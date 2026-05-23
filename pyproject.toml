@@ -23,7 +23,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "livespec-runtime"
-version = "0.1.0"
+version = "0.2.0"
 description = "Shared runtime library for livespec-governed projects: cross-repo dependency resolution, retry policy, runtime types consumed by canonical livespec skills and impl-plugin consumers. Sibling to livespec, livespec-impl-*, and livespec-dev-tooling (which owns enforcement-suite code)."
 requires-python = ">=3.10.16"
 authors = [
@@ -32,13 +32,15 @@ authors = [
 license = { text = "MIT" }
 readme = "README.md"
 
-# NO [project.dependencies] at v0.1.0: the cross_repo skeleton (li-ufvfmb)
-# is empty modules + types only. The li-aclzfe impl will add `gh` CLI as a
-# system dependency (NOT a Python package — invoked via subprocess) plus
-# tenacity (or hand-rolled retry) for the 3-attempt 1s/2s/4s backoff
-# policy per the consolidated v071+ Cross-repo dependency awareness contract.
-# Library kept dependency-free at runtime so consumers pay zero transitive-
-# pin cost when adding it to their [dependency-groups].dev table.
+# Single runtime dependency: typing_extensions for assert_never under Python
+# 3.10 (the package's floor); 3.11+ ships assert_never in the stdlib `typing`.
+# Hand-rolled retry policy (3 attempts, 1s/2s/4s) avoids pulling tenacity.
+# `gh` CLI is a system dependency (NOT a Python package — invoked via
+# subprocess) per the consolidated v071+ Cross-repo dependency awareness
+# contract.
+dependencies = [
+    "typing_extensions>=4.0.0",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["livespec_runtime"]

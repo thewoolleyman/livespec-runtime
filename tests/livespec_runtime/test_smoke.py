@@ -9,4 +9,15 @@ def test_top_level_package_imports() -> None:
 
 
 def test_cross_repo_subpackage_imports() -> None:
-    assert livespec_runtime.cross_repo.__all__ == []
+    expected = {
+        "BranchEntry",
+        "CrossRepoManifest",
+        "CrossRepoTarget",
+        "DependsOnEntry",
+        "LocalEntry",
+        "PullRequestEntry",
+        "RefStatus",
+        "SiblingWorkItemEntry",
+        "resolve_ref",
+    }
+    assert set(livespec_runtime.cross_repo.__all__) == expected
