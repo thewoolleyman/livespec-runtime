@@ -1,0 +1,44 @@
+// Project-local livespec configuration for livespec-runtime.
+//
+// This sibling library dogfoods livespec at the LIBRARY scale, second
+// such (livespec-dev-tooling was first). The SPECIFICATION/ tree at the
+// repo root is the live spec for this library; the work-items / memos
+// JSONL files at the repo root carry this library's own impl tracking.
+//
+// Authority: livespec/SPECIFICATION/contracts.md
+//   §"Cross-repo coordination — pin-and-bump" (sibling libraries take
+//   the same pin-and-bump shape as impl-plugins)
+//   §"Cross-repo dependency awareness" (the H2 landed by li-e7h6ki +
+//   parent epic li-6d2wpj that names livespec-runtime as the shared
+//   runtime library)
+//
+// Status: SPECIFICATION/ is seeded via /livespec:seed as a follow-up
+// after the v0.1.0 tag lands (per li-ufvfmb's "seed its own
+// SPECIFICATION/ via the livespec template"). The initial scaffold ships
+// the .livespec.jsonc and the package skeleton; the cross_repo impl
+// lands via li-aclzfe against the seeded spec.
+{
+  "template": "livespec",
+  "spec_root": "SPECIFICATION",
+  "implementation": { "plugin": "livespec-impl-plaintext" },
+  "livespec-runtime": {
+    "compat": {
+      // semver range and pinned tag against livespec-core. The pinned
+      // value is "master" until livespec-core's first post-v072 release
+      // tag (revising the propose-change from li-e7h6ki); doctor's
+      // contract-version-compatibility invariant currently fires `warn`
+      // against "master" pins, which is expected during bootstrap.
+      "livespec": ">=0.1.0,<1.0.0",
+      "pinned": "master"
+    }
+  },
+  "livespec-impl-plaintext": {
+    "format": "jsonl",
+    "compat": {
+      "livespec": ">=0.1.0,<1.0.0",
+      "pinned": "master"
+    },
+    "work_items_path": "work-items.jsonl",
+    "memos_path": "memos.jsonl"
+  }
+}
