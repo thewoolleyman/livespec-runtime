@@ -1,0 +1,8 @@
+{
+  "name": "feat/foo",
+  "commit": {
+    "sha": "abc123def456abc123def456abc123def456abcd",
+    "url": "https://api.github.com/repos/owner/repo/commits/abc123def456abc123def456abc123def456abcd"
+  },
+  "protected": false
+}
