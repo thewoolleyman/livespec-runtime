@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.2.1...v0.3.0) (2026-05-25)
+
+
+### Features
+
+* **workflows:** drop cross-repo coordination shim workflows ([#5](https://github.com/thewoolleyman/livespec-runtime/issues/5)) ([bcc646e](https://github.com/thewoolleyman/livespec-runtime/commit/bcc646e27fbe1db5f15c2f973d1a840850158983))
+
 ## [0.2.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.2.0...v0.2.1) (2026-05-24)
 
 
