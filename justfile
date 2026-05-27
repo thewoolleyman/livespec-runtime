@@ -32,6 +32,20 @@ default:
 bootstrap:
     uv sync --all-groups
     uv run lefthook install
+    # Idempotent `core.bare = true` on the primary checkout's
+    # git-common-dir config (per livespec/SPECIFICATION/
+    # non-functional-requirements.md §"Bare-flag bootstrap procedure").
+    # The flag is the load-bearing setting that forces every edit
+    # through `git worktree add`. Runs LAST because `lefthook install`
+    # invokes `git rev-parse --show-toplevel`, which refuses to run
+    # against a bare repository. The spec's clause-2 contract is "the
+    # entry point MUST result in core.bare = true being set" — it does
+    # not mandate ordering; the end-state guarantee is what counts.
+    # Re-running bootstrap re-sets the flag idempotently. Targets
+    # `git rev-parse --git-common-dir` so the recipe writes the right
+    # file when invoked from the primary checkout AND from secondary
+    # worktrees.
+    git config --file "$(git rev-parse --git-common-dir)/config" core.bare true
 
 # ---------------------------------------------------------------
 # Aggregate check — tool-backed targets only at Phase G.2.
