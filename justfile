@@ -32,6 +32,20 @@ default:
 bootstrap:
     uv sync --all-groups
     uv run lefthook install
+    # Idempotent `core.bare = true` on the primary checkout's
+    # git-common-dir config (per livespec/SPECIFICATION/
+    # non-functional-requirements.md §"Bare-flag bootstrap procedure").
+    # The flag is the load-bearing setting that forces every edit
+    # through `git worktree add`. Runs LAST because `lefthook install`
+    # invokes `git rev-parse --show-toplevel`, which refuses to run
+    # against a bare repository. The spec's clause-2 contract is "the
+    # entry point MUST result in core.bare = true being set" — it does
+    # not mandate ordering; the end-state guarantee is what counts.
+    # Re-running bootstrap re-sets the flag idempotently. Targets
+    # `git rev-parse --git-common-dir` so the recipe writes the right
+    # file when invoked from the primary checkout AND from secondary
+    # worktrees.
+    git config --file "$(git rev-parse --git-common-dir)/config" core.bare true
 
 # ---------------------------------------------------------------
 # Aggregate check — tool-backed targets only at Phase G.2.
@@ -46,6 +60,7 @@ check:
         check-lint
         check-format
         check-coverage
+        check-primary-checkout-bare-flag-set
     )
     failed=()
     for t in "${targets[@]}"; do
@@ -82,6 +97,16 @@ check-coverage:
         exit 0
     fi
     uv run pytest -n auto --cov --cov-branch --cov-config=pyproject.toml --cov-report=term-missing
+
+# Shared bare-flag invariant from livespec-dev-tooling. Per
+# livespec/SPECIFICATION/contracts.md §"`primary-checkout-bare-flag-set`"
+# and §"Shared code sync — livespec-dev-tooling", the bare-flag rule is
+# family-wide-by-intent and its canonical implementation ships in the
+# shared inventory (available since livespec-dev-tooling v0.3.0). This
+# recipe is the project-root-scoped CI/just-check adoption that the
+# spec mandates for every consumer repo.
+check-primary-checkout-bare-flag-set:
+    uv run python -m livespec_dev_tooling.checks.primary_checkout_bare_flag_set
 
 # ---------------------------------------------------------------
 # Pre-commit aggregate — Red-mode-aware. Classifies the staged
