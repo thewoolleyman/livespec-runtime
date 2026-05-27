@@ -180,6 +180,32 @@ def test_branch_exists_on_remote_propagates_when_stderr_empty(
         )
 
 
+def test_branch_exists_on_remote_propagates_when_unrelated_404_substring(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Regression guard for li-y2hd44.
+
+    An unrelated stderr fragment containing '404' as content (e.g. a
+    body-text mention of a 404-redirect target, an error body that
+    happens to include the digits, etc.) MUST NOT be mis-categorized
+    as a real HTTP 404. The detection MUST key off the structured
+    `HTTP 404` prefix (or the exit-code carrier) per
+    SPECIFICATION/history/v003/contracts.md §"livespec_runtime.cross_repo.providers.github" /
+    "branch_exists_on_remote".
+    """
+    unrelated_stderr = "gh: rate limit exceeded; see https://example.com/404-redirect (HTTP 403)"
+
+    def fake_run(_argv: list[str], **_kwargs: Any) -> subprocess.CompletedProcess[str]:
+        raise _make_called_process_error(stderr=unrelated_stderr)
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    with pytest.raises(subprocess.CalledProcessError):
+        _ = branch_exists_on_remote(
+            github_url="https://github.com/thewoolleyman/livespec",
+            name="feat/foo",
+        )
+
+
 def test_branch_exists_on_remote_invokes_gh_api(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: list[list[str]] = []
 
