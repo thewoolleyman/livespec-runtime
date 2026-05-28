@@ -83,11 +83,13 @@ dev = [
 # `python -m livespec_dev_tooling.checks.<slug>` invocation set (each
 # slug's argv contract and exit-code semantics). Bump-pin PRs against
 # this repo land each new tag per livespec/SPECIFICATION/contracts.md
-# §"Cross-repo coordination — pin-and-bump". v0.3.0 is the first tag
-# shipping the family-wide `primary_checkout_bare_flag_set` check that
-# this repo adopts in its `just check` aggregate.
+# §"Cross-repo coordination — pin-and-bump". v0.4.0 ships the
+# canonical-check enumeration (`livespec_dev_tooling.canonical_checks`)
+# and the `aggregate_completeness` wiring-completeness gate; this repo
+# self-hosts the full canonical aggregate against its own `just check`
+# from this pin onwards (epic li-univck Phase 3.3, work-item li-runwir).
 [tool.uv.sources]
-livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git", tag = "v0.3.0" }
+livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git", tag = "v0.4.0" }
 
 # ---------------------------------------------------------------------------
 # Ruff — sole linter, formatter, import-sorter, complexity checker.
