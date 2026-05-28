@@ -31,22 +31,40 @@ default:
 # gates fire automatically. Re-running is idempotent: `lefthook install`
 # rewrites the hook files atomically.
 bootstrap:
+    #!/usr/bin/env bash
+    set -uo pipefail
     uv sync --all-groups
     uv run lefthook install
-    # Idempotent `core.bare = true` on the primary checkout's
-    # git-common-dir config (per livespec/SPECIFICATION/
-    # non-functional-requirements.md §"Bare-flag bootstrap procedure").
-    # The flag is the load-bearing setting that forces every edit
-    # through `git worktree add`. Runs LAST because `lefthook install`
-    # invokes `git rev-parse --show-toplevel`, which refuses to run
-    # against a bare repository. The spec's clause-2 contract is "the
-    # entry point MUST result in core.bare = true being set" — it does
-    # not mandate ordering; the end-state guarantee is what counts.
-    # Re-running bootstrap re-sets the flag idempotently. Targets
-    # `git rev-parse --git-common-dir` so the recipe writes the right
-    # file when invoked from the primary checkout AND from secondary
-    # worktrees.
-    git config --file "$(git rev-parse --git-common-dir)/config" core.bare true
+    # Idempotent commit-refuse hook install at the primary checkout
+    # (per livespec/SPECIFICATION/non-functional-requirements.md
+    # §"Commit-refuse hook bootstrap procedure"). Replaces the
+    # prior bare-flag bootstrap as of epic li-unbare Phase 3 +
+    # livespec-dev-tooling v0.5.0. The hook is a no-op at
+    # secondary worktrees because `git rev-parse --show-toplevel`
+    # returns the worktree's own path there. Writes both
+    # `.git/hooks/pre-commit` AND `.git/hooks/pre-push`, sets
+    # `livespec.primaryPath` to the primary checkout's absolute
+    # path, and chmod +x both hooks. Re-running is idempotent.
+    git_common_dir="$(git rev-parse --git-common-dir)"
+    primary_path="$(realpath "$git_common_dir/..")"
+    hook_dir="$git_common_dir/hooks"
+    mkdir -p "$hook_dir"
+    for hook in pre-commit pre-push; do
+      cat > "$hook_dir/$hook" <<'HOOK_EOF'
+    #!/bin/sh
+    # livespec commit-refuse hook — refuses commits/pushes at the primary checkout.
+    primary_path="$(git config --get livespec.primaryPath || true)"
+    toplevel="$(git rev-parse --show-toplevel)"
+    if [ -n "$primary_path" ] && [ "$toplevel" = "$primary_path" ]; then
+      echo "livespec: refusing commit/push at primary checkout ($toplevel); use a worktree" >&2
+      exit 1
+    fi
+    hook_name="$(basename "$0")"
+    exec mise exec -- lefthook run "$hook_name" "$@"
+    HOOK_EOF
+      chmod +x "$hook_dir/$hook"
+    done
+    git config --file "$git_common_dir/config" livespec.primaryPath "$primary_path"
 
 # ---------------------------------------------------------------
 # Aggregate check — wires EVERY canonical check slug emitted by
@@ -91,7 +109,7 @@ check:
         check-no-write-direct
         check-pbt-coverage-pure-modules
         check-per-file-coverage
-        check-primary-checkout-bare-flag-set
+        check-primary-checkout-commit-refuse-hook-installed
         check-private-calls
         check-public-api-result-typed
         check-red-green-replay
@@ -294,13 +312,14 @@ check-per-file-coverage:
     uv run python -m livespec_dev_tooling.checks.per_file_coverage
 
 # Universal cross-boundary invariant: every livespec-governed primary
-# checkout MUST have `core.bare = true` set in `.git/config`. Self-
-# hosted into the `check` aggregate as of Phase 3b of the family-wide
-# bare-flag migration; CI's metadata matrix runs this target with its
-# own `git config core.bare true` gating step since `actions/checkout`
-# produces a non-bare working tree.
-check-primary-checkout-bare-flag-set:
-    uv run python -m livespec_dev_tooling.checks.primary_checkout_bare_flag_set
+# checkout MUST install the canonical commit-refuse hook body at
+# `.git/hooks/pre-commit` AND `.git/hooks/pre-push`. Replaces the
+# prior `core.bare = true` invariant as of epic li-unbare Phase 3 +
+# livespec-dev-tooling v0.5.0. CI's metadata matrix runs this target
+# with its own hook-installation gating step since `actions/checkout`
+# produces a non-bare working tree without the hook installed.
+check-primary-checkout-commit-refuse-hook-installed:
+    uv run python -m livespec_dev_tooling.checks.primary_checkout_commit_refuse_hook_installed
 
 check-private-calls:
     uv run python -m livespec_dev_tooling.checks.private_calls
