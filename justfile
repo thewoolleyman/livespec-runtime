@@ -60,6 +60,12 @@ bootstrap:
       exit 1
     fi
     hook_name="$(basename "$0")"
+    # git injects GIT_DIR=<worktree-gitdir> (plus GIT_INDEX_FILE/GIT_WORK_TREE/
+    # GIT_PREFIX) into the hook env when a hook fires inside a worktree;
+    # lefthook run with it misreads the repo as bare and writes core.bare=true
+    # into the shared .git/config (root cause li-iroguc). Clear them so lefthook
+    # detects the repo from cwd.
+    unset GIT_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX
     exec mise exec -- lefthook run "$hook_name" "$@"
     HOOK_EOF
       chmod +x "$hook_dir/$hook"
