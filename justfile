@@ -124,6 +124,15 @@ check:
         check-tests-mirror-pairing
         check-vendor-manifest
         check-wrapper-shape
+        # ---- Repo-private block (extends after canonical) ----
+        # Tool-backed checks that are NOT canonical slugs (absent from
+        # `livespec_dev_tooling.canonical_checks`) but still gate the
+        # aggregate. They appear AFTER the canonical block per the
+        # wiring-completeness invariant (which only constrains the
+        # canonical block to be exact + alphabetical). Mirrors how
+        # livespec-core and livespec-impl-plaintext wire `check-types`
+        # into their own aggregates (li-pyright-gate-wi2).
+        check-types
     )
     failed=()
     for t in "${targets[@]}"; do
@@ -140,12 +149,16 @@ check:
     printf '\nAll %d targets passed.\n' "${#targets[@]}"
 
 # ---------------------------------------------------------------
-# Tool-backed checks. Not canonical-aggregate targets; invoked from
-# canonical recipes (check-lint runs ruff check, etc.) but the slugs
-# `check-lint` / `check-format` / `check-coverage` / `check-types`
-# are NOT canonical (not in canonical_checks.py's discovery set).
-# They remain as helper recipes; they are not wired into the
-# `check:` aggregate's `targets=(...)`.
+# Tool-backed checks. The slugs `check-lint` / `check-format` /
+# `check-coverage` / `check-types` are NOT canonical (not in
+# canonical_checks.py's discovery set). `check-types` IS wired into
+# the `check:` aggregate's `targets=(...)` repo-private block (after
+# the canonical block) and into the CI `check-python` matrix, so
+# pyright gates the runtime package everywhere `just check` runs
+# (local, pre-push, CI). `check-lint` / `check-format` are invoked
+# transitively via the canonical recipes (e.g. `check-file-lloc`
+# pairs with ruff) and remain available as standalone helpers;
+# `check-coverage` overlaps the canonical `check-per-file-coverage`.
 # ---------------------------------------------------------------
 
 check-lint:
