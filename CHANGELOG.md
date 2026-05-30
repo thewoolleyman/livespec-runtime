@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.3.0...v0.3.1) (2026-05-30)
+
+
+### Bug Fixes
+
+* **github:** detect 404 via structured HTTP 404 marker, not substring (li-y2hd44) ([6a0f705](https://github.com/thewoolleyman/livespec-runtime/commit/6a0f7059c9237542292d5d857390dd6a02a032be))
+
 ## [0.3.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.2.1...v0.3.0) (2026-05-25)
 
 
