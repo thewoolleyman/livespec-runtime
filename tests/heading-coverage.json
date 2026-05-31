@@ -201,5 +201,89 @@
     "heading": "## Terminology",
     "test": "TODO",
     "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism."
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: resolve a closed pull-request dependency",
+    "test": "tests.consumer.test_cross_repo_resolution.test_pull_request_dependency_resolution_paths"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: resolve an open pull-request dependency",
+    "test": "tests.consumer.test_cross_repo_resolution.test_pull_request_dependency_resolution_paths"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: pull-request dependency under retry exhaustion",
+    "test": "tests.consumer.test_cross_repo_resolution.test_pull_request_dependency_retry_exhaustion_is_unknown"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: pull-request dependency with unknown repo slug",
+    "test": "tests.consumer.test_cross_repo_resolution.test_pull_request_dependency_unknown_repo_slug_is_unknown"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: branch dependency that no longer exists on remote",
+    "test": "tests.consumer.test_cross_repo_resolution.test_branch_dependency_resolution_paths"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: branch dependency present but not yet merged",
+    "test": "tests.consumer.test_cross_repo_resolution.test_branch_dependency_resolution_paths"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: branch dependency present and merged into default",
+    "test": "tests.consumer.test_cross_repo_resolution.test_branch_dependency_resolution_paths"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: local dependency delegates to caller-supplied lookup",
+    "test": "tests.consumer.test_cross_repo_resolution.test_local_dependency_delegates_to_caller_lookup"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: sibling work-item dependency without sibling_status_lookup",
+    "test": "tests.consumer.test_cross_repo_resolution.test_sibling_work_item_without_lookup_is_unknown"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: parse_depends_on_entry rejects unknown kind",
+    "test": "tests.consumer.test_cross_repo_resolution.test_parse_depends_on_entry_rejects_unknown_kind"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: parse_depends_on_entry rejects missing required field",
+    "test": "tests.consumer.test_cross_repo_resolution.test_parse_depends_on_entry_rejects_missing_required_field"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: parse_cross_repo_manifest accepts minimal target",
+    "test": "tests.consumer.test_cross_repo_resolution.test_parse_cross_repo_manifest_accepts_minimal_target"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: parse_cross_repo_manifest rejects target missing github_url",
+    "test": "tests.consumer.test_cross_repo_resolution.test_parse_cross_repo_manifest_rejects_target_missing_github_url"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: non-canonical github_url raises NonCanonicalGithubUrlError",
+    "test": "tests.consumer.test_cross_repo_resolution.test_non_canonical_github_url_raises_for_branch_provider"
   }
 ]

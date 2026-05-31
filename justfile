@@ -120,8 +120,10 @@ check:
         check-public-api-result-typed
         check-red-green-replay
         check-rop-pipeline-shape
+        check-skill-invocation-paths
         check-supervisor-discipline
         check-tests-mirror-pairing
+        check-tool-backed-check-completeness
         check-vendor-manifest
         check-wrapper-shape
         # ---- Repo-private block (extends after canonical) ----
@@ -129,10 +131,16 @@ check:
         # `livespec_dev_tooling.canonical_checks`) but still gate the
         # aggregate. They appear AFTER the canonical block per the
         # wiring-completeness invariant (which only constrains the
-        # canonical block to be exact + alphabetical). Mirrors how
-        # livespec-core and livespec-impl-plaintext wire `check-types`
-        # into their own aggregates (li-pyright-gate-wi2).
+        # canonical block to be exact + alphabetical). `check-lint`,
+        # `check-format`, `check-types`, and `check-coverage` are the
+        # four tool-backed slugs the canonical `check-tool-backed-check-
+        # completeness` meta-check (v0.9.0) requires as literal members
+        # of BOTH this targets array AND the CI matrix. Mirrors how
+        # livespec-core and livespec-impl-plaintext wire them.
+        check-lint
+        check-format
         check-types
+        check-coverage
     )
     failed=()
     for t in "${targets[@]}"; do
@@ -365,11 +373,17 @@ check-red-green-replay *args:
 check-rop-pipeline-shape:
     uv run python -m livespec_dev_tooling.checks.rop_pipeline_shape
 
+check-skill-invocation-paths:
+    uv run python -m livespec_dev_tooling.checks.skill_invocation_paths
+
 check-supervisor-discipline:
     uv run python -m livespec_dev_tooling.checks.supervisor_discipline
 
 check-tests-mirror-pairing:
     uv run python -m livespec_dev_tooling.checks.tests_mirror_pairing
+
+check-tool-backed-check-completeness:
+    uv run python -m livespec_dev_tooling.checks.tool_backed_check_completeness
 
 check-vendor-manifest:
     uv run python -m livespec_dev_tooling.checks.vendor_manifest
