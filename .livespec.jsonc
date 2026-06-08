@@ -2,8 +2,11 @@
 //
 // This sibling library dogfoods livespec at the LIBRARY scale, second
 // such (livespec-dev-tooling was first). The SPECIFICATION/ tree at the
-// repo root is the live spec for this library; the work-items / memos
-// JSONL files at the repo root carry this library's own impl tracking.
+// repo root is the live spec for this library; this library's own impl
+// tracking lives in a per-repo beads/Dolt TENANT database on the shared
+// dolt-server (tenant name "livespec-runtime"), via livespec-impl-beads.
+// (The pre-cutover plaintext work-items.jsonl / memos.jsonl snapshot is
+// frozen read-only under archive/ — see archive/README.md.)
 //
 // Authority: livespec/SPECIFICATION/contracts.md
 //   §"Cross-repo coordination — pin-and-bump" (sibling libraries take
@@ -20,7 +23,7 @@
 {
   "template": "livespec",
   "spec_root": "SPECIFICATION",
-  "implementation": { "plugin": "livespec-impl-plaintext" },
+  "implementation": { "plugin": "livespec-impl-beads" },
   "livespec-runtime": {
     "compat": {
       // semver range and pinned tag against livespec-core. The pinned
@@ -32,13 +35,40 @@
       "pinned": "master"
     }
   },
-  "livespec-impl-plaintext": {
-    "format": "jsonl",
+  "livespec-impl-beads": {
+    // Substrate marker. The plaintext sibling declared "jsonl"; this
+    // plugin's substrate is a per-repo beads/Dolt TENANT database on the
+    // shared dolt-server (NOT JSONL files at the repo root). The frozen
+    // pre-cutover JSONL snapshot lives under archive/ (see archive/README.md).
+    "format": "beads",
     "compat": {
       "livespec": ">=0.1.0,<1.0.0",
       "pinned": "master"
     },
-    "work_items_path": "work-items.jsonl",
-    "memos_path": "memos.jsonl"
+    // Per-repo beads tenant CONNECTION block, read by the plugin's
+    // commands/_config.py and overlaid by LIVESPEC_BD_PATH /
+    // LIVESPEC_BEADS_FAKE. `prefix` == `tenant` == `database` ==
+    // `server_user` is the load-bearing tenant identity rule (all four are
+    // this repo's name, "livespec-runtime"). TCP-only: NO `socket` key —
+    // the dolt unix socket dir is 0750 dolt:dolt and inaccessible to this
+    // caller, so the connection must go over 127.0.0.1:3307.
+    //
+    // The tenant PASSWORD is deliberately ABSENT — it is supplied only via
+    // the BEADS_DOLT_PASSWORD environment variable at bd-call time and is
+    // NEVER committed here.
+    //
+    // `fake` is false so the committed config describes the REAL
+    // connection; CI and tests set LIVESPEC_BEADS_FAKE=1 to force the
+    // hermetic in-memory backend (GitHub CI cannot reach the localhost
+    // dolt-server).
+    "connection": {
+      "tenant": "livespec-runtime",
+      "prefix": "livespec-runtime",
+      "database": "livespec-runtime",
+      "server_user": "livespec-runtime",
+      "server_host": "127.0.0.1",
+      "server_port": 3307,
+      "fake": false
+    }
   }
 }
