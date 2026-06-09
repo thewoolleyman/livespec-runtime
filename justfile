@@ -83,6 +83,17 @@ bootstrap:
       chmod +x "$hook_dir/$hook"
     done
     git config --file "$git_common_dir/config" livespec.primaryPath "$primary_path"
+    just ensure-plugins
+
+# Idempotent: `claude plugin marketplace add` and `claude plugin install`
+# both exit 0 when the target is already present. Installs livespec plus
+# the active impl plugin (livespec-impl-beads), mirroring the canonical
+# recipe in livespec-impl-beads/justfile.
+ensure-plugins:
+    claude plugin marketplace add thewoolleyman/livespec
+    claude plugin marketplace add thewoolleyman/livespec-impl-beads
+    claude plugin install livespec@livespec
+    claude plugin install livespec-impl-beads@livespec-impl-beads
 
 # ---------------------------------------------------------------
 # Aggregate check — wires EVERY canonical check slug emitted by
