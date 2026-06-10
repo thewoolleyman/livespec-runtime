@@ -171,7 +171,7 @@ check:
         # four tool-backed slugs the canonical `check-tool-backed-check-
         # completeness` meta-check (v0.9.0) requires as literal members
         # of BOTH this targets array AND the CI matrix. Mirrors how
-        # livespec-core and livespec-impl-plaintext wire them.
+        # livespec-core and livespec-impl-git-jsonl wire them.
         check-lint
         check-format
         check-types

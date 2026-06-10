@@ -48,16 +48,16 @@ def test_local_dependency_construction() -> None:
 
 
 def test_sibling_work_item_dependency_construction() -> None:
-    entry = SiblingWorkItemDependency(repo="impl-plaintext", work_item_id="li-xyz789")
+    entry = SiblingWorkItemDependency(repo="impl-git-jsonl", work_item_id="li-xyz789")
     assert entry.kind == "sibling_work_item"
-    assert entry.repo == "impl-plaintext"
+    assert entry.repo == "impl-git-jsonl"
     assert entry.work_item_id == "li-xyz789"
 
 
 def test_pull_request_dependency_construction() -> None:
-    entry = PullRequestDependency(repo="impl-plaintext", number=42)
+    entry = PullRequestDependency(repo="impl-git-jsonl", number=42)
     assert entry.kind == "pull_request"
-    assert entry.repo == "impl-plaintext"
+    assert entry.repo == "impl-git-jsonl"
     assert entry.number == 42
 
 

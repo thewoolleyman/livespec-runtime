@@ -60,8 +60,9 @@ full. Notable inherited rules (NOT re-stated, listed for orientation):
   one-to-one (every module under `livespec_runtime/cross_repo/` has a
   paired `tests/livespec_runtime/cross_repo/test_<module>.py`).
 - `SPECIFICATION/` — this spec, governed by livespec.
-- `work-items.jsonl`, `memos.jsonl` at the repo root — this library's
-  own impl tracking via `livespec-impl-plaintext`.
+- This library's own impl tracking lives in its per-repo beads Dolt
+  tenant via `livespec-impl-beads` (the legacy repo-root JSONL stores
+  are frozen under `archive/`).
 - `pyproject.toml`, `uv.lock`, `.mise.toml`, `.livespec.jsonc`,
   `justfile`, `lefthook.yml`, `release-please-config.json`,
   `.release-please-manifest.json` — toolchain configuration; each
@@ -73,7 +74,7 @@ full. Notable inherited rules (NOT re-stated, listed for orientation):
   with the owning project name. Library-local references use
   `livespec-runtime vX.Y.Z`; upstream meta-tool references use
   `livespec vNNN`; sibling impl-plugin references use the
-  plugin name (`livespec-impl-plaintext v0.x`, etc.). External
+  plugin name (`livespec-impl-git-jsonl v0.x`, etc.). External
   dependency versions follow the same shape (`uv 0.5.x`,
   `gh 2.x`, `Python 3.10+`).
 - Inline JSON or TOML example snippets are exempt when the
