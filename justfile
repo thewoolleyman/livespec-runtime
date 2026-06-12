@@ -43,46 +43,28 @@ default:
 # gates fire automatically. Re-running is idempotent: `lefthook install`
 # rewrites the hook files atomically.
 bootstrap:
-    #!/usr/bin/env bash
-    set -uo pipefail
     uv sync --all-groups
     uv run lefthook install
-    # Idempotent commit-refuse hook install at the primary checkout
-    # (per livespec/SPECIFICATION/non-functional-requirements.md
-    # §"Commit-refuse hook bootstrap procedure"). Replaces the
-    # prior bare-flag bootstrap as of epic li-unbare Phase 3 +
-    # livespec-dev-tooling v0.5.0. The hook is a no-op at
-    # secondary worktrees because `git rev-parse --show-toplevel`
-    # returns the worktree's own path there. Writes both
-    # `.git/hooks/pre-commit` AND `.git/hooks/pre-push`, sets
-    # `livespec.primaryPath` to the primary checkout's absolute
-    # path, and chmod +x both hooks. Re-running is idempotent.
-    git_common_dir="$(git rev-parse --git-common-dir)"
-    primary_path="$(realpath "$git_common_dir/..")"
-    hook_dir="$git_common_dir/hooks"
-    mkdir -p "$hook_dir"
-    for hook in pre-commit pre-push; do
-      cat > "$hook_dir/$hook" <<'HOOK_EOF'
-    #!/bin/sh
-    # livespec commit-refuse hook — refuses commits/pushes at the primary checkout.
-    primary_path="$(git config --get livespec.primaryPath || true)"
-    toplevel="$(git rev-parse --show-toplevel)"
-    if [ -n "$primary_path" ] && [ "$toplevel" = "$primary_path" ]; then
-      echo "livespec: refusing commit/push at primary checkout ($toplevel); use a worktree" >&2
-      exit 1
-    fi
-    hook_name="$(basename "$0")"
-    # git injects GIT_DIR=<worktree-gitdir> (plus GIT_INDEX_FILE/GIT_WORK_TREE/
-    # GIT_PREFIX) into the hook env when a hook fires inside a worktree;
-    # lefthook run with it misreads the repo as bare and writes core.bare=true
-    # into the shared .git/config (root cause li-iroguc). Clear them so lefthook
-    # detects the repo from cwd.
-    unset GIT_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX
-    exec mise exec -- lefthook run "$hook_name" "$@"
-    HOOK_EOF
-      chmod +x "$hook_dir/$hook"
-    done
-    git config --file "$git_common_dir/config" livespec.primaryPath "$primary_path"
+    # Idempotent install of the canonical livespec commit-refuse hook
+    # (vendored byte-identically from livespec-dev-tooling — see
+    # dev-tooling/livespec-commit-refuse-hook.sh) at the primary
+    # checkout's `.git/hooks/pre-commit` AND `.git/hooks/pre-push`,
+    # plus the `livespec.primaryPath` config entry the hook body
+    # reads. Per livespec/SPECIFICATION/non-functional-requirements.md
+    # §"Commit-refuse hook bootstrap procedure". The hook is a no-op
+    # at secondary worktrees because `git rev-parse --show-toplevel`
+    # returns the worktree's own path there. Targets
+    # `git rev-parse --git-common-dir` so the install lands in the
+    # primary's shared hooks directory regardless of whether bootstrap
+    # is invoked from the primary or a secondary worktree. Runs AFTER
+    # `lefthook install` because the canonical hook DELEGATES to
+    # `lefthook run <hook-name>` after the refuse-at-primary check —
+    # overwriting the lefthook stubs is intentional, the canonical
+    # hook subsumes them. Re-running is idempotent.
+    cp dev-tooling/livespec-commit-refuse-hook.sh "$(git rev-parse --git-common-dir)/hooks/pre-commit"
+    cp dev-tooling/livespec-commit-refuse-hook.sh "$(git rev-parse --git-common-dir)/hooks/pre-push"
+    chmod +x "$(git rev-parse --git-common-dir)/hooks/pre-commit" "$(git rev-parse --git-common-dir)/hooks/pre-push"
+    git config --file "$(git rev-parse --git-common-dir)/config" livespec.primaryPath "$(git rev-parse --git-common-dir | xargs dirname | xargs realpath)"
     just ensure-plugins
 
 # Idempotent: `claude plugin marketplace add` and `claude plugin install`
