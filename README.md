@@ -8,11 +8,11 @@ This library is NOT enforcement-suite code — those live in [`livespec-dev-tool
 
 ## Status
 
-**v0.1.0 — initial scaffold.** Empty `livespec_runtime.cross_repo` skeleton + scaffold. The cross_repo implementation (typed `DependsOnEntry` union, `providers.github`, `retry`, `resolve_ref`) lands as v0.2.0 per work-item `li-aclzfe` under parent epic `li-6d2wpj`.
+**v0.3.1 — cross_repo resolution surface shipped.** `livespec_runtime.cross_repo` is fully implemented: typed `DependsOnEntry` union, `providers.github`, `retry`, and `resolve_ref` all landed in v0.2.0 (2026-05-24). v0.3.x carries follow-on fixes and polish. The module is present and in active use by livespec consumers.
 
 ## Consumption
 
-Once `v0.2.0` cuts (the first useful release), consumers add this library via `uv` git source:
+Consumers add this library via `uv` git source:
 
 ```toml
 [dependency-groups]
@@ -21,7 +21,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.2.0" }
+livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.3.1" }
 ```
 
 Or as a runtime dependency:
@@ -29,11 +29,11 @@ Or as a runtime dependency:
 ```toml
 [project]
 dependencies = [
-    "livespec-runtime>=0.2.0",
+    "livespec-runtime>=0.3.1",
 ]
 
 [tool.uv.sources]
-livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.2.0" }
+livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.3.1" }
 ```
 
 ## Governance
