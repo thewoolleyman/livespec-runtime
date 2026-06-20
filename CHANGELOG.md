@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.3.1...v0.4.0) (2026-06-20)
+
+
+### Features
+
+* extract shared WorkItem store surface into livespec_runtime.work_items (livespec-4jsi) ([dccc818](https://github.com/thewoolleyman/livespec-runtime/commit/dccc8181e843a02196dbb86c9a47e0bce833f5d9))
+
 ## [0.3.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.3.0...v0.3.1) (2026-06-12)
 
 
