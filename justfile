@@ -69,13 +69,13 @@ bootstrap:
 
 # Idempotent: `claude plugin marketplace add` and `claude plugin install`
 # both exit 0 when the target is already present. Installs livespec plus
-# the active impl plugin (livespec-impl-beads), mirroring the canonical
-# recipe in livespec-impl-beads/justfile.
+# the active impl plugin (livespec-orchestrator-beads-fabro), mirroring the canonical
+# recipe in livespec-orchestrator-beads-fabro/justfile.
 ensure-plugins:
     claude plugin marketplace add thewoolleyman/livespec
-    claude plugin marketplace add thewoolleyman/livespec-impl-beads
+    claude plugin marketplace add thewoolleyman/livespec-orchestrator-beads-fabro
     claude plugin install livespec@livespec
-    claude plugin install livespec-impl-beads@livespec-impl-beads
+    claude plugin install livespec-orchestrator-beads-fabro@livespec-orchestrator-beads-fabro
 
 # ---------------------------------------------------------------
 # Aggregate check — wires EVERY canonical check slug emitted by
@@ -173,7 +173,7 @@ check:
         # four tool-backed slugs the canonical `check-tool-backed-check-
         # completeness` meta-check (v0.9.0) requires as literal members
         # of BOTH this targets array AND the CI matrix. Mirrors how
-        # livespec-core and livespec-impl-git-jsonl wire them.
+        # livespec-core and livespec-orchestrator-git-jsonl wire them.
         check-lint
         check-format
         check-types
