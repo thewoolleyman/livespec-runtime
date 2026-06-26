@@ -24,6 +24,10 @@
   "template": "livespec",
   "spec_root": "SPECIFICATION",
   "implementation": { "plugin": "livespec-orchestrator-beads-fabro" },
+  "harnesses": {
+    "claude": { "status": "exempt", "reason": "livespec-runtime is a library; it ships no command/skill surface to resolve from a harness" },
+    "codex":  { "status": "exempt", "reason": "livespec-runtime is a library; it ships no command/skill surface to resolve from a harness" }
+  },
   "livespec-runtime": {
     "compat": {
       // semver range and pinned tag against livespec-core. The pinned

@@ -165,6 +165,7 @@ check:
     fi
     export UV_NO_SYNC=1
     targets=(
+        check-agents-ai-references-resolve
         check-aggregate-completeness
         check-all-declared
         check-assert-never-exhaustiveness
@@ -193,6 +194,7 @@ check:
         check-no-write-direct
         check-pbt-coverage-pure-modules
         check-per-file-coverage
+        check-plugin-resolution
         check-primary-checkout-commit-refuse-hook-installed
         check-private-calls
         check-public-api-result-typed
@@ -201,6 +203,7 @@ check:
         check-skill-invocation-paths
         check-supervisor-discipline
         check-tests-mirror-pairing
+        check-tests-no-subprocess-spawn
         check-tool-backed-check-completeness
         check-vendor-manifest
         check-wrapper-shape
@@ -366,6 +369,11 @@ check-changed:
 # with the snake_case slug.
 # ---------------------------------------------------------------
 
+# AGENTS.md `.ai/` reference-resolution gate — every `.ai/<topic>.md`
+# referenced from an AGENTS.md must resolve to an existing file.
+check-agents-ai-references-resolve:
+    uv run python -m livespec_dev_tooling.checks.agents_ai_references_resolve
+
 # Wiring-completeness gate — verifies the targets=(...) array in this
 # very justfile carries every canonical slug in alphabetical order
 # (epic li-univck Phase 1.3, work-item li-aggchk). Self-bootstrapping:
@@ -494,6 +502,14 @@ check-per-file-coverage:
     uv run pytest -n auto --cov --cov-branch --cov-config=pyproject.toml --cov-report=term-missing
     uv run python -m livespec_dev_tooling.checks.per_file_coverage
 
+# Baseline harness plugin-resolution Verifier: asserts each declared
+# harness in `.livespec.jsonc` `harnesses` resolves its command/skill
+# surface (or is explicitly `exempt`). livespec-runtime is a library
+# with no harness surface, so both harnesses are marked `exempt` and
+# this check passes by construction.
+check-plugin-resolution:
+    uv run python -m livespec_dev_tooling.checks.plugin_resolution
+
 # Universal cross-boundary invariant: every livespec-governed primary
 # checkout MUST install the canonical commit-refuse hook body at
 # `.git/hooks/pre-commit` AND `.git/hooks/pre-push`. Replaces the
@@ -530,6 +546,9 @@ check-supervisor-discipline:
 
 check-tests-mirror-pairing:
     uv run python -m livespec_dev_tooling.checks.tests_mirror_pairing
+
+check-tests-no-subprocess-spawn:
+    uv run python -m livespec_dev_tooling.checks.tests_no_subprocess_spawn
 
 check-tool-backed-check-completeness:
     uv run python -m livespec_dev_tooling.checks.tool_backed_check_completeness
