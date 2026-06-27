@@ -45,26 +45,21 @@ default:
 bootstrap:
     uv sync --all-groups
     uv run lefthook install
-    # Idempotent install of the canonical livespec commit-refuse hook
-    # (vendored byte-identically from livespec-dev-tooling — see
-    # dev-tooling/livespec-commit-refuse-hook.sh) at the primary
-    # checkout's `.git/hooks/pre-commit` AND `.git/hooks/pre-push`,
-    # plus the `livespec.primaryPath` config entry the hook body
-    # reads. Per livespec/SPECIFICATION/non-functional-requirements.md
-    # §"Commit-refuse hook bootstrap procedure". The hook is a no-op
-    # at secondary worktrees because `git rev-parse --show-toplevel`
-    # returns the worktree's own path there. Targets
-    # `git rev-parse --git-common-dir` so the install lands in the
-    # primary's shared hooks directory regardless of whether bootstrap
-    # is invoked from the primary or a secondary worktree. Runs AFTER
-    # `lefthook install` because the canonical hook DELEGATES to
-    # `lefthook run <hook-name>` after the refuse-at-primary check —
-    # overwriting the lefthook stubs is intentional, the canonical
-    # hook subsumes them. Re-running is idempotent.
-    cp dev-tooling/livespec-commit-refuse-hook.sh "$(git rev-parse --git-common-dir)/hooks/pre-commit"
-    cp dev-tooling/livespec-commit-refuse-hook.sh "$(git rev-parse --git-common-dir)/hooks/pre-push"
-    chmod +x "$(git rev-parse --git-common-dir)/hooks/pre-commit" "$(git rev-parse --git-common-dir)/hooks/pre-push"
-    git config --file "$(git rev-parse --git-common-dir)/config" livespec.primaryPath "$(git rev-parse --git-common-dir | xargs dirname | xargs realpath)"
+    # Install the canonical livespec commit-refuse hook by REUSING the shared
+    # livespec-dev-tooling installer (pinned in pyproject.toml). The installed
+    # body is STRUCTURAL — it refuses commits/pushes when git-dir ==
+    # git-common-dir (a primary checkout) unless livespec.sandboxExempt is set —
+    # so it is ARMED ON INSTALL with NO livespec.primaryPath arming step to miss
+    # (this supersedes the retired `cp dev-tooling/livespec-commit-refuse-hook.sh`
+    # + `git config livespec.primaryPath` approach, whose unset-config window
+    # failed OPEN). Per livespec/SPECIFICATION/non-functional-requirements.md
+    # §"Commit-refuse hook bootstrap procedure". The installer resolves the
+    # primary's shared .git/hooks and installs all three hooks (pre-commit,
+    # pre-push, commit-msg) even when run from a linked worktree. Runs AFTER
+    # `lefthook install` because the canonical hook DELEGATES to `lefthook run
+    # <hook-name>` after the refuse-at-primary check — overwriting the lefthook
+    # stubs is intentional, the canonical hook subsumes them. Idempotent.
+    just install-commit-refuse-hooks
     # Harden the beads tenant-pointer dir to owner-only on first-touch (bd
     # recommends 0700; only the owning user's bd reads it — the Dolt server
     # connects over TCP and never reads this dir). Guarded: repos with no beads
@@ -85,6 +80,12 @@ bootstrap:
     if ! mise settings get trusted_config_paths 2>/dev/null | grep -qF "${HOME}/.worktrees"; then mise settings add trusted_config_paths "${HOME}/.worktrees"; fi
     just ensure-plugins
     just ensure-codex-plugins
+
+# Install the canonical livespec commit-refuse hook by REUSING the shared
+# livespec-dev-tooling installer module (the SINGLE source of the structural
+# hook body; pinned in pyproject.toml). Idempotent; worktree-safe.
+install-commit-refuse-hooks:
+    uv run python -m livespec_dev_tooling.install_commit_refuse_hooks
 
 # Idempotent: `claude plugin marketplace add` and `claude plugin install`
 # both exit 0 when the target is already present. Installs livespec plus
