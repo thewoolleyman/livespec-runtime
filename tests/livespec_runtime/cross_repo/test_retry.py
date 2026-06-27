@@ -7,8 +7,7 @@ attempts, and returns `None` after all attempts raise.
 `time.sleep` is monkeypatched to a list-append spy so test bodies
 verify the backoff sequence without burning real wall-clock seconds.
 
-Schema reference: livespec/SPECIFICATION/contracts.md v072
-§"Cross-repo dependency awareness" → "Retry policy".
+Schema reference: livespec/SPECIFICATION/contracts.md v072.
 """
 
 import time

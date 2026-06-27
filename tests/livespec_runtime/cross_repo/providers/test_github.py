@@ -9,9 +9,7 @@ gh responses live as fixture JSON files under `fixtures/`; loading
 through `Path.read_text` keeps the test bodies focused on argv shape
 and the impl's interpretation of the response payload.
 
-Schema reference: livespec/SPECIFICATION/contracts.md v072
-§"Cross-repo dependency awareness" → "Resolution mechanism" and
-"`gh` CLI as the GitHub transport".
+Schema reference: livespec/SPECIFICATION/contracts.md v072.
 """
 
 import json
@@ -190,8 +188,7 @@ def test_branch_exists_on_remote_propagates_when_unrelated_404_substring(
     happens to include the digits, etc.) MUST NOT be mis-categorized
     as a real HTTP 404. The detection MUST key off the structured
     `HTTP 404` prefix (or the exit-code carrier) per
-    SPECIFICATION/history/v003/contracts.md §"livespec_runtime.cross_repo.providers.github" /
-    "branch_exists_on_remote".
+    SPECIFICATION/history/v003/contracts.md.
     """
     unrelated_stderr = "gh: rate limit exceeded; see https://example.com/404-redirect (HTTP 403)"
 

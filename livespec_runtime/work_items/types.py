@@ -1,8 +1,7 @@
 """The unified `WorkItem` model + `AuditRecord` + the schema enums/aliases.
 
 The work-item schema is codified by livespec/SPECIFICATION/contracts.md
-§"Work-items JSONL record schema" (and the beads-side mapping
-§"Work-item beads-issue mapping"). Every field below has an entry
+(and the beads-side mapping). Every field below has an entry
 there; the field types here are the Python-level realization.
 
 This is the SHARED lift of the model both `livespec-impl-git-jsonl`

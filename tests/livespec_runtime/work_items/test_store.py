@@ -7,7 +7,7 @@ both at type-check time (it is assignable to a `WorkItemStore`-typed
 binding) and behaviorally (read/append round-trip + the canonical
 reducer composes over its output).
 
-Reference: livespec/SPECIFICATION/contracts.md §"Materialized view".
+Reference: livespec/SPECIFICATION/contracts.md.
 """
 
 from collections.abc import Iterator
