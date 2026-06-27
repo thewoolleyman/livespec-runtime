@@ -177,39 +177,6 @@ jobs:
           # the other metadata entries.
           fetch-depth: 0
 
-      # The shared livespec-dev-tooling commit-refuse-hook check
-      # verifies the canonical hook body is installed at
-      # `.git/hooks/pre-commit` AND `.git/hooks/pre-push` per
-      # livespec/SPECIFICATION/non-functional-requirements.md
-      # §"Primary-checkout commit-refuse hook" / §"Commit-refuse
-      # hook bootstrap procedure". `actions/checkout` clones a fresh
-      # working tree with no bootstrap step run; installing the
-      # canonical hook body here satisfies the family-wide invariant.
-      # The body is recognized via substring fingerprint (`# livespec
-      # commit-refuse hook` + `git rev-parse --show-toplevel` +
-      # `exit 1`) per the check contract. Only the commit-refuse-hook
-      # matrix entry needs this — other check-metadata entries are
-      # unaffected by hook installation.
-      - name: Install canonical commit-refuse hook (satisfy invariant)
-        if: matrix.target == 'check-primary-checkout-commit-refuse-hook-installed'
-        run: |
-          for hook in pre-commit pre-push; do
-            cat > .git/hooks/$hook <<'HOOK_EOF'
-          #!/bin/sh
-          # livespec commit-refuse hook — refuses commits/pushes at the primary checkout.
-          primary_path="$(git config --get livespec.primaryPath || true)"
-          toplevel="$(git rev-parse --show-toplevel)"
-          if [ -n "$primary_path" ] && [ "$toplevel" = "$primary_path" ]; then
-            echo "livespec: refusing commit/push at primary checkout ($toplevel); use a worktree" >&2
-            exit 1
-          fi
-          hook_name="$(basename "$0")"
-          exec mise exec -- lefthook run "$hook_name" "$@"
-          HOOK_EOF
-            chmod +x .git/hooks/$hook
-          done
-          git config livespec.primaryPath "$(pwd)"
-
       - name: Install pinned binaries via mise
         uses: jdx/mise-action@v2
 
@@ -222,6 +189,25 @@ jobs:
 
       - name: Install Python dev deps via uv
         run: uv sync --all-groups
+
+      # The shared livespec-dev-tooling commit-refuse-hook check verifies
+      # that `.git/hooks/pre-commit`, `.git/hooks/pre-push`, AND
+      # `.git/hooks/commit-msg` carry the canonical refuse-at-primary body.
+      # CI's actions/checkout clone does NOT install the hook, so we install
+      # it here — AFTER `uv sync`, so the installer module is importable —
+      # for the one matrix entry that exercises the check, by REUSING the
+      # SAME from-package installer `just bootstrap` /
+      # `just install-commit-refuse-hooks` use (the SINGLE source of the
+      # structural body; there is no repo-tracked git-hook-wrapper.sh copy
+      # any more, per convergence zs22.7.9.1). The verifier (zs22.7.9.5)
+      # asserts STRICT byte-identity of each installed hook against the
+      # package's CANONICAL_HOOK_BODY, so the body MUST come from the
+      # installer — an inline heredoc would byte-differ and fail the check.
+      # The verifier only READS the files; the hook never fires in this
+      # metadata job, so its lefthook delegation is never reached.
+      - name: Install commit-refuse hook (satisfy invariant)
+        if: matrix.target == 'check-primary-checkout-commit-refuse-hook-installed'
+        run: just install-commit-refuse-hooks
 
       - name: just ${{ matrix.target }}
         run: just ${{ matrix.target }}
