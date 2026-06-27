@@ -4,10 +4,7 @@ Verifies the typed `DependsOnEntry` union (4 variants discriminated on
 `kind`), the `CrossRepoManifest` / `CrossRepoTarget` dataclasses, the
 `RefStatus` enum, and the dict-to-typed parser helpers.
 
-Schema reference: livespec/SPECIFICATION/contracts.md v072
-§"Cross-repo dependency awareness" → "Typed `DependsOnEntry` union for
-the work-item `depends_on` field" and "`cross_repo_targets` manifest
-in `.livespec.jsonc`".
+Schema reference: livespec/SPECIFICATION/contracts.md v072.
 """
 
 from pathlib import Path

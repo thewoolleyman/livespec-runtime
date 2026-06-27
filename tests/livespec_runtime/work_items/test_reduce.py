@@ -12,8 +12,7 @@ lifted from livespec-impl-git-jsonl:
 - DIVERGENT-head detection (two un-superseded heads for one id);
 - the `random_id_suffix` format.
 
-Reference: livespec/SPECIFICATION/contracts.md §"Materialized view" /
-§"Append-only store disciplines".
+Reference: livespec/SPECIFICATION/contracts.md.
 """
 
 import re

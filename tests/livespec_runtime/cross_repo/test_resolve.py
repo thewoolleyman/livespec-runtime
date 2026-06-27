@@ -11,8 +11,7 @@ module attribute level so the resolve-walker's lambdas see the
 patched value on each invocation. `time.sleep` is monkeypatched in
 retry-exhaustion tests so they don't burn real wall-clock backoff.
 
-Schema reference: livespec/SPECIFICATION/contracts.md v072
-§"Cross-repo dependency awareness" → "Resolution mechanism".
+Schema reference: livespec/SPECIFICATION/contracts.md v072.
 """
 
 import time

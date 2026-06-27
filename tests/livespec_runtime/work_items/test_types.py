@@ -5,8 +5,7 @@ carrying `supersedes`), the `AuditRecord` sub-object, the schema
 enums/aliases, the `supersedes` / `spec_commitment_hint` defaults, and
 frozenness.
 
-Schema reference: livespec/SPECIFICATION/contracts.md §"Work-items JSONL
-record schema".
+Schema reference: livespec/SPECIFICATION/contracts.md.
 """
 
 import pytest

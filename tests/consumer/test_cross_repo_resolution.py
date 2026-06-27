@@ -3,7 +3,7 @@
 This is the top-of-pyramid, consumer-style test tier for
 livespec-runtime. Each test drives the library exactly as an external
 consumer would — importing ONLY the public surface enumerated in
-`SPECIFICATION/contracts.md` §"Module-level public surface", building
+`SPECIFICATION/contracts.md`, building
 a `CrossRepoManifest` from consumer-shaped `.livespec.jsonc` dicts via
 `parse_cross_repo_manifest`, building `DependsOnEntry` variants via
 `parse_depends_on_entry`, and resolving them through the public
@@ -39,7 +39,7 @@ from typing import Any
 import pytest
 
 # Every import below is part of `livespec_runtime`'s public surface per
-# contracts.md §"Module-level public surface": the parse boundary, the
+# contracts.md: the parse boundary, the
 # typed manifest + RefStatus, the `resolve_ref` entry point, the two
 # consumer-catchable error types, and the one public provider function a
 # consumer that pre-validates URLs may invoke directly.
