@@ -13,11 +13,14 @@
 #   migrates from livespec-core in Phase G.4 of epic li-fgqgnk, it
 #   enforces this mechanically here too).
 #
-# Activation: `just bootstrap` installs the canonical git-hook-wrapper
-# into .git/hooks/{pre-commit,pre-push,commit-msg}. The wrapper invokes
-# `mise exec lefthook -- lefthook run <hook-name> "$@"` so the gate
-# fires regardless of shell config and commit-msg argv[1] (the
-# commit-message file path) reaches the red-green-replay hook.
+# Activation: `just bootstrap` installs the canonical commit-refuse hook by
+# REUSING the livespec-dev-tooling installer
+# (`python -m livespec_dev_tooling.install_commit_refuse_hooks`, the SINGLE
+# source of the structural hook body) into
+# .git/hooks/{pre-commit,pre-push,commit-msg}. The installed body invokes
+# `mise exec -- lefthook run <hook-name> "$@"` so the gate fires regardless of
+# shell config and commit-msg argv[1] (the commit-message file path) reaches
+# the red-green-replay hook.
 #
 # Bootstrap order: at Phase G.2 the just targets check-commit-pairs-
 # source-and-test, check-red-green-replay, and lint-autofix-staged are
