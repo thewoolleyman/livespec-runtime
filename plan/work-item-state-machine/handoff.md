@@ -11,72 +11,63 @@ anchor (prose ref):** `livespec-35s3zo` (livespec core tenant).
 > ```
 > (`with-livespec-env.sh` injects the tenant password; the glob resolves
 > the active orchestrator plugin root.) Filter for
-> `livespec-runtime-l4yojx` and its children. Until `groom` runs, the
-> epic has **no children** — the code slices are a DRAFT in
-> `research/03-code-slices.md`, not yet filed.
+> `livespec-runtime-l4yojx` and its children. Until the cut is approved
+> and filed, the epic has **no children** — the slices are a DRAFT in
+> `research/04-groom-cut.md`, not yet filed.
 
 ## Read-first chain (open these, in order)
 
 1. `research/00-l0-overview.md` — the slice, the anchor, the reframe,
    and the cross-repo design-of-record paths.
-2. `research/01-spec-deltas.md` — the exact `SPECIFICATION/contracts.md`
-   deltas (the propose-change payload, human-readable) + the
-   heading-coverage reasoning + the recommended `scenarios.md` additions.
-3. `research/02-propose-change-findings.json` — the schema-valid
-   `/livespec:propose-change` findings payload for (2).
-4. `research/03-code-slices.md` — the code-slice breakdown (S1–S5), keyed
-   to the `impl_followups[]` id_hints in (3).
+2. `research/01-spec-deltas.md` — the spec deltas (now RATIFIED; kept for
+   the rationale + heading-coverage reasoning + recommended scenarios).
+3. `research/02-propose-change-findings.json` — the findings payload
+   `revise` consumed; the `impl_followups[]` `id_hint`s are the
+   `spec_commitment_hint` values each child carries.
+4. `research/03-code-slices.md` — the code-slice breakdown (S1–S5).
+5. `research/04-groom-cut.md` — **the drafted `groom` cut** (the current
+   next action): the 5 dependency-layered children + the filing-mechanism
+   decision. Awaiting the coordinator's approval relay.
 
 ## State as of this handoff
 
 - ✅ Epic `livespec-runtime-l4yojx` anchored (prose-linked to
   `livespec-35s3zo`; no typed cross-tenant `depends_on`).
-- ✅ Spec propose-change payload drafted (`01` + `02`), schema-validated.
-- ✅ Code-slice breakdown drafted (`03`).
-- ✅ This thread + the drafts are **committed to `master`** (PR #81,
-  merge `e89fe9b`).
-- 🚫 **No `SPECIFICATION/proposed_changes/` file exists yet — and that
-  is intentional.** The payload is the findings JSON in `02`;
-  materializing the on-disk proposed-change file is the **first step of
-  the maintainer's `revise` gate** (decision: keep authoring +
-  ratification together under that gate; do not pre-materialize partial
-  spec state). Do not hunt for a proposed-change file — there isn't one.
-- 🚫 **No code written yet** — the runtime `.py` lands only after
-  `groom` cuts the slices.
-- ⏳ **Two maintainer-owned gates remain (the next action).**
+- ✅ Thread + drafts committed to `master` (PR #81 `e89fe9b`; handoff
+  refresh #82 `cd50149`).
+- ✅ **`revise` gate DONE** (driven by the coordinator/core session):
+  commit **`42d3d5e`** on `origin/master`, history **`v008`**,
+  `SPECIFICATION/contracts.md` ratified (the `### …work_items.types`
+  rewrite + the new `### …work_items.lifecycle` / `### …work_items.rank`
+  headings). **Do NOT re-run `propose-change` / `revise`.**
+- ✅ **`groom` cut DRAFTED** — `research/04-groom-cut.md` (5
+  dependency-layered children, each keyed to its `spec_commitment_hint`).
+- 🚫 **Nothing filed to the ledger yet** — the epic has no children. The
+  cut is maintainer-owned; file nothing until the coordinator relays
+  approval.
+- 🚫 **No code written yet** — the runtime `.py` lands only after the
+  cut is approved + filed.
 
-## Next action (ONE path — the two maintainer-owned gates)
+## Next action (ONE path — the `groom` cut, maintainer-owned)
 
-**The maintainer owns both; this track drafted them and must NOT
-auto-pass either.**
+`revise` is DONE. The single remaining gate is **`groom`** — and the cut
+is already drafted in `research/04-groom-cut.md`. The maintainer/
+coordinator OWNS it; **draft is surfaced, awaiting approval. File
+nothing until approval is relayed.**
 
-1. **`revise` (spec ratification).** First materialize the
-   proposed-change file from the drafted findings, then ratify:
-   ```bash
-   # author (materializes SPECIFICATION/proposed_changes/<topic>.md):
-   /livespec:propose-change work-item-lifecycle-l0 \
-     --findings-json plan/work-item-state-machine/research/02-propose-change-findings.json
-   # then ratify (the gate):
-   /livespec:revise
-   ```
-   (Or run `/livespec:propose-change` interactively, pasting the intent
-   from `01-spec-deltas.md`.) Ratifying applies Deltas 1–4 to
-   `SPECIFICATION/contracts.md`. Per `01`'s reasoning, **no
-   `tests/heading-coverage.json` change is required** (the new `### `
-   headings fall under the already-registered `## Module-level public
-   surface` h2; the check skips `### `).
+On approval:
 
-2. **`groom` (the slice cut).** Decompose epic `livespec-runtime-l4yojx`
-   into dispatchable `ready` children using `research/03-code-slices.md`
-   (S1–S5). Each filed child carries `spec_commitment_hint = <id_hint>`
-   from `02`'s `impl_followups[]`. Then the code lands via the
-   red-green-replay TDD ritual (worktree → PR → rebase-merge), and the
-   **L0 exit gate is the `livespec-runtime` release** (S5) — the artifact
-   L1a/L1b vendor.
-
-After the release, the L1a (beads-fabro) and L1b (git-jsonl) tracks can
-re-vendor and consume the new `livespec_runtime.work_items.{lifecycle,
-rank}` + the new `types` shape.
+1. **File the 5 children** of `livespec-runtime-l4yojx` per the approved
+   cut in `04` — each `ready`, dep-linked by the layering (S3,S1 →
+   S2 → S4 → S5), carrying `spec_commitment_hint = <id_hint>`. **Filing
+   mechanism is a decision in `04`** (the native `groom`
+   `file_approved_slices` hardcodes `spec_commitment_hint=None`, so use
+   the `append_work_item`/`capture-work-item` path with the hint set, or
+   `groom`-then-update — see `04` §"Filing mechanism").
+2. **Implement S1–S4** via this repo's **red-green-replay** TDD
+   (worktree → PR → rebase-merge).
+3. **Cut the S5 `livespec-runtime` release** — the L0 exit gate; the
+   artifact L1a (beads-fabro) + L1b (git-jsonl) vendor.
 
 ## Discipline (non-negotiable)
 
