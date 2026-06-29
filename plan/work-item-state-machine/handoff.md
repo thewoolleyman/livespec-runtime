@@ -28,12 +28,15 @@ edges (round-trip to `depends_on` on read):
 | S3 types | `livespec-runtime-lxgk3g` | `types-schema-edits` | — | ✅ **DONE** (PR #89 `84173e6`; closed) |
 | S2 lifecycle | `livespec-runtime-tscgce` | `lifecycle-module` | S3 | ✅ **DONE** (PR #91 `4cda557`; closed) |
 | S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ✅ **DONE** (PR #93 `4dbb2fc`; closed) |
-| S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | 🧊 **HELD** — v0.5.0 release blocked pending release-please hardening (WI-A/WI-B); #87 left OPEN |
+| S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | 🧊 **HELD** — v0.5.0 blocked; WI-A ✅ merged (PR #96), **WI-B (CORE) pending**; #87 left OPEN |
 
 **All four code slices (S1–S4) are DONE + merged + closed.** S5 (the
 release exit gate) is **HELD by maintainer decision** — see
-"L0 v0.5.0 release HELD" below. `ocekuv` and the epic
-`livespec-runtime-l4yojx` stay **OPEN, blocked** pending WI-A/WI-B.
+"L0 v0.5.0 release HELD" below. **WI-A (release-please App-token CI fix)
+is DONE + merged (PR #96, `0914ec2`); WI-B (doctor out-of-band, home
+livespec core) is still pending.** `ocekuv` and the epic
+`livespec-runtime-l4yojx` stay **OPEN, blocked** until WI-B lands and the
+release is cut.
 
 ### L0 v0.5.0 release HELD — release-please↔doctor interaction (blocker)
 
@@ -44,16 +47,26 @@ now tracked as **new work-items linked to the fleet anchor
 `livespec-35s3zo`** (the coordinator drives them — this thread does NOT
 file or fix them):
 
-- **WI-A — release-please PRs must run CI ungated** (home:
-  **livespec-dev-tooling**). The release PR is authored by the
-  release-please bot token, so its `pull_request` CI run is parked
-  `action_required` (0 jobs) and the branch-protection required checks
-  never report → `mergeStateStatus: BLOCKED`. The fork-only
+- **WI-A — release-please PRs must run CI ungated** (`livespec-runtime-emz`;
+  reference pattern home: **livespec-dev-tooling**) — ✅ **RESOLVED + MERGED**
+  (PR #96, `0914ec2`). The release PR is authored by the release-please
+  bot token, so its `pull_request` CI run was parked `action_required`
+  (0 jobs) and the branch-protection required checks never reported →
+  `mergeStateStatus: BLOCKED`. The fork-only
   `POST …/actions/runs/<id>/approve` endpoint does NOT apply (403 "not
-  from a fork pull request"). Manual unblock today = close+reopen the PR
-  as a human actor (re-fires `pull_request: reopened` ungated). Fix:
-  release-please opens/updates its PRs via the **livespec App token** so
-  CI runs ungated.
+  from a fork pull request"); manual unblock was close+reopen the PR as a
+  human actor (re-fires `pull_request: reopened` ungated). **Fix landed
+  in THIS repo's `.github/workflows/release-please.yml`:** a
+  `actions/create-github-app-token@v1` step mints the livespec App
+  installation token (`secrets.APP_ID` / `APP_PRIVATE_KEY`, already
+  present) and passes `token:` to `googleapis/release-please-action@v4`
+  — so the NEXT release PR release-please opens is App-authored and its
+  CI runs ungated (it also restores the `release: published` fan-out
+  event). The `emz` work-item is left for the coordinator to close as
+  part of release gating. NB the CURRENTLY-OPEN #87 was opened under the
+  OLD bot-token flow, so until release-please re-opens/updates it under
+  the App identity (next master push) it may still need a one-time
+  close+reopen to pick up ungated CI.
 - **WI-B — doctor `out-of-band-edits` must not red master on
   release-please spec-file version bumps** (home: **livespec core**).
   release-please bumps the `x-release-please-version` anchors in
@@ -86,9 +99,11 @@ file or fix them):
 - ✅ Tree clean on `master`; no orphaned worktrees; **#87 left OPEN**
   (`chore(master): release 0.5.0`, label `autorelease: pending`).
 
-**Re-engagement (after WI-A + WI-B land):** the coordinator re-engages
-this thread to cut the release. Then: ensure #87's CI is green
-(WI-A makes that ungated; WI-B keeps `doctor-static` green) →
+**Re-engagement (WI-A done; after WI-B lands):** the coordinator
+re-engages this thread to cut the release. Then: ensure #87's CI is green
+(WI-A — merged — makes that ungated once release-please re-opens #87
+under the App identity, or via a one-time close+reopen; WI-B keeps
+`doctor-static` green) →
 rebase-merge #87 → confirm release-please cuts the **`v0.5.0`** tag (the
 artifact L1a/L1b vendor) → close `ocekuv` via the store close-in-place
 path (status `closed`, `resolution=completed`, merge-evidence
