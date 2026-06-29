@@ -220,3 +220,51 @@ def test_ready_sort_key_orders_by_rank_then_id() -> None:
     ordered = sorted([b, a, c], key=ready_sort_key)
     # rank "a1" sorts before "a2"; within "a1", id "li-b" before "li-c".
     assert [w.id for w in ordered] == ["li-b", "li-c", "li-a"]
+
+
+# ---------------------------------------------------------------------------
+# Cross-module invariant (S4): `is_item_ready` ⇔ `lane_of(...).name == "ready"`.
+#
+# `is_item_ready` is DEFINED as `lane_of(...).name == "ready"`, so the two can
+# never disagree. This matrix pins that agreement explicitly across the
+# overlay-bearing cases (a stored-`ready` item with an open / cleared / absent
+# dependency) and the non-`ready` states, so a future refactor that lets the
+# readiness gate drift from the rendered board is caught here.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("status", "deps", "dep_status", "blocked_reason"),
+    [
+        ("ready", (), None, None),  # ready, no deps → ready
+        ("ready", ("li-dep",), "active", None),  # ready + open dep → blocked:dependency
+        ("ready", ("li-dep",), "done", None),  # ready + cleared dep → ready
+        ("ready", ("li-missing",), None, None),  # ready + UNKNOWN dep → ready
+        ("backlog", (), None, None),
+        ("pending-approval", (), None, None),
+        ("active", (), None, None),
+        ("acceptance", (), None, None),
+        ("blocked", (), None, "needs-human"),
+        ("done", (), None, None),
+    ],
+)
+def test_is_item_ready_agrees_with_lane_of_by_construction(
+    status: str,
+    deps: tuple[str, ...],
+    dep_status: str | None,
+    blocked_reason: str | None,
+) -> None:
+    index: dict[str, WorkItem] = {}
+    if dep_status is not None:
+        dep = _item(id="li-dep", status=dep_status)
+        index["li-dep"] = dep
+    item = _item(
+        id="li-a",
+        status=status,
+        depends_on=deps,
+        blocked_reason=blocked_reason,
+    )
+    index["li-a"] = item
+    lane = lane_of(item=item, index=index, manifest=EMPTY_MANIFEST)
+    ready = is_item_ready(item=item, index=index, manifest=EMPTY_MANIFEST)
+    assert ready == (lane.name == "ready")

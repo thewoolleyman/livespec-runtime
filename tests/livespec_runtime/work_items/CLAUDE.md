@@ -14,6 +14,17 @@ source module under `livespec_runtime/work_items/`:
 - `test_store.py` — structural conformance to the `WorkItemStore`
   `typing.Protocol` (a thin in-memory facade, like a consumer's, that
   the Protocol accepts at type-check and runtime).
+- `test_rank.py` — the first-party fractional-index `rank` wrapper
+  (`key_between` / `n_keys_between` / `BOTTOM_SENTINEL`); covers the
+  wrapper to 100% and smoke-tests the ported algorithm through it.
+- `test__fractional_indexing.py` — the verbatim-ported (coverage-omitted)
+  module's own ordering + `validate_order_key` contract, pinned directly
+  as a drift guard (the wrapper does not re-export `validate_order_key`).
+- `test_lifecycle.py` — the single lane authority: the `lane_of` overlay
+  truth-table, the `is_item_ready` ⇔ `lane_of(...).name == "ready"`
+  agreement, and `ready_sort_key`'s `(rank, id)` ordering. All
+  dependency resolution is exercised OFFLINE (local + manifest-absent
+  deps only — no `gh`).
 
 Assertions are BEHAVIORAL — they exercise the real reduction
 semantics, not smoke imports.
