@@ -28,16 +28,72 @@ edges (round-trip to `depends_on` on read):
 | S3 types | `livespec-runtime-lxgk3g` | `types-schema-edits` | — | ✅ **DONE** (PR #89 `84173e6`; closed) |
 | S2 lifecycle | `livespec-runtime-tscgce` | `lifecycle-module` | S3 | ✅ **DONE** (PR #91 `4cda557`; closed) |
 | S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ✅ **DONE** (PR #93 `4dbb2fc`; closed) |
-| S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | 🛑 **AWAITING MAINTAINER** — release PR #87 (0.5.0) OPEN; STOP before merge |
+| S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | 🧊 **HELD** — v0.5.0 release blocked pending release-please hardening (WI-A/WI-B); #87 left OPEN |
 
-**All four code slices (S1–S4) are DONE + merged + closed.** S5 is the
-release exit gate: release-please has OPENED the release PR (**#87,
-`chore(master): release 0.5.0`**, branch
-`release-please--branches--master--components--livespec-runtime`, label
-`autorelease: pending`). Per the coordinator relay the agent **STOPS
-before merging** — the L0 release unblocks the whole L1 layer, so
-**maintainer approval is relayed first**. `ocekuv` stays OPEN until the
-maintainer merges #87 and the tag is cut.
+**All four code slices (S1–S4) are DONE + merged + closed.** S5 (the
+release exit gate) is **HELD by maintainer decision** — see
+"L0 v0.5.0 release HELD" below. `ocekuv` and the epic
+`livespec-runtime-l4yojx` stay **OPEN, blocked** pending WI-A/WI-B.
+
+### L0 v0.5.0 release HELD — release-please↔doctor interaction (blocker)
+
+The maintainer is **holding the L0 v0.5.0 release** until the
+release-please↔doctor interaction is fixed **systemically** (not worked
+around per-release). Two findings surfaced while attempting S5; both are
+now tracked as **new work-items linked to the fleet anchor
+`livespec-35s3zo`** (the coordinator drives them — this thread does NOT
+file or fix them):
+
+- **WI-A — release-please PRs must run CI ungated** (home:
+  **livespec-dev-tooling**). The release PR is authored by the
+  release-please bot token, so its `pull_request` CI run is parked
+  `action_required` (0 jobs) and the branch-protection required checks
+  never report → `mergeStateStatus: BLOCKED`. The fork-only
+  `POST …/actions/runs/<id>/approve` endpoint does NOT apply (403 "not
+  from a fork pull request"). Manual unblock today = close+reopen the PR
+  as a human actor (re-fires `pull_request: reopened` ungated). Fix:
+  release-please opens/updates its PRs via the **livespec App token** so
+  CI runs ungated.
+- **WI-B — doctor `out-of-band-edits` must not red master on
+  release-please spec-file version bumps** (home: **livespec core**).
+  release-please bumps the `x-release-please-version` anchors in
+  `SPECIFICATION/contracts.md` (`compat.pinned` + the two
+  `[tool.uv.sources]` example tags) `v0.4.0 → v0.5.0`. That drifts the
+  active spec vs `history/v008`, so `doctor-out-of-band-edits` fails.
+  `check-doctor-static` has no PR-only guard → it would run on the
+  master-push CI after merge → master CI conclusion = failure →
+  `check-master-ci-green` then blocks EVERY future pre-commit/pre-push
+  (the repo's commit workflow freezes). The doctor's self-heal writes a
+  `SPECIFICATION/history/vNNN/` backfill (verified: an untracked `v009/`
+  snapshot of the spec at v0.5.0 + an `out-of-band-edit-<ts>` PC/revision
+  pair; staging it → `doctor-static` green), but that is a
+  maintainer-owned spec-history mutation and must land WITH the bump so
+  master never reds. Fix: doctor (or the release flow) must not red
+  master on `x-release-please-version`-only spec-file edits (exempt the
+  annotated anchors, or auto-land the backfill atomically).
+
+**State of the attempt (what was and was NOT done):**
+
+- ✅ CI was made to run on #87 (close+reopen workaround) — the **5
+  required checks pass** (`check-lint` / `check-format` / `check-coverage`
+  / `check-aggregate-completeness` /
+  `check-primary-checkout-commit-refuse-hook-installed`).
+- ❌ Non-required `check-doctor-static` **fails** on #87
+  (`doctor-out-of-band-edits` vs `history/v008`) — the WI-B blocker.
+- 🚫 **#87 NOT merged** (merging would red master + freeze commits).
+- 🚫 **No `v009` (or any spec-history) written** — the self-heal was only
+  *probed* in a throwaway worktree (since removed); nothing committed.
+- ✅ Tree clean on `master`; no orphaned worktrees; **#87 left OPEN**
+  (`chore(master): release 0.5.0`, label `autorelease: pending`).
+
+**Re-engagement (after WI-A + WI-B land):** the coordinator re-engages
+this thread to cut the release. Then: ensure #87's CI is green
+(WI-A makes that ungated; WI-B keeps `doctor-static` green) →
+rebase-merge #87 → confirm release-please cuts the **`v0.5.0`** tag (the
+artifact L1a/L1b vendor) → close `ocekuv` via the store close-in-place
+path (status `closed`, `resolution=completed`, merge-evidence
+`AuditRecord` with the release merge sha + PR #87), closing the epic
+`livespec-runtime-l4yojx`.
 
 ### Verbatim-port pattern (ESTABLISHED by S1 — reuse for any future port)
 
@@ -107,35 +163,48 @@ surface.
   preserving so it took the **green-verified leg** (`TDD-Suite-Green-*`),
   not the Red→Green ritual; child `rfwfie` closed (`completed`,
   merge-evidence audit).
-- 🛑 **S5 AWAITING MAINTAINER** — release-please has OPENED the release
-  PR (**#87, `chore(master): release 0.5.0`**). The agent STOPS before
-  merging; `ocekuv` stays OPEN.
+- 🧊 **S5 HELD** — release-please OPENED the release PR (**#87,
+  `chore(master): release 0.5.0`**) and S5 was attempted, but the
+  maintainer is **HOLDING the v0.5.0 release** pending a systemic fix of
+  the release-please↔doctor interaction (**WI-A** + **WI-B**, both linked
+  to fleet anchor `livespec-35s3zo`; the coordinator drives them). #87 is
+  left OPEN; no `v009`/spec-history written; `ocekuv` + the epic stay
+  OPEN, blocked. Full detail in "L0 v0.5.0 release HELD" above.
 
-## Next action — MAINTAINER: approve + merge the release PR (S5)
+## Next action — BLOCKED: release HELD pending WI-A + WI-B (coordinator-driven)
 
-S1–S4 are complete. The only remaining step is the maintainer-owned
-release exit gate. **The agent must NOT merge the release PR** — the L0
-release unblocks the whole L1 layer, so approval is relayed first.
+**S1–S4 (all L0 code) are DONE + merged + closed.** The only remaining
+step is S5 (cut the v0.5.0 release), which is **HELD**. This thread does
+NOT drive the fix — the coordinator drives **WI-A** (release-please CI
+ungated, home livespec-dev-tooling) and **WI-B** (doctor `out-of-band-edits`
+must not red master on release-please version bumps, home livespec core),
+both anchored to `livespec-35s3zo`. See "L0 v0.5.0 release HELD" above for
+the full diagnosis and the verified (but unwritten) doctor self-heal.
 
-1. **Review release PR #87** (`chore(master): release 0.5.0`, branch
-   `release-please--branches--master--components--livespec-runtime`).
-   Changelog = the three product features (S1 rank wrapper, S3 20-field
-   schema, S2 lifecycle authority); S4 was `test:` so it carries no
-   changelog entry, by design. The PR bumps every `x-release-please-version`
-   anchor `v0.4.0 → v0.5.0` (`.release-please-manifest.json`,
-   `pyproject.toml` `version`, `SPECIFICATION/contracts.md`
-   `compat.pinned` + both `[tool.uv.sources]` example tags) + the
-   `CHANGELOG.md` 0.5.0 section.
+**Do NOT, while held:** merge #87; write `history/v009` (or any
+spec-history); work around the block per-release (close+reopen + manual
+v009 was only the *manual* path — the maintainer chose the systemic fix).
+
+**On re-engagement (after WI-A + WI-B land), to cut the release:**
+
+1. Confirm #87 is current and its CI is green — WI-A makes the release
+   PR's CI run ungated; WI-B keeps `check-doctor-static` green through the
+   `x-release-please-version` bump. (If #87 went stale, release-please
+   re-opens/updates it on the next master push.) The PR bumps every
+   `x-release-please-version` anchor `v0.4.0 → v0.5.0`
+   (`.release-please-manifest.json`, `pyproject.toml` `version`,
+   `SPECIFICATION/contracts.md` `compat.pinned` + both `[tool.uv.sources]`
+   example tags) + the `CHANGELOG.md` 0.5.0 section. Changelog = the three
+   product features (S1 rank wrapper, S3 20-field schema, S2 lifecycle
+   authority); S4 was `test:` so it carries no changelog entry, by design.
    - NB the schema change is breaking (`−priority`, the new 7-state
      `WorkItemStatus`) but was authored as plain `feat:` (no `!` /
-     `BREAKING CHANGE:`), so release-please proposes a 0.x **minor** bump
-     (0.4.0 → 0.5.0). For a pre-1.0 library that is the conventional
-     encoding; if the maintainer wants a louder signal, re-tag is a
-     maintainer call.
-2. **On maintainer approval:** merge #87 (the repo's rebase-merge
-   discipline). release-please then cuts the **`v0.5.0`** tag (the
-   `release-dispatch.yml` flow). **This tag is what L1a/L1b vendor — the
-   whole L1 layer gates on it.**
+     `BREAKING CHANGE:`); the maintainer APPROVED a 0.x **minor** bump
+     (0.4.0 → 0.5.0) as the conventional pre-1.0 encoding (relayed
+     2026-06-29) — cut v0.5.0 as-is.
+2. Merge #87 (the repo's rebase-merge discipline). release-please then
+   cuts the **`v0.5.0`** tag (the `release-dispatch.yml` flow). **This tag
+   is what L1a/L1b vendor — the whole L1 layer gates on it.**
 3. **After the tag is cut:** close `ocekuv` via the store close-in-place
    path (status `closed`, `resolution=completed`, merge-evidence
    `AuditRecord` with the release merge sha + PR #87), matching S1–S4.
