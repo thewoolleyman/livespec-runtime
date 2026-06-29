@@ -1,11 +1,16 @@
 """Tests for `livespec_runtime.work_items.types`.
 
-Verifies the unified `WorkItem` model (the git-jsonl 16-field shape
-carrying `supersedes`), the `AuditRecord` sub-object, the schema
-enums/aliases, the `supersedes` / `spec_commitment_hint` defaults, and
-frozenness.
+Verifies the unified `WorkItem` model (the 20-field shape codified by
+this repo's own `### livespec_runtime.work_items.types`), the
+`AuditRecord` sub-object, the schema enums/aliases (the 7-state
+`WorkItemStatus`, the `AdmissionPolicy` / `AcceptancePolicy` /
+`StoredBlockedReason` aliases), the optional-on-read defaults
+(`spec_commitment_hint`, `supersedes`, `admission_policy`,
+`acceptance_policy`, `blocked_reason`), the required `rank` ordering
+key, and frozenness.
 
-Schema reference: livespec/SPECIFICATION/contracts.md.
+Schema reference: this repo's own `SPECIFICATION/contracts.md`
+§`### livespec_runtime.work_items.types`.
 """
 
 import pytest
@@ -14,18 +19,43 @@ from livespec_runtime.work_items.types import AuditRecord, WorkItem
 
 __all__: list[str] = []
 
+# The ratified 20-field order (required block, then optional-on-read
+# block), per `### livespec_runtime.work_items.types`.
+_EXPECTED_FIELD_ORDER: tuple[str, ...] = (
+    "id",
+    "type",
+    "status",
+    "title",
+    "description",
+    "origin",
+    "gap_id",
+    "rank",
+    "assignee",
+    "depends_on",
+    "captured_at",
+    "resolution",
+    "reason",
+    "audit",
+    "superseded_by",
+    "spec_commitment_hint",
+    "supersedes",
+    "admission_policy",
+    "acceptance_policy",
+    "blocked_reason",
+)
+
 
 def _work_item(**overrides: object) -> WorkItem:
     """Build a WorkItem with sensible defaults, overridable per-field."""
     base: dict[str, object] = {
         "id": "li-aaa111",
         "type": "task",
-        "status": "open",
+        "status": "backlog",
         "title": "Title",
         "description": "Description",
         "origin": "freeform",
         "gap_id": None,
-        "priority": 2,
+        "rank": "a0",
         "assignee": None,
         "depends_on": (),
         "captured_at": "2026-06-20T00:00:00Z",
@@ -42,9 +72,17 @@ def test_work_item_construction_minimal() -> None:
     item = _work_item()
     assert item.id == "li-aaa111"
     assert item.type == "task"
-    assert item.status == "open"
+    assert item.status == "backlog"
     assert item.origin == "freeform"
+    assert item.rank == "a0"
     assert item.depends_on == ()
+
+
+def test_work_item_rank_is_required_and_carried() -> None:
+    # `rank` is the sole ordering authority: required, non-null, no
+    # default. A field this library owns is set on every record it writes.
+    item = _work_item(rank="a1V")
+    assert item.rank == "a1V"
 
 
 def test_work_item_supersedes_defaults_to_none() -> None:
@@ -57,35 +95,77 @@ def test_work_item_spec_commitment_hint_defaults_to_none() -> None:
     assert item.spec_commitment_hint is None
 
 
+def test_work_item_admission_policy_defaults_to_none() -> None:
+    item = _work_item()
+    assert item.admission_policy is None
+
+
+def test_work_item_acceptance_policy_defaults_to_none() -> None:
+    item = _work_item()
+    assert item.acceptance_policy is None
+
+
+def test_work_item_blocked_reason_defaults_to_none() -> None:
+    item = _work_item()
+    assert item.blocked_reason is None
+
+
 def test_work_item_supersedes_carries_prior_identity() -> None:
     item = _work_item(supersedes="sha256:deadbeef")
     assert item.supersedes == "sha256:deadbeef"
 
 
-def test_work_item_has_sixteen_schema_fields() -> None:
-    # The unified shape is the 16-field git-jsonl record; the two
-    # optional-on-read fields (spec_commitment_hint, supersedes) are the
-    # fifteenth and sixteenth keys.
-    field_names = {f for f in WorkItem.__dataclass_fields__}
-    assert field_names == {
-        "id",
-        "type",
-        "status",
-        "title",
-        "description",
-        "origin",
-        "gap_id",
-        "priority",
-        "assignee",
-        "depends_on",
-        "captured_at",
-        "resolution",
-        "reason",
-        "audit",
-        "superseded_by",
-        "spec_commitment_hint",
-        "supersedes",
-    }
+def test_work_item_carries_policy_fields() -> None:
+    # The three policy fields follow the blessed `… | None` optional-on-
+    # read pattern; when set, they carry the stored value verbatim.
+    item = _work_item(
+        status="blocked",
+        admission_policy="auto",
+        acceptance_policy="ai-then-human",
+        blocked_reason="needs-human",
+    )
+    assert item.admission_policy == "auto"
+    assert item.acceptance_policy == "ai-then-human"
+    assert item.blocked_reason == "needs-human"
+
+
+def test_work_item_accepts_each_lifecycle_status() -> None:
+    # The seven stored lifecycle states (the `WorkItemStatus` Literal).
+    for status in (
+        "backlog",
+        "pending-approval",
+        "ready",
+        "active",
+        "acceptance",
+        "blocked",
+        "done",
+    ):
+        assert _work_item(status=status).status == status
+
+
+def test_work_item_active_carries_assignee() -> None:
+    # `assignee` is REUSED in place as the claimed-by/owner field;
+    # REQUIRED once `status == "active"` (the `active ⟹ assignee`
+    # invariant the doctor enforces — the dataclass carries the value).
+    item = _work_item(status="active", assignee="agent-7")
+    assert item.assignee == "agent-7"
+
+
+def test_work_item_has_twenty_schema_fields() -> None:
+    # The unified shape is the 20-field record: 15 required (including
+    # the `rank` ordering key, `priority` removed), then 5 optional-on-
+    # read (spec_commitment_hint, supersedes, admission_policy,
+    # acceptance_policy, blocked_reason).
+    field_names = set(WorkItem.__dataclass_fields__)
+    assert field_names == set(_EXPECTED_FIELD_ORDER)
+    assert "priority" not in field_names
+    assert "rank" in field_names
+
+
+def test_work_item_field_order_matches_contract() -> None:
+    # The ratified `### livespec_runtime.work_items.types` pins the exact
+    # 20-field order (required block, then optional-on-read block).
+    assert tuple(WorkItem.__dataclass_fields__) == _EXPECTED_FIELD_ORDER
 
 
 def test_work_item_carries_audit_record() -> None:
@@ -95,7 +175,7 @@ def test_work_item_carries_audit_record() -> None:
         files_changed=("a.py",),
         merge_sha="f00",
     )
-    item = _work_item(audit=audit, status="closed", resolution="completed", reason="done")
+    item = _work_item(audit=audit, status="done", resolution="completed", reason="done")
     assert item.audit is audit
     assert audit.merge_sha == "f00"
 
