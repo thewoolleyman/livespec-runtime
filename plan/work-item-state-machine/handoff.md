@@ -22,16 +22,30 @@ All `ready` + `origin:freeform`, `parent=livespec-runtime-l4yojx`, each
 carrying `spec_commitment_hint = <id_hint>`. Deps are beads `blocks`
 edges (round-trip to `depends_on` on read):
 
-| Slice | id | `spec_commitment_hint` | depends_on | dispatchable now? |
+| Slice | id | `spec_commitment_hint` | depends_on | status |
 |---|---|---|---|---|
-| S1 rank | `livespec-runtime-lel76i` | `port-fractional-indexing` | — | ✅ ready |
-| S3 types | `livespec-runtime-lxgk3g` | `types-schema-edits` | — | ✅ ready |
+| S1 rank | `livespec-runtime-lel76i` | `port-fractional-indexing` | — | ✅ **DONE** (PR #86 `976cf86`; closed) |
+| S3 types | `livespec-runtime-lxgk3g` | `types-schema-edits` | — | ⏳ ready (NEXT) |
 | S2 lifecycle | `livespec-runtime-tscgce` | `lifecycle-module` | S3 | ⛔ (S3 open) |
 | S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ⛔ |
 | S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | ⛔ |
 
-`next` currently surfaces **S1 (`lel76i`) + S3 (`lxgk3g`)** as ready (the
-no-open-dep layer-0 slices); S2/S4/S5 unblock as their deps close.
+`next` currently surfaces **S3 (`lxgk3g`)** as the ready layer-0 slice;
+S2/S4/S5 unblock as their deps close.
+
+### Verbatim-port pattern (ESTABLISHED by S1 — reuse for any future port)
+
+A verbatim third-party file lands in the first-party tree at its
+ratified path and is excluded from the lint/type/coverage gates exactly
+like `_vendor/` code (it can't take `# pragma`/reformatting without
+ceasing to be verbatim). For `_fractional_indexing.py` the three
+exclusions are already in `pyproject.toml`: ruff `extend-exclude`,
+pyright `exclude`, coverage `omit` (`*/work_items/_fractional_indexing.py`).
+The custom AST checks (keyword-only, no-inheritance, no-raise/except)
+**no-op** in this repo (`[tool.livespec_dev_tooling].source_trees` is
+empty for this flat-layout library), so they need no exclusion. The
+first-party WRAPPER (`rank.py`) carries the gate-compliant, 100%-covered
+surface.
 
 ## Read-first chain (open these, in order)
 
@@ -56,20 +70,35 @@ no-open-dep layer-0 slices); S2/S4/S5 unblock as their deps close.
   **`42d3d5e`**, history **`v008`**, `SPECIFICATION/contracts.md`
   ratified. **Do NOT re-run `propose-change` / `revise`.**
 - ✅ **`groom` cut APPROVED (Option A) + FILED** — the 5 children above
-  are in the ledger, `ready`/factory, parent-linked + dep-linked, each
-  carrying its `spec_commitment_hint`. **Do NOT re-file.**
-- ⏳ **Code not yet written** — implement the slices next.
+  are in the ledger, parent-linked + dep-linked, each carrying its
+  `spec_commitment_hint`. **Do NOT re-file.**
+- ✅ **S1 DONE** — `rank.py` + verbatim `_fractional_indexing.py` +
+  `NOTICES` + the three gate-exclusions landed on `master` (PR #86,
+  `976cf86`); child `lel76i` closed (`completed`, merge-evidence audit).
+- ⏳ **S3 next** (ready); then S2, S4, S5.
 
-## Next action — implement the slices (red-green-replay)
+## Next action — implement the remaining slices (red-green-replay)
 
-Implement in dependency order; each via this repo's **red-green-replay**
-TDD (worktree → PR → rebase-merge; `mise exec -- git`; never
-`--no-verify`; halt + report on any hook failure):
+In dependency order; each via this repo's **red-green-replay** TDD
+(worktree → PR → rebase-merge; `mise exec -- git`; never `--no-verify`;
+halt + report on any hook failure). Use `feat:` subjects (release-please
+tracking). Close each child on merge via the store close-in-place path
+(status `closed`, `resolution=completed`, merge-evidence `AuditRecord`),
+as done for S1.
 
-1. **S1 (`livespec-runtime-lel76i`)** + **S3 (`livespec-runtime-lxgk3g`)**
-   — independent (both ready now). Port `_fractional_indexing` + `rank.py`
-   + `NOTICES` (S1); the `types.py` schema edits (S3). Use `feat:`
-   subjects so release-please tracks them.
+1. **S3 (`livespec-runtime-lxgk3g`)** — `types.py` schema edits (build to
+   the ratified `### …work_items.types`): 7-state `WorkItemStatus`;
+   `+ rank: str` (required, where `priority` was); `− priority: int`;
+   `AdmissionPolicy`/`AcceptancePolicy`/`StoredBlockedReason` aliases +
+   the three `… | None = None` policy fields; keep `assignee` (document
+   `active ⟹ assignee`); `__all__`; fix the module-docstring drift.
+   Update `test_types.py`; confirm `reduce.py` identity reducer stays
+   deterministic over the new shape. **NB:** `priority` is referenced by
+   the orchestrator's `ready_sort_key` (in beads-fabro, an L1a concern)
+   and by capture/groom filing under the CURRENT schema — but THIS repo's
+   `livespec_runtime` has no internal `priority` reader beyond `types`/
+   serialization, so the edit is contained here; just keep
+   `reduce._work_item_to_dict` (asdict-based) working.
 2. **S2 (`livespec-runtime-tscgce`)** — net-new `lifecycle.py` (after S3).
 3. **S4 (`livespec-runtime-rfwfie`)** — paired tests + coverage
    completion (after S1+S2+S3).
