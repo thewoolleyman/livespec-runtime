@@ -33,6 +33,16 @@ anchor (prose ref):** `livespec-35s3zo` (livespec core tenant).
   `livespec-35s3zo`; no typed cross-tenant `depends_on`).
 - ✅ Spec propose-change payload drafted (`01` + `02`), schema-validated.
 - ✅ Code-slice breakdown drafted (`03`).
+- ✅ This thread + the drafts are **committed to `master`** (PR #81,
+  merge `e89fe9b`).
+- 🚫 **No `SPECIFICATION/proposed_changes/` file exists yet — and that
+  is intentional.** The payload is the findings JSON in `02`;
+  materializing the on-disk proposed-change file is the **first step of
+  the maintainer's `revise` gate** (decision: keep authoring +
+  ratification together under that gate; do not pre-materialize partial
+  spec state). Do not hunt for a proposed-change file — there isn't one.
+- 🚫 **No code written yet** — the runtime `.py` lands only after
+  `groom` cuts the slices.
 - ⏳ **Two maintainer-owned gates remain (the next action).**
 
 ## Next action (ONE path — the two maintainer-owned gates)
@@ -40,13 +50,13 @@ anchor (prose ref):** `livespec-35s3zo` (livespec core tenant).
 **The maintainer owns both; this track drafted them and must NOT
 auto-pass either.**
 
-1. **`revise` (spec ratification).** Author the proposed-change file
-   from the drafted findings, then ratify:
+1. **`revise` (spec ratification).** First materialize the
+   proposed-change file from the drafted findings, then ratify:
    ```bash
-   # author (drafting; produces SPECIFICATION/proposed_changes/<topic>.md):
+   # author (materializes SPECIFICATION/proposed_changes/<topic>.md):
    /livespec:propose-change work-item-lifecycle-l0 \
      --findings-json plan/work-item-state-machine/research/02-propose-change-findings.json
-   # then ratify (maintainer gate):
+   # then ratify (the gate):
    /livespec:revise
    ```
    (Or run `/livespec:propose-change` interactively, pasting the intent
