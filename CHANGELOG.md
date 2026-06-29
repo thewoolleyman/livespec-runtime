@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.4.0...v0.5.0) (2026-06-29)
+
+
+### Features
+
+* **work_items:** lifecycle lane authority (lane_of/is_item_ready/ready_sort_key) ([4cda557](https://github.com/thewoolleyman/livespec-runtime/commit/4cda557bc36aef5d27e22f05774a8295db9afbe9))
+* **work_items:** rank fractional-index wrapper (key_between/n_keys_between/BOTTOM_SENTINEL) ([976cf86](https://github.com/thewoolleyman/livespec-runtime/commit/976cf8630caef1fbb5231321cc536d695506f804))
+* **work_items:** WorkItem 20-field schema (7-state status, +rank, -priority, policy fields) ([84173e6](https://github.com/thewoolleyman/livespec-runtime/commit/84173e613408927c9a0aa8b38bb598347c7ebcd7))
+
 ## [0.4.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.3.1...v0.4.0) (2026-06-20)
 
 
