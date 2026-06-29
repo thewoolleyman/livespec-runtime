@@ -154,6 +154,10 @@ surface.
 4. `research/03-code-slices.md` — the code-slice breakdown (S1–S5).
 5. `research/04-groom-cut.md` — the `groom` cut (APPROVED, Option A,
    now FILED; see the table above for the minted ids).
+6. `L2-tenant-migration.md` — the **L2 tenant migration** of this repo's
+   own `livespec-runtime` beads tenant to the new (7-state status +
+   `rank`) schema (custom-status registration + legacy-seed `rank`
+   backfill). ✅ DONE — post-L0/L1a.
 
 ## State as of this handoff
 
