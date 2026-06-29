@@ -10,10 +10,28 @@ anchor (prose ref):** `livespec-35s3zo` (livespec core tenant).
 >   /home/ubuntu/.claude/plugins/cache/livespec-orchestrator-beads-fabro/livespec-orchestrator-beads-fabro/*/scripts/bin/list_work_items.py --json
 > ```
 > (`with-livespec-env.sh` injects the tenant password; the glob resolves
-> the active orchestrator plugin root.) Filter for
-> `livespec-runtime-l4yojx` and its children. Until the cut is approved
-> and filed, the epic has **no children** — the slices are a DRAFT in
-> `research/04-groom-cut.md`, not yet filed.
+> the active orchestrator plugin root.) See the children with
+> `with-livespec-env.sh bd children livespec-runtime-l4yojx --json`. The
+> cut is **APPROVED (Option A) + FILED** — the 5 children below are in the
+> ledger under the CURRENT schema (`open`/`priority`/no-`rank`; the
+> 7-state shape lands at the L2 migration).
+
+## The filed children (epic `livespec-runtime-l4yojx`)
+
+All `ready` + `origin:freeform`, `parent=livespec-runtime-l4yojx`, each
+carrying `spec_commitment_hint = <id_hint>`. Deps are beads `blocks`
+edges (round-trip to `depends_on` on read):
+
+| Slice | id | `spec_commitment_hint` | depends_on | dispatchable now? |
+|---|---|---|---|---|
+| S1 rank | `livespec-runtime-lel76i` | `port-fractional-indexing` | — | ✅ ready |
+| S3 types | `livespec-runtime-lxgk3g` | `types-schema-edits` | — | ✅ ready |
+| S2 lifecycle | `livespec-runtime-tscgce` | `lifecycle-module` | S3 | ⛔ (S3 open) |
+| S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ⛔ |
+| S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | ⛔ |
+
+`next` currently surfaces **S1 (`lel76i`) + S3 (`lxgk3g`)** as ready (the
+no-open-dep layer-0 slices); S2/S4/S5 unblock as their deps close.
 
 ## Read-first chain (open these, in order)
 
@@ -25,49 +43,45 @@ anchor (prose ref):** `livespec-35s3zo` (livespec core tenant).
    `revise` consumed; the `impl_followups[]` `id_hint`s are the
    `spec_commitment_hint` values each child carries.
 4. `research/03-code-slices.md` — the code-slice breakdown (S1–S5).
-5. `research/04-groom-cut.md` — **the drafted `groom` cut** (the current
-   next action): the 5 dependency-layered children + the filing-mechanism
-   decision. Awaiting the coordinator's approval relay.
+5. `research/04-groom-cut.md` — the `groom` cut (APPROVED, Option A,
+   now FILED; see the table above for the minted ids).
 
 ## State as of this handoff
 
 - ✅ Epic `livespec-runtime-l4yojx` anchored (prose-linked to
   `livespec-35s3zo`; no typed cross-tenant `depends_on`).
-- ✅ Thread + drafts committed to `master` (PR #81 `e89fe9b`; handoff
-  refresh #82 `cd50149`).
-- ✅ **`revise` gate DONE** (driven by the coordinator/core session):
-  commit **`42d3d5e`** on `origin/master`, history **`v008`**,
-  `SPECIFICATION/contracts.md` ratified (the `### …work_items.types`
-  rewrite + the new `### …work_items.lifecycle` / `### …work_items.rank`
-  headings). **Do NOT re-run `propose-change` / `revise`.**
-- ✅ **`groom` cut DRAFTED** — `research/04-groom-cut.md` (5
-  dependency-layered children, each keyed to its `spec_commitment_hint`).
-- 🚫 **Nothing filed to the ledger yet** — the epic has no children. The
-  cut is maintainer-owned; file nothing until the coordinator relays
-  approval.
-- 🚫 **No code written yet** — the runtime `.py` lands only after the
-  cut is approved + filed.
+- ✅ Thread + drafts committed to `master` (PR #81 `e89fe9b`; #82
+  `cd50149`; #84 `fa82022`).
+- ✅ **`revise` gate DONE** (coordinator/core session): commit
+  **`42d3d5e`**, history **`v008`**, `SPECIFICATION/contracts.md`
+  ratified. **Do NOT re-run `propose-change` / `revise`.**
+- ✅ **`groom` cut APPROVED (Option A) + FILED** — the 5 children above
+  are in the ledger, `ready`/factory, parent-linked + dep-linked, each
+  carrying its `spec_commitment_hint`. **Do NOT re-file.**
+- ⏳ **Code not yet written** — implement the slices next.
 
-## Next action (ONE path — the `groom` cut, maintainer-owned)
+## Next action — implement the slices (red-green-replay)
 
-`revise` is DONE. The single remaining gate is **`groom`** — and the cut
-is already drafted in `research/04-groom-cut.md`. The maintainer/
-coordinator OWNS it; **draft is surfaced, awaiting approval. File
-nothing until approval is relayed.**
+Implement in dependency order; each via this repo's **red-green-replay**
+TDD (worktree → PR → rebase-merge; `mise exec -- git`; never
+`--no-verify`; halt + report on any hook failure):
 
-On approval:
+1. **S1 (`livespec-runtime-lel76i`)** + **S3 (`livespec-runtime-lxgk3g`)**
+   — independent (both ready now). Port `_fractional_indexing` + `rank.py`
+   + `NOTICES` (S1); the `types.py` schema edits (S3). Use `feat:`
+   subjects so release-please tracks them.
+2. **S2 (`livespec-runtime-tscgce`)** — net-new `lifecycle.py` (after S3).
+3. **S4 (`livespec-runtime-rfwfie`)** — paired tests + coverage
+   completion (after S1+S2+S3).
+4. **S5 (`livespec-runtime-ocekuv`)** — let **release-please open** the
+   `livespec-runtime` release PR, then **STOP before merging it** and
+   surface for the coordinator (the L0 release unblocks the whole L1
+   layer; maintainer approval is relayed first).
 
-1. **File the 5 children** of `livespec-runtime-l4yojx` per the approved
-   cut in `04` — each `ready`, dep-linked by the layering (S3,S1 →
-   S2 → S4 → S5), carrying `spec_commitment_hint = <id_hint>`. **Filing
-   mechanism is a decision in `04`** (the native `groom`
-   `file_approved_slices` hardcodes `spec_commitment_hint=None`, so use
-   the `append_work_item`/`capture-work-item` path with the hint set, or
-   `groom`-then-update — see `04` §"Filing mechanism").
-2. **Implement S1–S4** via this repo's **red-green-replay** TDD
-   (worktree → PR → rebase-merge).
-3. **Cut the S5 `livespec-runtime` release** — the L0 exit gate; the
-   artifact L1a (beads-fabro) + L1b (git-jsonl) vendor.
+Close each child via the `implement` freeform path as its PR merges (or
+per the coordinator's dispatch). The ratified contract surface to build
+to: `SPECIFICATION/contracts.md` §§`work_items.types` / `.lifecycle` /
+`.rank`; per-slice scope + acceptance in `research/04-groom-cut.md`.
 
 ## Discipline (non-negotiable)
 
