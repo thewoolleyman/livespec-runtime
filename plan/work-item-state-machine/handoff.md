@@ -27,11 +27,17 @@ edges (round-trip to `depends_on` on read):
 | S1 rank | `livespec-runtime-lel76i` | `port-fractional-indexing` | — | ✅ **DONE** (PR #86 `976cf86`; closed) |
 | S3 types | `livespec-runtime-lxgk3g` | `types-schema-edits` | — | ✅ **DONE** (PR #89 `84173e6`; closed) |
 | S2 lifecycle | `livespec-runtime-tscgce` | `lifecycle-module` | S3 | ✅ **DONE** (PR #91 `4cda557`; closed) |
-| S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ⏳ ready (NEXT) |
-| S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | ⛔ (S4 open) |
+| S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ✅ **DONE** (PR #93 `4dbb2fc`; closed) |
+| S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | 🛑 **AWAITING MAINTAINER** — release PR #87 (0.5.0) OPEN; STOP before merge |
 
-`next` / `bd ready` now surfaces **S4 (`rfwfie`)** as the ready slice
-(S1+S2+S3 all closed); S5 (the release exit gate) unblocks when S4 closes.
+**All four code slices (S1–S4) are DONE + merged + closed.** S5 is the
+release exit gate: release-please has OPENED the release PR (**#87,
+`chore(master): release 0.5.0`**, branch
+`release-please--branches--master--components--livespec-runtime`, label
+`autorelease: pending`). Per the coordinator relay the agent **STOPS
+before merging** — the L0 release unblocks the whole L1 layer, so
+**maintainer approval is relayed first**. `ocekuv` stays OPEN until the
+maintainer merges #87 and the tag is cut.
 
 ### Verbatim-port pattern (ESTABLISHED by S1 — reuse for any future port)
 
@@ -92,35 +98,48 @@ surface.
   per-file coverage, offline); landed on `master` (PR #91, `4cda557`);
   child `tscgce` closed (`completed`, merge-evidence audit). **No
   orchestrator-repo edits** (the `_cross_repo.py` shrink is L1a).
-- ⏳ **S4 next** (ready); then S5.
+- ✅ **S4 DONE** — cross-module + completeness tests (the
+  `is_item_ready` ⇔ `lane_of(...).name=="ready"` agreement matrix in
+  `test_lifecycle.py`; the verbatim `_fractional_indexing` round-trip /
+  `validate_order_key` drift guard in `test__fractional_indexing.py`;
+  the work_items tests `CLAUDE.md` refresh) landed on `master` (PR #93,
+  `4dbb2fc`); per-file 100% coverage green (164 tests); behavior-
+  preserving so it took the **green-verified leg** (`TDD-Suite-Green-*`),
+  not the Red→Green ritual; child `rfwfie` closed (`completed`,
+  merge-evidence audit).
+- 🛑 **S5 AWAITING MAINTAINER** — release-please has OPENED the release
+  PR (**#87, `chore(master): release 0.5.0`**). The agent STOPS before
+  merging; `ocekuv` stays OPEN.
 
-## Next action — implement the remaining slices (red-green-replay)
+## Next action — MAINTAINER: approve + merge the release PR (S5)
 
-In dependency order; each via this repo's **red-green-replay** TDD
-(worktree → PR → rebase-merge; `mise exec -- git`; never `--no-verify`;
-halt + report on any hook failure). Use `feat:` subjects (release-please
-tracking). Close each child on merge via the store close-in-place path
-(status `closed`, `resolution=completed`, merge-evidence `AuditRecord`),
-as done for S1.
+S1–S4 are complete. The only remaining step is the maintainer-owned
+release exit gate. **The agent must NOT merge the release PR** — the L0
+release unblocks the whole L1 layer, so approval is relayed first.
 
-1. **S4 (`livespec-runtime-rfwfie`)** — paired tests + coverage
-   completion (now ready; S1+S2+S3 closed). The per-module Red tests
-   already rode with their impl in S1–S3 (`test_rank.py`,
-   `test_lifecycle.py`, the rebuilt `test_types.py`), and per-file 100%
-   coverage is ALREADY green across the runtime. S4 is the
-   **cross-module + completeness** slice: add the explicit
-   lane↔readiness agreement test (`is_item_ready` ⇔
-   `lane_of(...).name=="ready"` over a representative matrix), any
-   `_fractional_indexing` round-trip / `validate_order_key` property
-   gap, and confirm `just check-per-file-coverage` + heading/claude-md
-   coverage are green. If no NEW product `.py` is touched, S4 is a
-   `chore`/test-only changeset (red-green-replay test-only green-verified
-   leg, not the Red→Green ritual); refresh the work_items `tests/.../
-   CLAUDE.md` to list `test_rank.py` + `test_lifecycle.py` while here.
-2. **S5 (`livespec-runtime-ocekuv`)** — let **release-please open** the
-   `livespec-runtime` release PR, then **STOP before merging it** and
-   surface for the coordinator (the L0 release unblocks the whole L1
-   layer; maintainer approval is relayed first).
+1. **Review release PR #87** (`chore(master): release 0.5.0`, branch
+   `release-please--branches--master--components--livespec-runtime`).
+   Changelog = the three product features (S1 rank wrapper, S3 20-field
+   schema, S2 lifecycle authority); S4 was `test:` so it carries no
+   changelog entry, by design. The PR bumps every `x-release-please-version`
+   anchor `v0.4.0 → v0.5.0` (`.release-please-manifest.json`,
+   `pyproject.toml` `version`, `SPECIFICATION/contracts.md`
+   `compat.pinned` + both `[tool.uv.sources]` example tags) + the
+   `CHANGELOG.md` 0.5.0 section.
+   - NB the schema change is breaking (`−priority`, the new 7-state
+     `WorkItemStatus`) but was authored as plain `feat:` (no `!` /
+     `BREAKING CHANGE:`), so release-please proposes a 0.x **minor** bump
+     (0.4.0 → 0.5.0). For a pre-1.0 library that is the conventional
+     encoding; if the maintainer wants a louder signal, re-tag is a
+     maintainer call.
+2. **On maintainer approval:** merge #87 (the repo's rebase-merge
+   discipline). release-please then cuts the **`v0.5.0`** tag (the
+   `release-dispatch.yml` flow). **This tag is what L1a/L1b vendor — the
+   whole L1 layer gates on it.**
+3. **After the tag is cut:** close `ocekuv` via the store close-in-place
+   path (status `closed`, `resolution=completed`, merge-evidence
+   `AuditRecord` with the release merge sha + PR #87), matching S1–S4.
+   That closes the L0 epic `livespec-runtime-l4yojx`.
 
 Close each child via the `implement` freeform path as its PR merges (or
 per the coordinator's dispatch). The ratified contract surface to build
