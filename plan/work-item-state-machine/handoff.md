@@ -26,12 +26,12 @@ edges (round-trip to `depends_on` on read):
 |---|---|---|---|---|
 | S1 rank | `livespec-runtime-lel76i` | `port-fractional-indexing` | — | ✅ **DONE** (PR #86 `976cf86`; closed) |
 | S3 types | `livespec-runtime-lxgk3g` | `types-schema-edits` | — | ✅ **DONE** (PR #89 `84173e6`; closed) |
-| S2 lifecycle | `livespec-runtime-tscgce` | `lifecycle-module` | S3 | ⏳ ready (NEXT) |
-| S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ⛔ (S2 open) |
-| S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | ⛔ |
+| S2 lifecycle | `livespec-runtime-tscgce` | `lifecycle-module` | S3 | ✅ **DONE** (PR #91 `4cda557`; closed) |
+| S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ⏳ ready (NEXT) |
+| S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | ⛔ (S4 open) |
 
-`next` / `bd ready` now surfaces **S2 (`tscgce`)** as the ready slice
-(its only blocking dep S3 is closed); S4/S5 unblock as their deps close.
+`next` / `bd ready` now surfaces **S4 (`rfwfie`)** as the ready slice
+(S1+S2+S3 all closed); S5 (the release exit gate) unblocks when S4 closes.
 
 ### Verbatim-port pattern (ESTABLISHED by S1 — reuse for any future port)
 
@@ -83,7 +83,16 @@ surface.
   updates; landed on `master` (PR #89, `84173e6`); `reduce.py` identity
   reducer green over the new shape (100% per-file coverage); child
   `lxgk3g` closed (`completed`, merge-evidence audit).
-- ⏳ **S2 next** (ready); then S4, S5.
+- ✅ **S2 DONE** — net-new `lifecycle.py` (the `lane_of` single lane
+  authority; `is_item_ready` = `lane_of(...).name=="ready"`;
+  `ready_sort_key` on `(rank, id)`; the dep-blocking predicate relocated
+  from the orchestrator's `_cross_repo.py` as PURE functions injecting
+  only the in-memory `index` — no `runtime → beads` back-edge, sibling
+  deps resolve `UNKNOWN`) + `test_lifecycle.py` (lane scenarios + 100%
+  per-file coverage, offline); landed on `master` (PR #91, `4cda557`);
+  child `tscgce` closed (`completed`, merge-evidence audit). **No
+  orchestrator-repo edits** (the `_cross_repo.py` shrink is L1a).
+- ⏳ **S4 next** (ready); then S5.
 
 ## Next action — implement the remaining slices (red-green-replay)
 
@@ -94,21 +103,21 @@ tracking). Close each child on merge via the store close-in-place path
 (status `closed`, `resolution=completed`, merge-evidence `AuditRecord`),
 as done for S1.
 
-1. **S2 (`livespec-runtime-tscgce`)** — net-new `lifecycle.py` (now ready,
-   S3 closed): `Lane`/`LaneName`/`BlockedReason`; `lane_of` (overlay per
-   the ratified `### …work_items.lifecycle`); `is_item_ready` =
-   `lane_of(...).name=="ready"` as a **pure predicate with INJECTED
-   `local_status_lookup`/`sibling_status_lookup`** (no `runtime → beads`
-   back-edge); `ready_sort_key` keyed on `rank` then `id`; the dep
-   predicate helpers reusing `livespec_runtime.cross_repo.resolve_ref`/
-   `RefStatus`. **No orchestrator-repo edits** (the `_cross_repo.py`
-   shrink is L1a, gating on the L0 release). Acceptance: the 6 lane
-   scenarios in `01-spec-deltas.md`; `is_item_ready` agrees with
-   `lane_of` by construction; `lifecycle.py` imports NO beads/orchestrator
-   symbol; `just check` green.
-2. **S4 (`livespec-runtime-rfwfie`)** — paired tests + coverage
-   completion (after S2; S1+S3 already done).
-3. **S5 (`livespec-runtime-ocekuv`)** — let **release-please open** the
+1. **S4 (`livespec-runtime-rfwfie`)** — paired tests + coverage
+   completion (now ready; S1+S2+S3 closed). The per-module Red tests
+   already rode with their impl in S1–S3 (`test_rank.py`,
+   `test_lifecycle.py`, the rebuilt `test_types.py`), and per-file 100%
+   coverage is ALREADY green across the runtime. S4 is the
+   **cross-module + completeness** slice: add the explicit
+   lane↔readiness agreement test (`is_item_ready` ⇔
+   `lane_of(...).name=="ready"` over a representative matrix), any
+   `_fractional_indexing` round-trip / `validate_order_key` property
+   gap, and confirm `just check-per-file-coverage` + heading/claude-md
+   coverage are green. If no NEW product `.py` is touched, S4 is a
+   `chore`/test-only changeset (red-green-replay test-only green-verified
+   leg, not the Red→Green ritual); refresh the work_items `tests/.../
+   CLAUDE.md` to list `test_rank.py` + `test_lifecycle.py` while here.
+2. **S5 (`livespec-runtime-ocekuv`)** — let **release-please open** the
    `livespec-runtime` release PR, then **STOP before merging it** and
    surface for the coordinator (the L0 release unblocks the whole L1
    layer; maintainer approval is relayed first).
