@@ -123,7 +123,7 @@ scenario_tiers = ["tests.consumer", "tests.e2e"]
 [tool.ruff]
 target-version = "py310"
 line-length = 100
-extend-exclude = [".claude/hooks/**", "**/_vendor/**", "**/__pycache__/**", "mutants/**"]
+extend-exclude = [".claude/hooks/**", "**/_vendor/**", "**/__pycache__/**", "mutants/**", "livespec_runtime/work_items/_fractional_indexing.py"]
 
 [tool.ruff.lint]
 # 27 categories: v011 baseline (11) + v012 additions (16). Per
@@ -201,7 +201,7 @@ ban-relative-imports = "all"
 
 [tool.pyright]
 include = ["livespec_runtime"]
-exclude = ["**/_vendor/**", "**/__pycache__/**"]
+exclude = ["**/_vendor/**", "**/__pycache__/**", "livespec_runtime/work_items/_fractional_indexing.py"]
 pythonVersion = "3.10"
 typeCheckingMode = "strict"
 
@@ -252,6 +252,12 @@ omit = [
     "/tmp/*",
     "/private/var/folders/*",
     "mutants/*",
+    # Verbatim CC0 third-party port (decision 38, G-1) — carried
+    # source-only in the first-party tree (no `_vendor/` machinery in
+    # livespec_runtime), excluded from the lint/type/coverage gates like
+    # any vendored code. Exercised through the `rank.py` wrapper, which
+    # IS covered.
+    "*/work_items/_fractional_indexing.py",
 ]
 
 [tool.coverage.report]
