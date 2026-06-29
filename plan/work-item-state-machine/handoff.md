@@ -25,13 +25,13 @@ edges (round-trip to `depends_on` on read):
 | Slice | id | `spec_commitment_hint` | depends_on | status |
 |---|---|---|---|---|
 | S1 rank | `livespec-runtime-lel76i` | `port-fractional-indexing` | — | ✅ **DONE** (PR #86 `976cf86`; closed) |
-| S3 types | `livespec-runtime-lxgk3g` | `types-schema-edits` | — | ⏳ ready (NEXT) |
-| S2 lifecycle | `livespec-runtime-tscgce` | `lifecycle-module` | S3 | ⛔ (S3 open) |
-| S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ⛔ |
+| S3 types | `livespec-runtime-lxgk3g` | `types-schema-edits` | — | ✅ **DONE** (PR #89 `84173e6`; closed) |
+| S2 lifecycle | `livespec-runtime-tscgce` | `lifecycle-module` | S3 | ⏳ ready (NEXT) |
+| S4 tests | `livespec-runtime-rfwfie` | `lifecycle-rank-paired-tests` | S1, S2, S3 | ⛔ (S2 open) |
 | S5 release | `livespec-runtime-ocekuv` | `cut-runtime-release` | S1, S2, S3, S4 | ⛔ |
 
-`next` currently surfaces **S3 (`lxgk3g`)** as the ready layer-0 slice;
-S2/S4/S5 unblock as their deps close.
+`next` / `bd ready` now surfaces **S2 (`tscgce`)** as the ready slice
+(its only blocking dep S3 is closed); S4/S5 unblock as their deps close.
 
 ### Verbatim-port pattern (ESTABLISHED by S1 — reuse for any future port)
 
@@ -75,7 +75,15 @@ surface.
 - ✅ **S1 DONE** — `rank.py` + verbatim `_fractional_indexing.py` +
   `NOTICES` + the three gate-exclusions landed on `master` (PR #86,
   `976cf86`); child `lel76i` closed (`completed`, merge-evidence audit).
-- ⏳ **S3 next** (ready); then S2, S4, S5.
+- ✅ **S3 DONE** — `types.py` rebuilt to the ratified 20-field shape
+  (7-state `WorkItemStatus`; `+rank: str` required; `−priority: int`;
+  `AdmissionPolicy`/`AcceptancePolicy`/`StoredBlockedReason` aliases +
+  the three `… | None = None` policy fields; module-docstring drift
+  fixed) + collateral `test_reduce.py`/`test_store.py` construction
+  updates; landed on `master` (PR #89, `84173e6`); `reduce.py` identity
+  reducer green over the new shape (100% per-file coverage); child
+  `lxgk3g` closed (`completed`, merge-evidence audit).
+- ⏳ **S2 next** (ready); then S4, S5.
 
 ## Next action — implement the remaining slices (red-green-replay)
 
@@ -86,23 +94,21 @@ tracking). Close each child on merge via the store close-in-place path
 (status `closed`, `resolution=completed`, merge-evidence `AuditRecord`),
 as done for S1.
 
-1. **S3 (`livespec-runtime-lxgk3g`)** — `types.py` schema edits (build to
-   the ratified `### …work_items.types`): 7-state `WorkItemStatus`;
-   `+ rank: str` (required, where `priority` was); `− priority: int`;
-   `AdmissionPolicy`/`AcceptancePolicy`/`StoredBlockedReason` aliases +
-   the three `… | None = None` policy fields; keep `assignee` (document
-   `active ⟹ assignee`); `__all__`; fix the module-docstring drift.
-   Update `test_types.py`; confirm `reduce.py` identity reducer stays
-   deterministic over the new shape. **NB:** `priority` is referenced by
-   the orchestrator's `ready_sort_key` (in beads-fabro, an L1a concern)
-   and by capture/groom filing under the CURRENT schema — but THIS repo's
-   `livespec_runtime` has no internal `priority` reader beyond `types`/
-   serialization, so the edit is contained here; just keep
-   `reduce._work_item_to_dict` (asdict-based) working.
-2. **S2 (`livespec-runtime-tscgce`)** — net-new `lifecycle.py` (after S3).
-3. **S4 (`livespec-runtime-rfwfie`)** — paired tests + coverage
-   completion (after S1+S2+S3).
-4. **S5 (`livespec-runtime-ocekuv`)** — let **release-please open** the
+1. **S2 (`livespec-runtime-tscgce`)** — net-new `lifecycle.py` (now ready,
+   S3 closed): `Lane`/`LaneName`/`BlockedReason`; `lane_of` (overlay per
+   the ratified `### …work_items.lifecycle`); `is_item_ready` =
+   `lane_of(...).name=="ready"` as a **pure predicate with INJECTED
+   `local_status_lookup`/`sibling_status_lookup`** (no `runtime → beads`
+   back-edge); `ready_sort_key` keyed on `rank` then `id`; the dep
+   predicate helpers reusing `livespec_runtime.cross_repo.resolve_ref`/
+   `RefStatus`. **No orchestrator-repo edits** (the `_cross_repo.py`
+   shrink is L1a, gating on the L0 release). Acceptance: the 6 lane
+   scenarios in `01-spec-deltas.md`; `is_item_ready` agrees with
+   `lane_of` by construction; `lifecycle.py` imports NO beads/orchestrator
+   symbol; `just check` green.
+2. **S4 (`livespec-runtime-rfwfie`)** — paired tests + coverage
+   completion (after S2; S1+S3 already done).
+3. **S5 (`livespec-runtime-ocekuv`)** — let **release-please open** the
    `livespec-runtime` release PR, then **STOP before merging it** and
    surface for the coordinator (the L0 release unblocks the whole L1
    layer; maintainer approval is relayed first).
