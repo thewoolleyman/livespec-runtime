@@ -23,7 +23,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "livespec-runtime"
-version = "0.5.0"
+version = "0.6.0"
 description = "Shared runtime library for livespec-governed projects: cross-repo dependency resolution, retry policy, runtime types consumed by canonical livespec skills and impl-plugin consumers. Sibling to livespec, livespec-impl-*, and livespec-dev-tooling (which owns enforcement-suite code)."
 requires-python = ">=3.10.16"
 authors = [
