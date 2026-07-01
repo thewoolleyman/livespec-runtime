@@ -1,13 +1,13 @@
 """Tests for `livespec_runtime.work_items.types`.
 
-Verifies the unified `WorkItem` model (the 20-field shape codified by
+Verifies the unified `WorkItem` model (the 22-field shape codified by
 this repo's own `### livespec_runtime.work_items.types`), the
 `AuditRecord` sub-object, the schema enums/aliases (the 7-state
 `WorkItemStatus`, the `AdmissionPolicy` / `AcceptancePolicy` /
 `StoredBlockedReason` aliases), the optional-on-read defaults
-(`spec_commitment_hint`, `supersedes`, `admission_policy`,
-`acceptance_policy`, `blocked_reason`), the required `rank` ordering
-key, and frozenness.
+(`spec_commitment_hint`, `acceptance_criteria`, `notes`, `supersedes`,
+`admission_policy`, `acceptance_policy`, `blocked_reason`), the
+required `rank` ordering key, and frozenness.
 
 Schema reference: this repo's own `SPECIFICATION/contracts.md`
 §`### livespec_runtime.work_items.types`.
@@ -19,7 +19,7 @@ from livespec_runtime.work_items.types import AuditRecord, WorkItem
 
 __all__: list[str] = []
 
-# The ratified 20-field order (required block, then optional-on-read
+# The ratified 22-field order (required block, then optional-on-read
 # block), per `### livespec_runtime.work_items.types`.
 _EXPECTED_FIELD_ORDER: tuple[str, ...] = (
     "id",
@@ -38,6 +38,8 @@ _EXPECTED_FIELD_ORDER: tuple[str, ...] = (
     "audit",
     "superseded_by",
     "spec_commitment_hint",
+    "acceptance_criteria",
+    "notes",
     "supersedes",
     "admission_policy",
     "acceptance_policy",
@@ -95,6 +97,16 @@ def test_work_item_spec_commitment_hint_defaults_to_none() -> None:
     assert item.spec_commitment_hint is None
 
 
+def test_work_item_acceptance_criteria_defaults_to_none() -> None:
+    item = _work_item()
+    assert item.acceptance_criteria is None
+
+
+def test_work_item_notes_defaults_to_none() -> None:
+    item = _work_item()
+    assert item.notes is None
+
+
 def test_work_item_admission_policy_defaults_to_none() -> None:
     item = _work_item()
     assert item.admission_policy is None
@@ -113,6 +125,15 @@ def test_work_item_blocked_reason_defaults_to_none() -> None:
 def test_work_item_supersedes_carries_prior_identity() -> None:
     item = _work_item(supersedes="sha256:deadbeef")
     assert item.supersedes == "sha256:deadbeef"
+
+
+def test_work_item_carries_acceptance_criteria_and_notes() -> None:
+    item = _work_item(
+        acceptance_criteria="Given context, then preserve it.",
+        notes="Operator rider is load-bearing.",
+    )
+    assert item.acceptance_criteria == "Given context, then preserve it."
+    assert item.notes == "Operator rider is load-bearing."
 
 
 def test_work_item_carries_policy_fields() -> None:
@@ -151,11 +172,11 @@ def test_work_item_active_carries_assignee() -> None:
     assert item.assignee == "agent-7"
 
 
-def test_work_item_has_twenty_schema_fields() -> None:
-    # The unified shape is the 20-field record: 15 required (including
-    # the `rank` ordering key, `priority` removed), then 5 optional-on-
-    # read (spec_commitment_hint, supersedes, admission_policy,
-    # acceptance_policy, blocked_reason).
+def test_work_item_has_twenty_two_schema_fields() -> None:
+    # The unified shape is the 22-field record: 15 required (including
+    # the `rank` ordering key, `priority` removed), then 7 optional-on-
+    # read (spec_commitment_hint, acceptance_criteria, notes,
+    # supersedes, admission_policy, acceptance_policy, blocked_reason).
     field_names = set(WorkItem.__dataclass_fields__)
     assert field_names == set(_EXPECTED_FIELD_ORDER)
     assert "priority" not in field_names
@@ -164,7 +185,7 @@ def test_work_item_has_twenty_schema_fields() -> None:
 
 def test_work_item_field_order_matches_contract() -> None:
     # The ratified `### livespec_runtime.work_items.types` pins the exact
-    # 20-field order (required block, then optional-on-read block).
+    # 22-field order (required block, then optional-on-read block).
     assert tuple(WorkItem.__dataclass_fields__) == _EXPECTED_FIELD_ORDER
 
 
