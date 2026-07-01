@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.5.0...v0.6.0) (2026-07-01)
+
+
+### Features
+
+* **credentials:** add pure decide_credentials self-heal decision ([b70c8c0](https://github.com/thewoolleyman/livespec-runtime/commit/b70c8c03e09da7937eca0db62484c63aa7d660b4))
+
 ## [0.5.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.4.0...v0.5.0) (2026-06-29)
 
 
