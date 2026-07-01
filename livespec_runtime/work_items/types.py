@@ -124,8 +124,7 @@ class WorkItem:
     that should survive store-to-WorkItem reads and downstream rendering.
     Both fields follow the same blessed `… | None` optional-on-read
     pattern as `spec_commitment_hint`: legacy records lacking the field on
-    disk read back as `None` with no in-place migration required; append
-    paths write them explicitly as `null` or the stored value.
+    disk read back as `None` with no in-place migration required.
 
     `supersedes` is the append-only supersession pointer (per this repo's
     `### livespec_runtime.work_items.reduce` and the append-only store
