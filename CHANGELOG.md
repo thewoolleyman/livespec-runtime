@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.6.0...v0.7.0) (2026-07-01)
+
+
+### Features
+
+* carry work item context fields ([647547a](https://github.com/thewoolleyman/livespec-runtime/commit/647547a55a9669e0d1e034cebc9aad58b14dd28a))
+
+
+### Bug Fixes
+
+* clarify work item context optionality ([5c36c83](https://github.com/thewoolleyman/livespec-runtime/commit/5c36c830f105cfa39732d6ff8cfefc6407b6ce42))
+
 ## [0.6.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.5.0...v0.6.0) (2026-07-01)
 
 
