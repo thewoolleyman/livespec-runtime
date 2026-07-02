@@ -193,6 +193,10 @@ ban-relative-imports = "all"
 # with fixed argv lists per the providers.github contract; S603/S607/S404
 # are over-strict for this documented pattern.
 "livespec_runtime/cross_repo/**.py" = ["S603", "S607", "S404"]
+# The github_auth signer shells out to `openssl` via subprocess.run with a
+# fixed argv list (the RS256 production signer); same documented pattern as
+# cross_repo above.
+"livespec_runtime/github_auth/**.py" = ["S603", "S607", "S404"]
 
 # ---------------------------------------------------------------------------
 # Pyright — strict + seven strict-plus diagnostics. Per
