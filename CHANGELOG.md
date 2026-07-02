@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.8.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.7.0...v0.8.0) (2026-07-02)
+
+
+### Features
+
+* **github_auth:** App JWT assembly, PEM normalization + RS256 openssl signer ([4a7527d](https://github.com/thewoolleyman/livespec-runtime/commit/4a7527d0069b5b1e69fccd86f3745e1bac02cf84))
+* **github_auth:** caching token provider with pre-expiry transparent re-mint ([f393fa6](https://github.com/thewoolleyman/livespec-runtime/commit/f393fa699eb563d9197dadce8fc51958e5fc7457))
+* **github_auth:** env-only fail-closed GithubAppConfig boundary ([bf2f87d](https://github.com/thewoolleyman/livespec-runtime/commit/bf2f87d1fb6ac67c7877b9b21a98ff57de41fdfe))
+* **github_auth:** git credential helper answering get with the minted token ([5a0e2e4](https://github.com/thewoolleyman/livespec-runtime/commit/5a0e2e49e5e4e1d15d01a89a6529830fe80556a4))
+* **github_auth:** installation-token mint railway over injectable seams ([4f2fd78](https://github.com/thewoolleyman/livespec-runtime/commit/4f2fd78b97624c5e64e6d20944571f67c9bcd775))
+
 ## [0.7.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.6.0...v0.7.0) (2026-07-01)
 
 
