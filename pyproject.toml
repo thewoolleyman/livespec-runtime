@@ -52,6 +52,12 @@ dependencies = [
     "typing_extensions>=4.4.0",
 ]
 
+# The `git credential` helper entry point (github_auth): installing this
+# library places the script on the consumer venv's PATH; consumers wire it
+# as `git config credential.helper '!livespec-github-credential-helper'`.
+[project.scripts]
+livespec-github-credential-helper = "livespec_runtime.github_auth.credential_helper:run"
+
 [tool.hatch.build.targets.wheel]
 packages = ["livespec_runtime"]
 
