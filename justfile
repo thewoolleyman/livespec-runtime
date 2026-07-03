@@ -65,15 +65,25 @@ bootstrap:
 install-commit-refuse-hooks:
     uv run python -m livespec_dev_tooling.install_commit_refuse_hooks
 
-# Idempotent: `claude plugin marketplace add` and `claude plugin install`
-# both exit 0 when the target is already present. Installs livespec plus
-# the active impl plugin (livespec-orchestrator-beads-fabro), mirroring the canonical
-# recipe in livespec-orchestrator-beads-fabro/justfile.
+# Idempotent: `claude plugin marketplace add` / `install` / `update` all exit 0
+# when the target is already present / already at latest. The `update` calls
+# after each `install` are required because `install` is a no-op when any
+# version is already present locally — without `update`, a bumped upstream
+# release never reaches a previously-bootstrapped working copy. Registers this
+# repo's full `.claude/settings.json` `enabledPlugins` set (livespec +
+# livespec-driver-claude + livespec-orchestrator-beads-fabro); the SessionStart
+# hook in `.claude/settings.json` runs this recipe so each new session's
+# project-scope plugins are current.
 ensure-plugins:
     claude plugin marketplace add --scope project thewoolleyman/livespec
+    claude plugin marketplace add --scope project thewoolleyman/livespec-driver-claude
     claude plugin marketplace add --scope project thewoolleyman/livespec-orchestrator-beads-fabro
     claude plugin install -s project livespec@livespec
+    claude plugin install -s project livespec@livespec-driver-claude
     claude plugin install -s project livespec-orchestrator-beads-fabro@livespec-orchestrator-beads-fabro
+    claude plugin update -s project livespec@livespec
+    claude plugin update -s project livespec@livespec-driver-claude
+    claude plugin update -s project livespec-orchestrator-beads-fabro@livespec-orchestrator-beads-fabro
 
 # Idempotent host-wide Codex plugin provisioning. Codex does not support
 # project-scoped plugin enablement, so these registrations intentionally land in
