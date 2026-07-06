@@ -57,6 +57,7 @@ dependencies = [
 # as `git config credential.helper '!livespec-github-credential-helper'`.
 [project.scripts]
 livespec-github-credential-helper = "livespec_runtime.github_auth.credential_helper:run"
+livespec-hygiene-scan = "livespec_runtime.hygiene_scan:run"
 
 [tool.hatch.build.targets.wheel]
 packages = ["livespec_runtime"]
@@ -203,6 +204,7 @@ ban-relative-imports = "all"
 # fixed argv list (the RS256 production signer); same documented pattern as
 # cross_repo above.
 "livespec_runtime/github_auth/**.py" = ["S603", "S607", "S404"]
+"livespec_runtime/hygiene_scan.py" = ["S603", "S607", "S404"]
 
 # ---------------------------------------------------------------------------
 # Pyright — strict + seven strict-plus diagnostics. Per
