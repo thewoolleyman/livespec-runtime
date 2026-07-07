@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.9.0...v0.9.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* never flag default-branch worktrees as stale ([18e8527](https://github.com/thewoolleyman/livespec-runtime/commit/18e85270df854bd23f418b36909f5ba0a8db68df))
+
 ## [0.9.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.8.0...v0.9.0) (2026-07-07)
 
 
