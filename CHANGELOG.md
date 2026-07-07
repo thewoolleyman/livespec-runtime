@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.9.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.8.0...v0.9.0) (2026-07-07)
+
+
+### Features
+
+* add attention item schema ([56e58b8](https://github.com/thewoolleyman/livespec-runtime/commit/56e58b8c9a76aebd271e9ce4333a9c0b1a9b0dcb))
+* add hygiene scan primitive ([5213a6c](https://github.com/thewoolleyman/livespec-runtime/commit/5213a6cacf1ce21e6fecece0697bb951cea75d2d))
+* compose needs-attention items ([889569f](https://github.com/thewoolleyman/livespec-runtime/commit/889569fd48707de8559f8e4770ca73b855036c04))
+* flag rebase-merged orphan worktrees in hygiene stale detector ([1b0b3dc](https://github.com/thewoolleyman/livespec-runtime/commit/1b0b3dcae850cc6ffc4852a8b0e02d0789a852db))
+
 ## [0.8.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.7.0...v0.8.0) (2026-07-02)
 
 
