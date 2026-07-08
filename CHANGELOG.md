@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.9.1...v0.9.2) (2026-07-08)
+
+
+### Bug Fixes
+
+* add wrapper launch failure diagnostic ([697e45f](https://github.com/thewoolleyman/livespec-runtime/commit/697e45f9807d0a221b0856d37ca86f2cefec7d02))
+
 ## [0.9.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.9.0...v0.9.1) (2026-07-07)
 
 
