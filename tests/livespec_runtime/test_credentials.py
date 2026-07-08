@@ -14,6 +14,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
+from livespec_runtime import credentials
 from livespec_runtime.credentials import (
     CREDENTIAL_REEXEC_SENTINEL,
     Fail,
@@ -98,6 +99,26 @@ def test_missing_without_wrapper_returns_fail() -> None:
     assert isinstance(decision, Fail)
     assert "BEADS_DOLT_PASSWORD" in decision.message
     assert "no credential_wrapper configured in .livespec.jsonc" in decision.message
+
+
+def test_wrapper_launch_failure_message_is_actionable() -> None:
+    assert hasattr(credentials, "wrapper_launch_failure")
+
+    decision = credentials.wrapper_launch_failure(
+        required=["BEADS_DOLT_PASSWORD", "GH_TOKEN"],
+        credential_wrapper=["credential_wrapper", "--profile", "livespec"],
+    )
+
+    assert isinstance(decision, Fail)
+    assert decision.kind == "fail"
+    assert "credential_wrapper could not run in this environment" in decision.message
+    assert "sandbox" in decision.message
+    assert "sudo" in decision.message
+    assert "no_new_privs" in decision.message
+    assert "BEADS_DOLT_PASSWORD" in decision.message
+    assert "GH_TOKEN" in decision.message
+    assert "already present" in decision.message
+    assert "--dangerously-bypass-approvals-and-sandbox" in decision.message
 
 
 def test_proceed_variant_is_frozen() -> None:
