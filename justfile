@@ -174,6 +174,7 @@ check:
         check-no-raise-outside-io
         check-no-todo-registry
         check-no-write-direct
+        check-partition-completeness
         check-pbt-coverage-pure-modules
         check-per-file-coverage
         check-plugin-resolution
@@ -689,3 +690,6 @@ fmt:
 
 lint-fix:
     uv run ruff check --fix .
+
+check-partition-completeness:
+    uv run python -m livespec_dev_tooling.checks.partition_completeness
