@@ -407,8 +407,20 @@ def test_non_canonical_github_url_error_carries_url() -> None:
     assert "git@github.com:owner/repo.git" in str(exc)
 
 
-def test_non_canonical_github_url_error_remains_value_error_catchable() -> None:
-    with pytest.raises(ValueError, match="expected canonical github_url"):
+def test_non_canonical_github_url_error_catchable_as_domain_type() -> None:
+    """The error's catchability contract is the domain type, not `ValueError`.
+
+    The class inherits `Exception` DIRECTLY (visible `class` statement,
+    no dynamic `type()` construction) so the `no_inheritance` guardrail
+    passes honestly. Callers therefore catch `NonCanonicalGithubUrlError`
+    (or `Exception`), never `ValueError` — asserting the latter is
+    explicitly excluded here to pin the contract migration.
+    """
+    exc = NonCanonicalGithubUrlError(github_url="git@github.com:owner/repo.git")
+    assert isinstance(exc, NonCanonicalGithubUrlError)
+    assert isinstance(exc, Exception)
+    assert not isinstance(exc, ValueError)
+    with pytest.raises(NonCanonicalGithubUrlError, match="expected canonical github_url"):
         raise NonCanonicalGithubUrlError(github_url="git@github.com:owner/repo.git")
 
 
