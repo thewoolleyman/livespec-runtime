@@ -407,6 +407,11 @@ def test_non_canonical_github_url_error_carries_url() -> None:
     assert "git@github.com:owner/repo.git" in str(exc)
 
 
+def test_non_canonical_github_url_error_remains_value_error_catchable() -> None:
+    with pytest.raises(ValueError, match="expected canonical github_url"):
+        raise NonCanonicalGithubUrlError(github_url="git@github.com:owner/repo.git")
+
+
 def test_fixture_payload_round_trips_through_json() -> None:
     payload: dict[str, Any] = json.loads(_load_fixture(name="branch_compare_identical.json"))
     assert payload["status"] == "identical"

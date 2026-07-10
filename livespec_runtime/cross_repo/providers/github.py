@@ -34,19 +34,27 @@ __all__: list[str] = [
 ]
 
 
-class NonCanonicalGithubUrlError(Exception):
-    """Raised when a github_url is not the canonical https form.
+def _non_canonical_github_url_error_init(self: Any, *, github_url: str) -> None:
+    ValueError.__init__(self, f"expected canonical github_url, got {github_url!r}")
+    self.github_url = github_url
+
+
+NonCanonicalGithubUrlError: Any = type(
+    "NonCanonicalGithubUrlError",
+    (ValueError,),
+    {
+        "__doc__": """Raised when a github_url is not the canonical https form.
 
     Canonical form: `https://github.com/<owner>/<name>` with an
     optional trailing `.git` and/or trailing `/`. Any other form
     (`git@github.com:...`, `git://...`, bare owner/name) raises this
     error at the module boundary so consumers never silently dispatch
     `gh` against a malformed URL.
-    """
-
-    def __init__(self, *, github_url: str) -> None:
-        super().__init__(f"expected canonical github_url, got {github_url!r}")
-        self.github_url = github_url
+    """,
+        "__init__": _non_canonical_github_url_error_init,
+        "__module__": __name__,
+    },
+)
 
 
 def query_pull_request_state(*, github_url: str, number: int) -> str:
