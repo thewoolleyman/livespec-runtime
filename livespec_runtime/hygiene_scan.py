@@ -262,12 +262,12 @@ def _stale_worktree_finding(
             resource=label,
             path=label,
             summary=f"Prune stale worktree metadata for {label} ({worktree.prunable_reason}).",
-            command=f"git -C {_quote(context.primary_path)} worktree prune -v",
+            command=f"git -C {_quote(path=context.primary_path)} worktree prune -v",
         )
     if not _worktree_is_clean(worktree=worktree, runner=context.runner):
         return None
     remove_command = (
-        f"git -C {_quote(context.primary_path)} worktree remove {_quote(worktree.path)}"
+        f"git -C {_quote(path=context.primary_path)} worktree remove {_quote(path=worktree.path)}"
     )
     if _head_is_merged(context=context, head=worktree.head):
         return HygieneScanFinding(
@@ -417,7 +417,7 @@ def _primary_health_findings(*, context: _ScanContext) -> list[HygieneScanFindin
                 resource=primary,
                 path=primary,
                 summary=f"Primary checkout {primary} has uncommitted changes.",
-                command=f"git -C {_quote(context.primary_path)} status --short",
+                command=f"git -C {_quote(path=context.primary_path)} status --short",
                 urgency="medium",
             )
         )
@@ -442,7 +442,7 @@ def _primary_detached_finding(*, context: _ScanContext) -> HygieneScanFinding:
         path=primary,
         summary=f"Primary checkout {primary} is detached instead of on {context.default_branch}.",
         command=(
-            f"git -C {_quote(context.primary_path)} "
+            f"git -C {_quote(path=context.primary_path)} "
             f"switch {shlex.quote(context.default_branch)}"
         ),
         urgency="medium",
@@ -457,7 +457,7 @@ def _primary_off_default_finding(*, context: _ScanContext, branch: str) -> Hygie
         path=primary,
         summary=f"Primary checkout {primary} is on {branch}, expected {context.default_branch}.",
         command=(
-            f"git -C {_quote(context.primary_path)} "
+            f"git -C {_quote(path=context.primary_path)} "
             f"switch {shlex.quote(context.default_branch)}"
         ),
         urgency="medium",
@@ -500,7 +500,7 @@ def _stale_branch_finding(*, context: _ScanContext, branch: str) -> HygieneScanF
         resource=ref,
         path=f".git/refs/heads/{branch}",
         summary=f"Delete local branch {branch}; it is merged into {context.base_ref}.",
-        command=f"git -C {_quote(context.primary_path)} branch -d {shlex.quote(branch)}",
+        command=f"git -C {_quote(path=context.primary_path)} branch -d {shlex.quote(branch)}",
     )
 
 
@@ -584,7 +584,7 @@ def _run_command(*, argv: list[str], cwd: Path) -> CommandResult:  # pragma: no 
     )
 
 
-def _quote(path: Path) -> str:
+def _quote(*, path: Path) -> str:
     return shlex.quote(str(path))
 
 

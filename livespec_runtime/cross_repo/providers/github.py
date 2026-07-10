@@ -34,7 +34,7 @@ __all__: list[str] = [
 ]
 
 
-class NonCanonicalGithubUrlError(ValueError):
+class NonCanonicalGithubUrlError(Exception):
     """Raised when a github_url is not the canonical https form.
 
     Canonical form: `https://github.com/<owner>/<name>` with an

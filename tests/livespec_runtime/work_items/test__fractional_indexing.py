@@ -23,30 +23,30 @@ __all__: list[str] = []
 
 
 def test_generated_keys_validate_as_order_keys() -> None:
-    first = generate_key_between(None, None)
+    first = generate_key_between(a=None, b=None)
     # validate_order_key raises ValueError on an invalid key; a freshly
     # generated key MUST validate.
-    validate_order_key(first)
-    nxt = generate_key_between(first, None)
-    validate_order_key(nxt)
+    validate_order_key(key=first)
+    nxt = generate_key_between(a=first, b=None)
+    validate_order_key(key=nxt)
 
 
 def test_generate_key_between_is_strictly_between_neighbors() -> None:
-    a = generate_key_between(None, None)
-    b = generate_key_between(a, None)
-    mid = generate_key_between(a, b)
+    a = generate_key_between(a=None, b=None)
+    b = generate_key_between(a=a, b=None)
+    mid = generate_key_between(a=a, b=b)
     assert a < mid < b
     for key in (a, b, mid):
-        validate_order_key(key)
+        validate_order_key(key=key)
 
 
 def test_generate_n_keys_between_round_trips_sorted_unique_and_valid() -> None:
-    keys = generate_n_keys_between(None, None, 5)
+    keys = generate_n_keys_between(a=None, b=None, n=5)
     assert len(keys) == 5
     assert keys == sorted(keys)
     assert len(set(keys)) == 5
     for key in keys:
-        validate_order_key(key)
+        validate_order_key(key=key)
 
 
 def test_validate_order_key_rejects_the_bottom_sentinel() -> None:
@@ -55,11 +55,11 @@ def test_validate_order_key_rejects_the_bottom_sentinel() -> None:
     # never generated or validated as a real rank. The ported module's
     # invalid-head guard raises its own `FIError`.
     with pytest.raises(FIError):
-        validate_order_key("~")
+        validate_order_key(key="~")
 
 
 def test_validate_order_key_rejects_trailing_zero_fraction() -> None:
     # A fractional part ending in the zero digit is non-canonical (the
     # generator never emits one), so the validator rejects it.
     with pytest.raises(FIError):
-        validate_order_key("a00")
+        validate_order_key(key="a00")
