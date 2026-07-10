@@ -17,11 +17,12 @@ clause that currently mandates *"Lefthook pre-push and CI MUST both
 invoke `just check` (not the individual targets)."* Keep the pre-push
 requirement (pre-push MUST invoke the full `just check` aggregate), but
 replace the CI half: CI MAY run the aggregate as a per-target matrix of
-individual `just check-<slug>` jobs, provided a completeness guard
-(`check-aggregate-completeness`) prevents the wired set from silently
-dropping a canonical slug. This matches the convention every other
-Python repo in the livespec fleet — including livespec core itself —
-actually follows.
+individual `just check-<slug>` jobs, provided the
+`check-ci-matrix-completeness` guard proves the CI job set is a superset
+of the aggregate (so no canonical slug is silently dropped from CI) and
+merges are gated on the whole matrix by a single all-green `ci-green`
+gate job. This matches the convention every other Python repo in the
+livespec fleet — including livespec core itself — actually follows.
 
 ### Motivation
 
@@ -42,18 +43,19 @@ The clause as written is contradicted by the entire fleet, making
   <target>` delegation in CI.
 
 The per-target matrix is a deliberate, load-bearing design, not drift:
-it buys granular branch-protection status checks, job-level
-parallelism, the second-checkout `check-doctor-static` job, and
-zero-`.py` subsetting for fast docs-only feedback. Forcing runtime's CI
-back to a single `just check` invocation to satisfy the current clause
-would sacrifice all four and make runtime diverge from every sibling.
+it buys job-level parallelism, per-job CI status visibility, the
+second-checkout `check-doctor-static` job, and zero-`.py` subsetting for
+fast docs-only feedback. Forcing runtime's CI back to a single `just
+check` invocation to satisfy the current clause would sacrifice all four
+and make runtime diverge from every sibling.
 
 The clause's *intent* — CI must enforce the same gates as local, with
-no silent drift — remains correct and is preserved: the completeness
-guard keeps the CI matrix from dropping a canonical slug, and
-broadening the matrix to the full canonical aggregate is tracked as
-dedicated fleet work (the CI-aggregate-coverage epic), not left
-implicit.
+no silent drift — remains correct and is preserved: the
+`check-ci-matrix-completeness` guard keeps the CI matrix from dropping a
+canonical slug and keeps the `ci-green` gate job covering every gating
+job, and broadening the matrix to the full canonical aggregate is
+tracked as dedicated fleet work (the CI-aggregate-coverage epic), not
+left implicit.
 
 This revision resolves gap `gap-rsfmjjzl` (work-item
 `livespec-runtime-woe5gi`) as spec-side drift correction rather than an
@@ -76,12 +78,17 @@ with:
 >   exit non-zero on any failure. Lefthook pre-push MUST invoke `just
 >   check` (the full aggregate). CI MAY run the aggregate as a
 >   per-target matrix of individual `just check-<slug>` jobs — for
->   granular branch-protection status checks, job-level parallelism, the
+>   job-level parallelism, per-job status visibility, the
 >   second-checkout `check-doctor-static` job, and zero-`.py` subsetting
 >   per livespec `SPECIFICATION/contracts.md` §"Pre-commit step
->   ordering" — provided a completeness guard
->   (`check-aggregate-completeness`) prevents the wired set from silently
->   dropping a canonical slug. CI MUST NOT hand-pick a subset that omits
->   a canonical slug the aggregate runs without that guard flagging the
+>   ordering" — provided the `check-ci-matrix-completeness` guard proves
+>   the CI job set is a superset of the aggregate (excluding the
+>   pre-push-only world-gate checks), so no canonical slug the aggregate
+>   runs is silently dropped from CI. Merges are gated on
+>   the whole matrix by a single all-green gate job (`ci-green`) that
+>   `needs:` every gating job, per livespec
+>   `SPECIFICATION/non-functional-requirements.md` §"CI as a merge gate
+>   (branch protection)"; CI MUST NOT hand-pick a subset that omits a
+>   canonical slug the aggregate runs without the guard flagging the
 >   omission. Broadening the CI matrix to cover the full canonical
 >   aggregate is tracked fleet-wide by the CI-aggregate-coverage epic.
