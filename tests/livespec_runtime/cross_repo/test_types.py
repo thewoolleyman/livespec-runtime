@@ -2,7 +2,7 @@
 
 Verifies the typed `DependsOnEntry` union (4 variants discriminated on
 `kind`), the `CrossRepoManifest` / `CrossRepoTarget` dataclasses, the
-`RefStatus` enum, and the dict-to-typed parser helpers.
+`RefStatus` values, and the dict-to-typed parser helpers.
 
 Schema reference: livespec/SPECIFICATION/contracts.md v072.
 """
@@ -35,7 +35,11 @@ def test_ref_status_values() -> None:
 
 
 def test_ref_status_membership() -> None:
-    assert {member.value for member in RefStatus} == {"open", "closed", "unknown"}
+    assert {RefStatus.OPEN.value, RefStatus.CLOSED.value, RefStatus.UNKNOWN.value} == {
+        "open",
+        "closed",
+        "unknown",
+    }
 
 
 def test_local_dependency_construction() -> None:
