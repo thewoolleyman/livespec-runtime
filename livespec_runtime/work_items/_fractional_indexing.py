@@ -1,6 +1,7 @@
 # ruff: noqa
 # type: ignore
 # fmt: off
+# @generated
 #
 # VERBATIM PORT — DO NOT EDIT (decision 38, G-1).
 #
