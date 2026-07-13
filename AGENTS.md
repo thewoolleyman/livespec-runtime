@@ -45,6 +45,36 @@ colon-qualified form `livespec-orchestrator-beads-fabro:orchestrate` is still
 valid for prompt / `codex exec` name selection and model-visible skill
 references, but it is not the picker row operators should expect.
 
+## Agent operating posture
+
+When the user gives a clear directive, carry the obvious next step through
+without re-asking. In particular, once a task asks for repo mutation, the
+worktree -> PR path below already answers "should I commit?", "should I push?",
+and "should I open the PR?". Keep confirmation gates for genuinely ambiguous
+scope choices and destructive or high-blast-radius actions not already
+authorized in the current task.
+
+For maintainer-owned livespec spec gates, do not materialize
+`SPECIFICATION/proposed_changes/` files on the maintainer's behalf unless the
+task explicitly asks for that operation. Prepare and validate the proposal
+payload instead: findings JSON, the human-readable spec delta, and the exact
+handoff command or next action for the maintainer to run through
+`livespec:propose-change` / `livespec:revise`.
+
+## Beads runtime operations
+
+This repo's live work-item state is the `livespec-runtime` beads/Dolt tenant on
+the shared dolt-server (`127.0.0.1:3307`). `.beads/config.yaml` carries only
+committable connection coordinates; the tenant password is injected at call time
+by `/usr/local/bin/with-livespec-env.sh`. Run `bd` and orchestrator operations
+that touch the real tenant under that wrapper. `LIVESPEC_BEADS_FAKE=1` is for
+hermetic tests and CI only, not for reading or writing the live tenant.
+
+If a tenant-level `bd` write emits an auto-backup warning that includes a Dolt
+backup permission denial for the tenant user, treat it as correct by design.
+Tenant users are not granted backup rights; host-managed backup jobs own real
+backups. Do not file work-items or attempt fixes for that warning alone.
+
 ## Repository mutation protocol
 
 Every repo change uses a worktree → PR → merge → cleanup path. Treat
