@@ -213,6 +213,7 @@ jobs:
           # livespec-core PR #1034 (same shared check modules).
           - check-claude-md-coverage
           - check-heading-coverage
+          - check-self-hosted-routing
           - check-vendor-manifest
           - check-no-direct-tool-invocation
           - check-tool-backed-check-completeness
