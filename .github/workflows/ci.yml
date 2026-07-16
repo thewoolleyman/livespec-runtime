@@ -256,6 +256,7 @@ jobs:
           - check-claude-md-coverage
           - check-heading-coverage
           - check-self-hosted-routing
+          - check-source-trees-scoped-to-consumer
           - check-vendor-manifest
           - check-no-direct-tool-invocation
           - check-tool-backed-check-completeness

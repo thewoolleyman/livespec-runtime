@@ -191,6 +191,7 @@ check:
         check-rop-pipeline-shape
         check-self-hosted-routing
         check-skill-invocation-paths
+        check-source-trees-scoped-to-consumer
         check-supervisor-discipline
         check-tests-mirror-pairing
         check-tests-no-subprocess-spawn
@@ -721,3 +722,6 @@ check-handoff-dispatch-routing:
 
 check-self-hosted-routing:
     uv run python -m livespec_dev_tooling.checks.self_hosted_routing
+
+check-source-trees-scoped-to-consumer:
+    uv run python -m livespec_dev_tooling.checks.source_trees_scoped_to_consumer
