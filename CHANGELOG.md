@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.10.0...v0.11.0) (2026-07-18)
+
+
+### Features
+
+* add factory safety attention kind coverage ([2c07540](https://github.com/thewoolleyman/livespec-runtime/commit/2c075405ca0c4b3f850808c2120acb6db35a2aff))
+
+
+### Bug Fixes
+
+* rename attention residue kind ([ee66ea5](https://github.com/thewoolleyman/livespec-runtime/commit/ee66ea57ff9b2e4c6ac511f3127cffda82e8d9e0))
+
 ## [0.10.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.9.2...v0.10.0) (2026-07-18)
 
 
