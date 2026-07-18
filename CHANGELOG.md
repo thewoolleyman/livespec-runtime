@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.9.2...v0.10.0) (2026-07-18)
+
+
+### Features
+
+* add factory safety work item coverage ([0274008](https://github.com/thewoolleyman/livespec-runtime/commit/0274008d2b2f9dd1930d23cdefeab21caf2c7252))
+
+
+### Bug Fixes
+
+* burn down phase1 mechanical check warnings ([b416ef8](https://github.com/thewoolleyman/livespec-runtime/commit/b416ef8cce472b348be112924bd2ac286327a16d))
+* **github:** NonCanonicalGithubUrlError catchable as domain type, not ValueError ([43e6645](https://github.com/thewoolleyman/livespec-runtime/commit/43e6645b958f62c0be241bb262f55bd798440da9))
+* preserve github url error catchability ([2225526](https://github.com/thewoolleyman/livespec-runtime/commit/22255267436783220bd82b324c47e7dff21eb3e1))
+* split hygiene scan file length ([802a5da](https://github.com/thewoolleyman/livespec-runtime/commit/802a5daff9f343be68460269d1c615c656fdf7bc))
+
 ## [0.9.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.9.1...v0.9.2) (2026-07-08)
 
 
