@@ -1,7 +1,10 @@
 """Tests for `livespec_runtime.attention_item`."""
 
+from typing import get_args
+
 import pytest
 
+from livespec_runtime import attention_item
 from livespec_runtime.attention_item import (
     AttentionItem,
     Handoff,
@@ -43,6 +46,18 @@ def test_attention_item_is_frozen() -> None:
         item.summary = "other"  # type: ignore[misc]
 
 
+def test_attention_kind_carries_factory_safety_residue_kind() -> None:
+    assert set(get_args(attention_item.AttentionKind)) == {
+        "human-valve",
+        "impl",
+        "spec",
+        "plan",
+        "hygiene",
+        "internal",
+        "factory-safety",
+    }
+
+
 def test_validate_attention_item_id_accepts_stable_natural_keys() -> None:
     valid_ids = (
         "valve:approve:li-abc123",
@@ -50,6 +65,7 @@ def test_validate_attention_item_id_accepts_stable_natural_keys() -> None:
         "hygiene:stale-branch:refs/heads/feat-x",
         "plan:needs-attention",
         "spec:next:SPECIFICATION/contracts.md",
+        "factory-safety:needs-host-secrets:li-abc123",
     )
 
     assert all(validate_attention_item_id(id=value) for value in valid_ids)
@@ -66,6 +82,8 @@ def test_validate_attention_item_id_rejects_positional_or_malformed_keys() -> No
         "internal:li-abc123",
         "spec::SPECIFICATION/contracts.md",
         "hygiene:type:",
+        "factory-safety:needs-host-secrets:0",
+        "factory-safety:type:",
     )
 
     assert not any(validate_attention_item_id(id=value) for value in invalid_ids)
