@@ -20,7 +20,7 @@ AttentionKind = Literal[
     "plan",
     "hygiene",
     "internal",
-    "factory-safety",
+    "host-only",
 ]
 AttentionUrgency = Literal["high", "medium", "low"]
 HandoffKind = Literal["drive", "livespec-op", "plan", "shell"]
@@ -28,7 +28,7 @@ HandoffKind = Literal["drive", "livespec-op", "plan", "shell"]
 _TWO_PART_COUNT = 2
 _THREE_PART_COUNT = 3
 _TWO_PART_PREFIXES = frozenset(("impl", "plan"))
-_THREE_PART_PREFIXES = frozenset(("factory-safety", "valve", "hygiene", "spec"))
+_THREE_PART_PREFIXES = frozenset(("host-only", "valve", "hygiene", "spec"))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
