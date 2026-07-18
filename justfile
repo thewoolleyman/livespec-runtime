@@ -277,7 +277,7 @@ check-coverage:
         uv run coverage report --fail-under=100
     else
         echo ":: check-coverage: no .coverage data file (CI standalone job); running the suite"
-        uv run pytest -n auto --cov --cov-branch --cov-config=pyproject.toml --cov-report=term-missing
+        uv run pytest -n 4 --cov --cov-branch --cov-config=pyproject.toml --cov-report=term-missing
     fi
 
 # livespec core's doctor STATIC phase (reference-discipline + out-of-band
@@ -528,7 +528,7 @@ check-pbt-coverage-pure-modules:
 check-per-file-coverage:
     #!/usr/bin/env bash
     set -uo pipefail
-    uv run pytest -n auto --cov --cov-branch --cov-config=pyproject.toml --cov-report=term-missing
+    uv run pytest -n 4 --cov --cov-branch --cov-config=pyproject.toml --cov-report=term-missing
     uv run python -m livespec_dev_tooling.checks.per_file_coverage
 
 # Baseline harness plugin-resolution Verifier: asserts each declared
