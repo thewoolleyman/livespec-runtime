@@ -104,7 +104,7 @@ dev = [
 # below + the `tests/heading-coverage.json` scenario entries land in
 # the same PR, work-item li-scetrn).
 [tool.uv.sources]
-livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git", tag = "v0.49.4" }
+livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git", tag = "v0.50.0" }
 
 # Consumer-declared layout config consumed by the shared
 # livespec-dev-tooling checks (per livespec-dev-tooling
