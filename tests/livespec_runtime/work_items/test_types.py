@@ -1,13 +1,14 @@
 """Tests for `livespec_runtime.work_items.types`.
 
-Verifies the unified `WorkItem` model (the 22-field shape codified by
+Verifies the unified `WorkItem` model (the 24-field shape codified by
 this repo's own `### livespec_runtime.work_items.types`), the
 `AuditRecord` sub-object, the schema enums/aliases (the 7-state
 `WorkItemStatus`, the `AdmissionPolicy` / `AcceptancePolicy` /
-`StoredBlockedReason` / `FactorySafety` aliases), the optional-on-read defaults
+`StoredBlockedReason` / `FactorySafety` / `ReviewRequirement` aliases), the
+optional-on-read defaults
 (`spec_commitment_hint`, `acceptance_criteria`, `notes`, `supersedes`,
 `admission_policy`, `acceptance_policy`, `blocked_reason`,
-`factory_safety`), the
+`factory_safety`, `review_requirement`), the
 required `rank` ordering key, and frozenness.
 
 Schema reference: this repo's own `SPECIFICATION/contracts.md`
@@ -24,7 +25,7 @@ from livespec_runtime.work_items.types import AuditRecord, WorkItem
 
 __all__: list[str] = []
 
-# The ratified 22-field order (required block, then optional-on-read
+# The ratified 24-field order (required block, then optional-on-read
 # block), per `### livespec_runtime.work_items.types`.
 _EXPECTED_FIELD_ORDER: tuple[str, ...] = (
     "id",
@@ -50,12 +51,18 @@ _EXPECTED_FIELD_ORDER: tuple[str, ...] = (
     "acceptance_policy",
     "blocked_reason",
     "factory_safety",
+    "review_requirement",
 )
 
 _FACTORY_SAFETY_REASONS: tuple[str | None, ...] = (
     "needs-host-secrets",
     "mutates-host-machinery",
     "needs-privileged-host",
+    None,
+)
+
+_REVIEW_REQUIREMENTS: tuple[str | None, ...] = (
+    "human-before-merge",
     None,
 )
 
@@ -140,6 +147,11 @@ def test_work_item_factory_safety_defaults_to_none() -> None:
     assert item.factory_safety is None
 
 
+def test_work_item_review_requirement_defaults_to_none() -> None:
+    item = _work_item()
+    assert item.review_requirement is None
+
+
 def test_work_item_supersedes_carries_prior_identity() -> None:
     item = _work_item(supersedes="sha256:deadbeef")
     assert item.supersedes == "sha256:deadbeef"
@@ -177,6 +189,13 @@ def test_factory_safety_alias_carries_ratified_reasons() -> None:
     }
 
 
+def test_review_requirement_alias_carries_ratified_requirements() -> None:
+    assert "ReviewRequirement" in work_item_types.__all__
+    assert set(get_args(work_item_types.ReviewRequirement)) == {
+        "human-before-merge",
+    }
+
+
 @pytest.mark.parametrize("factory_safety", _FACTORY_SAFETY_REASONS)
 def test_work_item_round_trips_factory_safety(
     *,
@@ -188,6 +207,19 @@ def test_work_item_round_trips_factory_safety(
     round_tripped = WorkItem(**payload)
 
     assert round_tripped.factory_safety == factory_safety
+
+
+@pytest.mark.parametrize("review_requirement", _REVIEW_REQUIREMENTS)
+def test_work_item_round_trips_review_requirement(
+    *,
+    review_requirement: str | None,
+) -> None:
+    item = _work_item(review_requirement=review_requirement)
+    payload = asdict(item)
+
+    round_tripped = WorkItem(**payload)
+
+    assert round_tripped.review_requirement == review_requirement
 
 
 def test_work_item_accepts_each_lifecycle_status() -> None:
@@ -212,12 +244,12 @@ def test_work_item_active_carries_assignee() -> None:
     assert item.assignee == "agent-7"
 
 
-def test_work_item_has_twenty_three_schema_fields() -> None:
-    # The unified shape is the 23-field record: 15 required (including
-    # the `rank` ordering key, `priority` removed), then 8 optional-on-
+def test_work_item_has_twenty_four_schema_fields() -> None:
+    # The unified shape is the 24-field record: 15 required (including
+    # the `rank` ordering key, `priority` removed), then 9 optional-on-
     # read (spec_commitment_hint, acceptance_criteria, notes,
     # supersedes, admission_policy, acceptance_policy, blocked_reason,
-    # factory_safety).
+    # factory_safety, review_requirement).
     field_names = set(WorkItem.__dataclass_fields__)
     assert field_names == set(_EXPECTED_FIELD_ORDER)
     assert "priority" not in field_names
@@ -226,7 +258,7 @@ def test_work_item_has_twenty_three_schema_fields() -> None:
 
 def test_work_item_field_order_matches_contract() -> None:
     # The ratified `### livespec_runtime.work_items.types` pins the exact
-    # 23-field order (required block, then optional-on-read block).
+    # 24-field order (required block, then optional-on-read block).
     assert tuple(WorkItem.__dataclass_fields__) == _EXPECTED_FIELD_ORDER
 
 
