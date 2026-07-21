@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.11.0...v0.12.0) (2026-07-21)
+
+
+### Features
+
+* add work item review requirement schema tests ([bbf4980](https://github.com/thewoolleyman/livespec-runtime/commit/bbf49805a3814f10b0901568ad01cae0b6a574b2))
+
+
+### Bug Fixes
+
+* block readiness on an unresolved sibling work-item dependency ([8eff84b](https://github.com/thewoolleyman/livespec-runtime/commit/8eff84bf3b71141717c66d8dace041d23d7e7eda))
+
 ## [0.11.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.10.0...v0.11.0) (2026-07-18)
 
 
