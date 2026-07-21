@@ -12,7 +12,10 @@ Exercises the single lane authority:
 - `ready_sort_key` orders by `rank` then `id`;
 - the dependency-blocking predicate's fail-closed + status-mapping
   branches (open / done / missing / sibling-unknown / unparseable),
-  all resolved OFFLINE (local + manifest-absent deps only — no `gh`).
+  all resolved OFFLINE (local + sibling deps only — no `gh`). Note the
+  deliberate asymmetry the sibling cases pin: an UNRESOLVED (`UNKNOWN`)
+  sibling work-item dependency BLOCKS (fail-closed), while an
+  unresolved LOCAL dependency does NOT.
 
 Schema reference: this repo's own `SPECIFICATION/contracts.md`
 §`### livespec_runtime.work_items.lifecycle`.
@@ -20,7 +23,7 @@ Schema reference: this repo's own `SPECIFICATION/contracts.md`
 
 import pytest
 
-from livespec_runtime.cross_repo.types import CrossRepoManifest
+from livespec_runtime.cross_repo.types import CrossRepoManifest, CrossRepoTarget
 from livespec_runtime.work_items.lifecycle import (
     Lane,
     is_item_ready,
@@ -32,6 +35,18 @@ from livespec_runtime.work_items.types import WorkItem
 __all__: list[str] = []
 
 EMPTY_MANIFEST = CrossRepoManifest(targets={})
+
+# A manifest that DOES declare the sibling repo, so the sibling cases below
+# exercise the `repo in manifest.targets` arm of `_resolve_sibling_work_item`
+# (which still yields `UNKNOWN`, because no `sibling_status_lookup` exists at
+# this layer) rather than short-circuiting on an absent target.
+SIBLING_MANIFEST = CrossRepoManifest(
+    targets={
+        "livespec-dev-tooling": CrossRepoTarget(
+            github_url="https://github.com/thewoolleyman/livespec-dev-tooling",
+        )
+    }
+)
 
 
 def _item(**overrides: object) -> WorkItem:
@@ -135,6 +150,8 @@ def test_lane_of_ready_with_done_local_dep_is_ready() -> None:
 def test_lane_of_ready_with_missing_local_dep_is_ready_unknown_non_blocking() -> None:
     # A missing dependency id resolves to UNKNOWN, which does NOT block
     # (the doctor's orphan-dependency invariant is the right surface).
+    # This is the deliberate counterpart to the sibling fail-closed rule
+    # below: UNKNOWN blocks for a `sibling_work_item` entry ONLY.
     item = _item(id="li-a", status="ready", depends_on=("li-missing",))
     lane = lane_of(item=item, index={"li-a": item}, manifest=EMPTY_MANIFEST)
     assert lane == Lane(name="ready", reason=None)
@@ -152,17 +169,57 @@ def test_lane_of_ready_with_typed_dict_local_dep_open_is_blocked_dependency() ->
     assert lane == Lane(name="blocked", reason="dependency")
 
 
-def test_lane_of_ready_with_sibling_dep_is_ready_unknown_non_blocking() -> None:
-    # A sibling work-item dep whose repo is absent from the manifest
-    # resolves to UNKNOWN (no runtime→beads back-edge, no network) and
-    # therefore does NOT block.
+def test_lane_of_ready_with_sibling_dep_unknown_is_blocked_dependency() -> None:
+    # A sibling work-item dep resolves to UNKNOWN at this layer (no
+    # runtime→beads back-edge, no network, no `sibling_status_lookup`).
+    # An UNRESOLVED cross-repo blocker must FAIL CLOSED: a well-formed
+    # sibling entry must never be treated as LESS blocking than a
+    # malformed one, or a candidate whose cross-repo blocker is still
+    # open is dispatched anyway.
+    item = _item(
+        id="li-a",
+        status="ready",
+        depends_on=(
+            {
+                "kind": "sibling_work_item",
+                "repo": "livespec-dev-tooling",
+                "work_item_id": "x-1",
+            },
+        ),
+    )
+    lane = lane_of(item=item, index={"li-a": item}, manifest=SIBLING_MANIFEST)
+    assert lane == Lane(name="blocked", reason="dependency")
+
+
+def test_lane_of_ready_with_sibling_dep_absent_from_manifest_is_blocked_dependency() -> None:
+    # Same fail-closed rule on the other `_resolve_sibling_work_item`
+    # arm: a repo absent from the manifest is equally unresolved, so it
+    # equally blocks.
     item = _item(
         id="li-a",
         status="ready",
         depends_on=({"kind": "sibling_work_item", "repo": "other", "work_item_id": "x-1"},),
     )
     lane = lane_of(item=item, index={"li-a": item}, manifest=EMPTY_MANIFEST)
-    assert lane == Lane(name="ready", reason=None)
+    assert lane == Lane(name="blocked", reason="dependency")
+
+
+def test_is_item_ready_false_for_ready_with_unresolved_sibling_dep() -> None:
+    # The readiness gate the dispatcher consults agrees with the lane:
+    # an unresolved sibling dependency makes the item NOT a dispatch
+    # candidate.
+    item = _item(
+        id="li-a",
+        status="ready",
+        depends_on=(
+            {
+                "kind": "sibling_work_item",
+                "repo": "livespec-dev-tooling",
+                "work_item_id": "x-1",
+            },
+        ),
+    )
+    assert is_item_ready(item=item, index={"li-a": item}, manifest=SIBLING_MANIFEST) is False
 
 
 def test_lane_of_ready_with_malformed_typed_dep_is_blocked_dependency() -> None:
