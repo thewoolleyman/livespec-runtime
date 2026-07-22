@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.12.0...v0.13.0) (2026-07-22)
+
+
+### Features
+
+* resolve CLOSED sibling_work_item deps as satisfied via injected lookup ([c91bc1d](https://github.com/thewoolleyman/livespec-runtime/commit/c91bc1de3811771b40b35c120ca8e1ce5867c9f8))
+
 ## [0.12.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.11.0...v0.12.0) (2026-07-21)
 
 
