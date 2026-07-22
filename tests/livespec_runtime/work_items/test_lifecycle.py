@@ -23,7 +23,7 @@ Schema reference: this repo's own `SPECIFICATION/contracts.md`
 
 import pytest
 
-from livespec_runtime.cross_repo.types import CrossRepoManifest, CrossRepoTarget
+from livespec_runtime.cross_repo.types import CrossRepoManifest, CrossRepoTarget, RefStatus
 from livespec_runtime.work_items.lifecycle import (
     Lane,
     is_item_ready,
@@ -220,6 +220,65 @@ def test_is_item_ready_false_for_ready_with_unresolved_sibling_dep() -> None:
         ),
     )
     assert is_item_ready(item=item, index={"li-a": item}, manifest=SIBLING_MANIFEST) is False
+
+
+# ---------------------------------------------------------------------------
+# Scenario: a `sibling_status_lookup` IS injected (the orchestrator's job).
+# Clause 2 of bd-ib-qiqz6b: a genuinely-CLOSED sibling is SATISFIED (does not
+# over-block), while an OPEN sibling still blocks — now by a real resolution
+# rather than the fail-closed UNKNOWN default. The lookup is called
+# positionally as `(repo, work_item_id)`, matching `resolve_ref`.
+# ---------------------------------------------------------------------------
+
+
+def _closed_sibling_lookup(_repo: str, _work_item_id: str) -> RefStatus:
+    return RefStatus.CLOSED
+
+
+def _open_sibling_lookup(_repo: str, _work_item_id: str) -> RefStatus:
+    return RefStatus.OPEN
+
+
+_SIBLING_DEP_ITEM = {
+    "kind": "sibling_work_item",
+    "repo": "livespec-dev-tooling",
+    "work_item_id": "x-1",
+}
+
+
+def test_lane_of_ready_with_closed_sibling_via_lookup_is_ready() -> None:
+    item = _item(id="li-a", status="ready", depends_on=(_SIBLING_DEP_ITEM,))
+    lane = lane_of(
+        item=item,
+        index={"li-a": item},
+        manifest=SIBLING_MANIFEST,
+        sibling_status_lookup=_closed_sibling_lookup,
+    )
+    assert lane == Lane(name="ready", reason=None)
+
+
+def test_lane_of_ready_with_open_sibling_via_lookup_is_blocked_dependency() -> None:
+    item = _item(id="li-a", status="ready", depends_on=(_SIBLING_DEP_ITEM,))
+    lane = lane_of(
+        item=item,
+        index={"li-a": item},
+        manifest=SIBLING_MANIFEST,
+        sibling_status_lookup=_open_sibling_lookup,
+    )
+    assert lane == Lane(name="blocked", reason="dependency")
+
+
+def test_is_item_ready_true_for_ready_with_closed_sibling_via_lookup() -> None:
+    item = _item(id="li-a", status="ready", depends_on=(_SIBLING_DEP_ITEM,))
+    assert (
+        is_item_ready(
+            item=item,
+            index={"li-a": item},
+            manifest=SIBLING_MANIFEST,
+            sibling_status_lookup=_closed_sibling_lookup,
+        )
+        is True
+    )
 
 
 def test_lane_of_ready_with_malformed_typed_dep_is_blocked_dependency() -> None:
