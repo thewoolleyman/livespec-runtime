@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.13.0...v0.13.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* route growing jq inputs to stdin in the CI telemetry export ([8aa5137](https://github.com/thewoolleyman/livespec-runtime/commit/8aa5137ae55ff0a850c2be6a4413440ced0c9343))
+
 ## [0.13.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.12.0...v0.13.0) (2026-07-22)
 
 
