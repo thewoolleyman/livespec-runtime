@@ -131,6 +131,32 @@ livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-to
 file_lloc_hard_gate = true
 scenario_tiers = ["tests.consumer", "tests.e2e"]
 
+# e9j Wave-1 B-rt (role-key declaration). `source_trees` arms the ROP checks
+# (`no_except_outside_io`, `no_raise_outside_io`) over `livespec_runtime` for
+# the first time. `io_trees` covers the `cross_repo` resolution substrate: the
+# broad `except` in `cross_repo/retry.py` is SPEC-SANCTIONED — this repo's
+# SPECIFICATION/constraints.md §"Provider constraints" requires provider domain
+# errors to be `ValueError` subclasses "so the retry layer's broad catch still
+# works", and §"Resolution-substrate constraints" mandates degrade-to-`UNKNOWN`.
+# So the catch is exempted as the I/O seam it is, NOT narrowed (narrowing would
+# break that ratified contract). The remaining roles are declared explicitly
+# empty: runtime is a flat consumer with no separate command/pure/dataclasses/
+# covered trees, installs no neutral shared hook body, and adopts neither the
+# per-directory-CLAUDE.md (`target_dirs`) nor tests-mirror-pairing
+# (`source_tree_prefixes`) conventions (declaring real values there would redden
+# `claude_md_coverage` / `tests_mirror_pairing`, structural conventions this
+# repo has not adopted).
+source_trees = ["livespec_runtime"]
+io_trees = ["livespec_runtime/cross_repo"]
+commands_trees = []
+supervisor_entry_files = []
+dataclasses_tree = ""
+pure_trees = []
+covered_trees = []
+source_tree_prefixes = []
+target_dirs = []
+neutral_hook_body_path = ""
+
 # ---------------------------------------------------------------------------
 # Ruff — sole linter, formatter, import-sorter, complexity checker.
 # Rule set mirrors livespec/pyproject.toml [tool.ruff] per
@@ -140,7 +166,7 @@ scenario_tiers = ["tests.consumer", "tests.e2e"]
 [tool.ruff]
 target-version = "py310"
 line-length = 100
-extend-exclude = [".claude/hooks/**", "**/_vendor/**", "**/__pycache__/**", "mutants/**", "livespec_runtime/work_items/_fractional_indexing.py"]
+extend-exclude = [".claude/hooks/**", "**/_vendor/**", "**/__pycache__/**", "mutants/**"]
 
 [tool.ruff.lint]
 # 27 categories: v011 baseline (11) + v012 additions (16). Per
@@ -175,6 +201,8 @@ select = [
     "ISC",   # flake8-implicit-str-concat — complements pyright
     "T20",   # flake8-print — bans print/pprint
     "S",     # flake8-bandit — security anti-patterns
+    "BLE",   # flake8-blind-except — the ruff-side breadth backstop the armed
+             # no_except_outside_io check requires over every inspected file
 ]
 ignore = [
     "ISC001",  # implicit-str-concat on one line; conflicts with the formatter
@@ -210,6 +238,13 @@ ban-relative-imports = "all"
 # with fixed argv lists per the providers.github contract; S603/S607/S404
 # are over-strict for this documented pattern.
 "livespec_runtime/cross_repo/**.py" = ["S603", "S607", "S404"]
+# retry.py's broad `except Exception` is the spec-sanctioned I/O/retry-seam
+# catch (SPECIFICATION/constraints.md §"Provider constraints": domain errors are
+# ValueError subclasses "so the retry layer's broad catch still works"). io_trees
+# exempts it from no_except_outside_io (position); this ignores the paired ruff
+# BLE001 (breadth) for the same one sanctioned catch — scoped to retry.py so a
+# future broad catch elsewhere in cross_repo still surfaces.
+"livespec_runtime/cross_repo/retry.py" = ["BLE001"]
 # The github_auth signer shells out to `openssl` via subprocess.run with a
 # fixed argv list (the RS256 production signer); same documented pattern as
 # cross_repo above.
@@ -276,9 +311,12 @@ omit = [
     "mutants/*",
     # Verbatim CC0 third-party port (decision 38, G-1) — carried
     # source-only in the first-party tree (no `_vendor/` machinery in
-    # livespec_runtime), excluded from the lint/type/coverage gates like
-    # any vendored code. Exercised through the `rank.py` wrapper, which
-    # IS covered.
+    # livespec_runtime), excluded from the type/coverage gates like any
+    # vendored code. Exercised through the `rank.py` wrapper, which IS
+    # covered. NOTE: it is NO LONGER ruff-excluded (e9j Wave-1 B-rt) — the
+    # armed `no_except_outside_io` requires ruff BLE coverage over every
+    # file it inspects, and this port is already ruff-clean, so it is
+    # lint-included while staying type/coverage-excluded.
     "*/work_items/_fractional_indexing.py",
 ]
 
