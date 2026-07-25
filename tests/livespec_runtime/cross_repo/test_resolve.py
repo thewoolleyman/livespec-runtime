@@ -14,6 +14,7 @@ retry-exhaustion tests so they don't burn real wall-clock backoff.
 Schema reference: livespec/SPECIFICATION/contracts.md v072.
 """
 
+import subprocess
 import time
 from typing import Any
 
@@ -44,8 +45,11 @@ _MANIFEST = CrossRepoManifest(
 )
 
 
-def _raise_runtime_error(*_args: Any, **_kwargs: Any) -> Any:
-    raise RuntimeError("simulated gh failure")
+def _raise_transient_gh_failure(*_args: Any, **_kwargs: Any) -> Any:
+    # A transient transport failure the retry layer catches and degrades to
+    # `None` (→ `RefStatus.UNKNOWN`) after exhaustion — the graceful path a
+    # `gh` non-zero exit takes. A bug-class exception would instead propagate.
+    raise subprocess.CalledProcessError(returncode=1, cmd=["gh"])
 
 
 def test_local_dependency_delegates_to_lookup() -> None:
@@ -134,7 +138,7 @@ def test_pull_request_retry_exhaustion_returns_unknown(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(time, "sleep", lambda _seconds: None)
-    monkeypatch.setattr(gh_provider, "query_pull_request_state", _raise_runtime_error)
+    monkeypatch.setattr(gh_provider, "query_pull_request_state", _raise_transient_gh_failure)
     entry = PullRequestDependency(repo="livespec", number=42)
     status = resolve_ref(
         entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN
@@ -183,7 +187,7 @@ def test_branch_exists_check_retry_exhausted_returns_unknown(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(time, "sleep", lambda _seconds: None)
-    monkeypatch.setattr(gh_provider, "branch_exists_on_remote", _raise_runtime_error)
+    monkeypatch.setattr(gh_provider, "branch_exists_on_remote", _raise_transient_gh_failure)
     entry = BranchDependency(repo="livespec", name="feat/foo")
     status = resolve_ref(
         entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN
@@ -196,7 +200,7 @@ def test_branch_merged_check_retry_exhausted_returns_unknown(
 ) -> None:
     monkeypatch.setattr(time, "sleep", lambda _seconds: None)
     monkeypatch.setattr(gh_provider, "branch_exists_on_remote", lambda **_kwargs: True)
-    monkeypatch.setattr(gh_provider, "branch_merged_into_default", _raise_runtime_error)
+    monkeypatch.setattr(gh_provider, "branch_merged_into_default", _raise_transient_gh_failure)
     entry = BranchDependency(repo="livespec", name="feat/foo")
     status = resolve_ref(
         entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN

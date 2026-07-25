@@ -292,11 +292,12 @@ def test_non_canonical_github_url_raises_for_branch_provider() -> None:
     §`livespec_runtime.cross_repo.providers.github`) with a
     non-canonical (ssh) github_url gets `NonCanonicalGithubUrlError`
     carrying the offending url verbatim, raised at the owner/name split
-    BEFORE any `gh` shell-out. (This typed error surfaces only when the
-    provider is called directly; behind the `resolve_ref` retry layer
-    it degrades to `RefStatus.UNKNOWN`, which is the
-    "tolerate-partial-visibility" contract, so the scenario is observed
-    here at the provider boundary the Gherkin names.)
+    BEFORE any `gh` shell-out. This typed error is a user-configuration
+    fault surfaced as a typed exception: the narrowed `resolve_ref` retry
+    layer catches only transient transport/environment failures, so a
+    malformed `github_url` PROPAGATES through `resolve_ref` rather than
+    degrading to `RefStatus.UNKNOWN` — the scenario is observed here at
+    the provider boundary the Gherkin names, where the error is raised.
     """
     offending = "git@github.com:thewoolleyman/livespec.git"
     with pytest.raises(NonCanonicalGithubUrlError) as excinfo:

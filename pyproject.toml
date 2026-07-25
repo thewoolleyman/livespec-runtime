@@ -132,6 +132,48 @@ file_lloc_hard_gate = true
 scenario_tiers = ["tests.consumer", "tests.e2e"]
 
 # ---------------------------------------------------------------------------
+# Structural role keys (livespec-dev-tooling "Consumer configuration schema").
+# Declared EXPLICITLY and in FULL so every source_trees-family check has a
+# defined answer for this consumer rather than an implicit default. Declaring
+# `source_trees` ARMS the ROP checks (`no_except_outside_io` /
+# `no_raise_outside_io`) on this repo for the first time, and flips the
+# git-derived structural checks from Phase-0 WARN to the hard gate for files
+# under it. livespec-runtime is a FLAT-layout library (package
+# `livespec_runtime/`, tests under `tests/`) carrying none of the specialized
+# sub-trees the heavier consumers declare, so every other role takes the
+# declared-none value — `[]` for lists, `""` for scalars (parsed as None by
+# livespec-dev-tooling >= v0.54.8; this repo pins v0.54.11) — with the reason
+# recorded inline. (epic livespec-dev-tooling-e9j, backfill mirror B-rt.)
+# ---------------------------------------------------------------------------
+# The one first-party package tree; arms the ROP + structural checks.
+source_trees = ["livespec_runtime"]
+# No wholesale IO-exemption subtree: the cross-repo subprocess seam
+# (cross_repo/providers/github.py) catches narrowly at the call site rather
+# than living under an `io/` tree, so nothing is exempted wholesale.
+io_trees = []
+# No command-surface subtree (this library exposes no `/livespec:*` commands).
+commands_trees = []
+# No supervisor-boundary broad catch to exempt: the only `main()` carrying a
+# catch (github_auth/credential_helper.py) catches the narrow domain
+# `GithubAppAuthError`, not `Exception`/`BaseException`.
+supervisor_entry_files = []
+# Dataclasses are colocated with their modules; no dedicated schema subtree.
+dataclasses_tree = ""
+# No pure-module subtree carved out for the mutation/PBT/public-API gates yet
+# (gated on livespec-mutreal.1).
+pure_trees = []
+# Coverage/size checks derive this repo's first-party universe from git.
+covered_trees = []
+# No prefix-driven source<->test mirror / coverage-incremental convention
+# declared: the package's source<->test mirror is not yet complete, so the
+# prefix-driven mirror and coverage-incremental checks stay no-op here.
+source_tree_prefixes = []
+# No per-directory CLAUDE.md convention in the package tree.
+target_dirs = []
+# Installs no neutral (shadow-ledger) hook body.
+neutral_hook_body_path = ""
+
+# ---------------------------------------------------------------------------
 # Ruff — sole linter, formatter, import-sorter, complexity checker.
 # Rule set mirrors livespec/pyproject.toml [tool.ruff] per
 # livespec/SPECIFICATION/non-functional-requirements.md §"Linter rule set".
@@ -140,10 +182,10 @@ scenario_tiers = ["tests.consumer", "tests.e2e"]
 [tool.ruff]
 target-version = "py310"
 line-length = 100
-extend-exclude = [".claude/hooks/**", "**/_vendor/**", "**/__pycache__/**", "mutants/**", "livespec_runtime/work_items/_fractional_indexing.py"]
+extend-exclude = [".claude/hooks/**", "**/_vendor/**", "**/__pycache__/**", "mutants/**"]
 
 [tool.ruff.lint]
-# 27 categories: v011 baseline (11) + v012 additions (16). Per
+# 28 categories: v011 baseline (11) + v012 additions (16) + BLE (1). Per
 # livespec/SPECIFICATION/non-functional-requirements.md §"Linter rule set".
 select = [
     # ----- v011 baseline (11 categories) -----
@@ -175,6 +217,11 @@ select = [
     "ISC",   # flake8-implicit-str-concat — complements pyright
     "T20",   # flake8-print — bans print/pprint
     "S",     # flake8-bandit — security anti-patterns
+    # ----- ROP-arming addition (epic livespec-dev-tooling-e9j, mirror B-rt) -----
+    "BLE",   # flake8-blind-except — the mechanical BLE001 catch-breadth backstop
+             # the armed `no_except_outside_io` check REQUIRES over every
+             # inspected source file (it polices catch POSITION and errors when
+             # a source file lacks the BLE001 breadth backstop).
 ]
 ignore = [
     "ISC001",  # implicit-str-concat on one line; conflicts with the formatter
@@ -223,7 +270,7 @@ ban-relative-imports = "all"
 
 [tool.pyright]
 include = ["livespec_runtime"]
-exclude = ["**/_vendor/**", "**/__pycache__/**", "livespec_runtime/work_items/_fractional_indexing.py"]
+exclude = ["**/_vendor/**", "**/__pycache__/**"]
 pythonVersion = "3.10"
 typeCheckingMode = "strict"
 
@@ -274,12 +321,10 @@ omit = [
     "/tmp/*",
     "/private/var/folders/*",
     "mutants/*",
-    # Verbatim CC0 third-party port (decision 38, G-1) — carried
-    # source-only in the first-party tree (no `_vendor/` machinery in
-    # livespec_runtime), excluded from the lint/type/coverage gates like
-    # any vendored code. Exercised through the `rank.py` wrapper, which
-    # IS covered.
-    "*/work_items/_fractional_indexing.py",
+    # The verbatim CC0 third-party port (decision 38, G-1) now lives under
+    # `livespec_runtime/work_items/_vendor/`, so the `*/_vendor/*` entry above
+    # already omits it from coverage (as it does every vendored file);
+    # exercised through the `rank.py` wrapper, which IS covered.
 ]
 
 [tool.coverage.report]

@@ -25,7 +25,7 @@ keyword-only and free of the ported module's positional, base-parameter
 signature.
 """
 
-from livespec_runtime.work_items._fractional_indexing import (
+from livespec_runtime.work_items._vendor._fractional_indexing import (
     generate_key_between,
     generate_n_keys_between,
 )

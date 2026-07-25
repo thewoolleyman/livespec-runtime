@@ -12,7 +12,7 @@ verbatim).
 
 import pytest
 
-from livespec_runtime.work_items._fractional_indexing import (
+from livespec_runtime.work_items._vendor._fractional_indexing import (
     FIError,
     generate_key_between,
     generate_n_keys_between,
