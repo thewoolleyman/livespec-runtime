@@ -108,9 +108,16 @@ livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-to
 
 # Consumer-declared layout config consumed by the shared
 # livespec-dev-tooling checks (per livespec-dev-tooling
-# SPECIFICATION/contracts.md §"Consumer configuration schema"). Only
-# the keys runtime's layout actually needs are declared; omitted role
-# keys make the corresponding check no-op against this consumer.
+# SPECIFICATION/contracts.md §"Consumer configuration schema"). EVERY role
+# key MUST be DECLARED, and all ten are declared below. An undeclared key
+# that a wired check consumes is a hard ERROR naming the key and the two
+# sanctioned outs — declare its real value, or declare it explicitly empty
+# (`[]` for list keys, `""` for the scalar `dataclasses_tree` /
+# `neutral_hook_body_path`) with a comment giving the reason.
+# Declared-empty is the sanctioned, VISIBLE opt-out: the gating check
+# no-ops and says so in a structured `info` event. Omission is NOT that
+# opt-out — selective declaration was the PRE-v0.54.12 regime, retired by
+# livespec-dev-tooling epic livespec-dev-tooling-e9j slice L.
 #
 # `scenario_tiers` is the node-id-prefix allowlist the `heading_coverage`
 # check (v0.9.0+) accepts as integration-tier-or-above for
