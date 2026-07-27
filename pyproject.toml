@@ -153,8 +153,21 @@ scenario_tiers = ["tests.consumer", "tests.e2e"]
 # (`source_tree_prefixes`) conventions (declaring real values there would redden
 # `claude_md_coverage` / `tests_mirror_pairing`, structural conventions this
 # repo has not adopted).
+#
+# `.claude/hooks` joined `io_trees` on 2026-07-27 (`livespec-runtime-9uo`, child
+# of the fleet epic `livespec-dev-tooling-hev1`) for a DIFFERENT reason than
+# `cross_repo`, and the two should not be read as one. `cross_repo` is exempted
+# because a ratified spec constraint requires its broad catch. `.claude/hooks`
+# is exempted because hook scripts are fail-open boundary code whose blind
+# catches and direct prints are the contract, not a smell — the same fact the
+# ruff `extend-exclude` below already records. The tree sits outside
+# `source_trees`, so the railway checks do not reach it today; they will once
+# `livespec-dev-tooling-i532` derives their universe from the git index, and the
+# blind `except Exception` in `livespec_footgun_guard.py` would then be reported
+# as an offense. Declaring the role now is what keeps this repo green through
+# that migration.
 source_trees = ["livespec_runtime"]
-io_trees = ["livespec_runtime/cross_repo"]
+io_trees = ["livespec_runtime/cross_repo", ".claude/hooks"]
 commands_trees = []
 supervisor_entry_files = []
 dataclasses_tree = ""
