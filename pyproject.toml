@@ -110,14 +110,29 @@ livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-to
 # livespec-dev-tooling checks (per livespec-dev-tooling
 # SPECIFICATION/contracts.md §"Consumer configuration schema"). EVERY role
 # key MUST be DECLARED, and all ten are declared below. An undeclared key
-# that a wired check consumes is a hard ERROR naming the key and the two
-# sanctioned outs — declare its real value, or declare it explicitly empty
-# (`[]` for list keys, `""` for the scalar `dataclasses_tree` /
-# `neutral_hook_body_path`) with a comment giving the reason.
-# Declared-empty is the sanctioned, VISIBLE opt-out: the gating check
-# no-ops and says so in a structured `info` event. Omission is NOT that
-# opt-out — selective declaration was the PRE-v0.54.12 regime, retired by
-# livespec-dev-tooling epic livespec-dev-tooling-e9j slice L.
+# that a wired check consumes is a hard ERROR naming the key and its legal
+# spellings. Omission is NOT an opt-out — selective declaration was the
+# PRE-v0.54.12 regime, retired by livespec-dev-tooling epic
+# livespec-dev-tooling-e9j slice L.
+#
+# HOW A ROLE THIS REPO LACKS IS DECLARED (livespec-dev-tooling-8o8e.1). The
+# five UNION keys — `pure_trees`, `target_dirs`, `source_tree_prefixes`,
+# `dataclasses_tree`, `neutral_hook_body_path` — are the ones whose value IS
+# a check's scan universe, so an empty value made that check scan NOTHING
+# and exit 0. `[]` / `""` there meant two incompatible things at once, and
+# this repo is the proof: emptying `source_tree_prefixes` to decline the
+# tests-mirror convention ALSO silently disarmed the commit-time TDD pairing
+# gate, which no comment here ever mentioned. Each of the five now carries a
+# real value or exactly ONE blessed variant (`not_applicable`,
+# `superseded_by`, `unarmed_until`, `convention_not_adopted`), with its
+# reason in the PARSED VALUE rather than in a comment no checker can read. A
+# bare `[]` / `""` on those five parses to `LegacyAmbiguousEmpty` and WARNs
+# today, and becomes a hard `ConfigParseError` once the fleet has migrated.
+#
+# Every OTHER role key keeps a bare `[]` as a LEGITIMATE spelling. Those are
+# exemption / severity predicates whose consuming checks derive the universe
+# from `resolve_check_universe()`, so an empty value makes them STRICTER
+# rather than blinder.
 #
 # `scenario_tiers` is the node-id-prefix allowlist the `heading_coverage`
 # check (v0.9.0+) accepts as integration-tier-or-above for
@@ -146,13 +161,15 @@ scenario_tiers = ["tests.consumer", "tests.e2e"]
 # errors to be `ValueError` subclasses "so the retry layer's broad catch still
 # works", and §"Resolution-substrate constraints" mandates degrade-to-`UNKNOWN`.
 # So the catch is exempted as the I/O seam it is, NOT narrowed (narrowing would
-# break that ratified contract). The remaining roles are declared explicitly
-# empty: runtime is a flat consumer with no separate command/pure/dataclasses/
-# covered trees, installs no neutral shared hook body, and adopts neither the
-# per-directory-CLAUDE.md (`target_dirs`) nor tests-mirror-pairing
-# (`source_tree_prefixes`) conventions (declaring real values there would redden
-# `claude_md_coverage` / `tests_mirror_pairing`, structural conventions this
-# repo has not adopted).
+# break that ratified contract). The remaining roles declare their absence
+# EXPLICITLY below, and — since `8o8e.1` — they say WHICH KIND of absence
+# rather than sharing one indistinguishable `[]`. Runtime is a flat consumer
+# with no separate command/pure/dataclasses/covered trees and installs no
+# neutral shared hook body (`not_applicable`); it separately adopts neither the
+# per-directory-CLAUDE.md (`target_dirs`) nor the tests-mirror-pairing
+# (`source_tree_prefixes`) convention, because declaring real values there would
+# redden `claude_md_coverage` / `tests_mirror_pairing` (`convention_not_adopted`).
+# Those are two different statements and they now parse to two different types.
 source_trees = ["livespec_runtime"]
 io_trees = ["livespec_runtime/cross_repo"]
 commands_trees = []
@@ -165,12 +182,24 @@ commands_trees = []
 # clause forecloses exempting a hook tree wholesale ("There is NO 'thin repo'
 # exemption").
 supervisor_entry_files = [".claude/hooks/livespec_footgun_guard.py"]
-dataclasses_tree = ""
-pure_trees = []
+# NOT APPLICABLE — runtime is a flat consumer with no separate dataclasses/schema
+# or pure parse/validate subtree, and it installs no neutral shared hook body.
+# The concept does not exist here; there is nothing for these gates to scan.
+dataclasses_tree = { not_applicable = "flat consumer with no separate dataclasses/schema tree" }
+pure_trees = { not_applicable = "flat consumer with no separate pure parse/validate tree" }
+neutral_hook_body_path = { not_applicable = "runtime is not a Driver and installs no neutral shared hook body" }
+# CONVENTION NOT ADOPTED — materially different from not-applicable, and the
+# distinction is why the union has four spellings. Both concepts DO apply to a
+# repo shaped like this one; declaring real values would arm `claude_md_coverage`
+# and `tests_mirror_pairing`, two structural conventions this repo has
+# deliberately not adopted. Saying `not_applicable` here would be a lie that
+# reads tidier.
+target_dirs = { convention_not_adopted = "per-directory-CLAUDE.md convention not adopted; real values would redden claude_md_coverage" }
+source_tree_prefixes = { convention_not_adopted = "tests-mirror-pairing convention not adopted; real values would redden tests_mirror_pairing" }
+# `covered_trees` stays a bare `[]`, and that is CORRECT rather than an oversight:
+# it is an exemption/severity predicate whose consuming checks derive the universe
+# from `resolve_check_universe()`, so empty makes them STRICTER, never blinder.
 covered_trees = []
-source_tree_prefixes = []
-target_dirs = []
-neutral_hook_body_path = ""
 
 # ---------------------------------------------------------------------------
 # Ruff — sole linter, formatter, import-sorter, complexity checker.
