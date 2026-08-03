@@ -44,6 +44,21 @@ test_nprocs := if env_var_or_default("LIVESPEC_CI_LANE", "local") == "hosted" { 
 default:
     @just --list
 
+# Factory-sandbox guard: implementation branches must not carry workflow
+# changes. Maintainer-side workflow landings are handled outside Fabro.
+check-no-workflow-edits:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    base_ref="master"
+    if ! git rev-parse --verify --quiet "$base_ref" >/dev/null; then
+        base_ref="origin/master"
+    fi
+    if ! git diff --quiet "$base_ref"...HEAD -- .github/workflows/; then
+        echo "ERROR: factory branch modifies .github/workflows/:" >&2
+        git diff --name-status "$base_ref"...HEAD -- .github/workflows/ >&2
+        exit 1
+    fi
+
 # ---------------------------------------------------------------
 # First-time setup.
 # ---------------------------------------------------------------
