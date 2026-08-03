@@ -20,8 +20,10 @@ import sys
 from typing import Any
 
 import pytest
+from returns.io import IOResult, IOSuccess
 
 from livespec_runtime.github_auth.credential_helper import main, run
+from livespec_runtime.github_auth.errors import GithubAppAuthError
 from livespec_runtime.github_auth.mint import MintSeams
 
 __all__: list[str] = []
@@ -31,17 +33,17 @@ _ENVIRON = {"GITHUB_APP_ID": "123456", "GITHUB_PRIVATE_KEY": _PEM}
 
 
 def _seams() -> MintSeams:
-    def sign(*, signing_input: str, pem: str) -> bytes:
+    def sign(*, signing_input: str, pem: str) -> IOResult[bytes, GithubAppAuthError]:
         _ = signing_input, pem
-        return b"fake-signature"
+        return IOSuccess(b"fake-signature")
 
-    def http_get(*, url: str, jwt: str) -> Any:
+    def http_get(*, url: str, jwt: str) -> IOResult[Any, GithubAppAuthError]:
         _ = url, jwt
-        return [{"id": 7}]
+        return IOSuccess([{"id": 7}])
 
-    def http_post(*, url: str, jwt: str) -> Any:
+    def http_post(*, url: str, jwt: str) -> IOResult[Any, GithubAppAuthError]:
         _ = url, jwt
-        return {"token": "ghs_helper"}
+        return IOSuccess({"token": "ghs_helper"})
 
     return MintSeams(sign=sign, http_get=http_get, http_post=http_post)
 
