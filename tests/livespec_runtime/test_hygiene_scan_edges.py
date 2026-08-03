@@ -1,5 +1,6 @@
 """Edge-case tests for `livespec_runtime.hygiene_scan`."""
 
+from datetime import datetime, timezone
 from io import StringIO
 from pathlib import Path
 
@@ -120,6 +121,7 @@ def test_scan_hygiene_reports_detached_primary_and_skips_unsafe_worktrees() -> N
 
 
 def test_scan_hygiene_ignores_malformed_pr_payloads_and_keeps_stale_defaults() -> None:
+    now = datetime(2026, 7, 30, tzinfo=timezone.utc)
     base = {
         ("git", "-C", "/repo", "worktree", "list", "--porcelain"): CommandResult(
             stdout="worktree /repo\nHEAD base\nbranch refs/heads/main\n"
@@ -167,7 +169,7 @@ def test_scan_hygiene_ignores_malformed_pr_payloads_and_keeps_stale_defaults() -
         }
     )
 
-    items = scan_hygiene(repo_path=Path("/repo"), runner=runner.run)
+    items = scan_hygiene(repo_path=Path("/repo"), now=now, runner=runner.run)
 
     assert [item.id for item in items] == ["hygiene:stale-pr:pr-10"]
     assert items[0].summary == "Open PR #10 (PR #10) on unknown branch has gone stale."
@@ -180,7 +182,7 @@ def test_scan_hygiene_ignores_malformed_pr_payloads_and_keeps_stale_defaults() -
             ),
         }
     )
-    assert scan_hygiene(repo_path=Path("/repo"), runner=invalid_json.run) == []
+    assert scan_hygiene(repo_path=Path("/repo"), now=now, runner=invalid_json.run) == []
 
     non_list = _FakeRunner(
         {
@@ -190,7 +192,7 @@ def test_scan_hygiene_ignores_malformed_pr_payloads_and_keeps_stale_defaults() -
             ),
         }
     )
-    assert scan_hygiene(repo_path=Path("/repo"), runner=non_list.run) == []
+    assert scan_hygiene(repo_path=Path("/repo"), now=now, runner=non_list.run) == []
 
 
 def test_main_writes_json_and_rejects_negative_stale_days() -> None:
