@@ -30,6 +30,17 @@
     "claude": { "status": "exempt", "reason": "livespec-runtime is a library; it ships no command/skill surface to resolve from a harness" },
     "codex":  { "status": "exempt", "reason": "livespec-runtime is a library; it ships no command/skill surface to resolve from a harness" }
   },
+  // Planning/work-item-resolution registry. These targets are the repo slugs
+  // accepted by cross-tenant DependsOnEntry refs (`sibling_work_item`,
+  // `pull_request`, and `branch`) so the Dispatcher readiness gate can fail
+  // closed on still-open sibling work.
+  "cross_repo_targets": {
+    "livespec-dev-tooling": {
+      "github_url": "https://github.com/thewoolleyman/livespec-dev-tooling",
+      "local_clone": "/data/projects/livespec-dev-tooling",
+      "default_branch": "master"
+    }
+  },
   "livespec-runtime": {
     "compat": {
       // semver range and pinned tag against livespec-core. The pinned
