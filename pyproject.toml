@@ -34,11 +34,28 @@ readme = "README.md"
 
 # Runtime dependencies at v0.2.0 (li-aclzfe impl):
 #
-# - `typing_extensions` is the SOLE Python runtime dependency, needed
-#   for `typing_extensions.assert_never` under the >=3.10.16 floor
-#   (`typing.assert_never` is 3.11+). Used by
+# - `typing_extensions` is needed for `typing_extensions.assert_never`
+#   under the >=3.10.16 floor (`typing.assert_never` is 3.11+). Used by
 #   `livespec_runtime.cross_repo.resolve` to enforce exhaustivity of
 #   the `DependsOnEntry` match.
+#
+# - `dry-python/returns` supplies the ROP railway primitives (`Result`,
+#   `IOResult`, `@safe`, `@impure_safe`) that livespec
+#   `non-functional-requirements.md` §"Shared content provenance"
+#   requires of every governed repo carrying first-party Python.
+#
+#   IT IS DECLARED HERE AND IMPORTED BARE, WITH NO `_vendor/` TREE, AND
+#   THAT IS THE RATIFIED SHAPE FOR THIS REPO RATHER THAN AN OMISSION.
+#   This package is consumed TWO ways at once: installed as a wheel, AND
+#   source-copied verbatim into three consumers' `.claude-plugin/scripts/
+#   _vendor/livespec_runtime/` trees. Per livespec v191, a source-copied
+#   library MUST declare the dependency (serving the installed path) and
+#   MUST import it bare, so that on the source-copied path it resolves
+#   against the CONSUMING repo's own `_vendor/` root — all three
+#   consumers already vendor `returns`. Vendoring it here instead would
+#   nest `_vendor` inside `_vendor`, putting two copies of one library on
+#   one `sys.path` under two independent manifests. `typing_extensions`
+#   above already occupies this exact shape.
 #
 # - `gh` CLI is a SYSTEM dependency, not a Python package. Invoked via
 #   subprocess from `livespec_runtime.cross_repo.providers.github`.
@@ -49,6 +66,7 @@ readme = "README.md"
 #   `livespec_runtime.cross_repo.retry` for zero transitive pin cost
 #   on consumers.
 dependencies = [
+    "returns>=0.25.0",
     "typing_extensions>=4.4.0",
 ]
 
