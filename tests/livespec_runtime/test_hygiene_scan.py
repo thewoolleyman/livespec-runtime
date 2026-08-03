@@ -3,7 +3,9 @@
 from datetime import datetime, timezone
 from pathlib import Path
 
-from livespec_runtime.hygiene_scan import CommandResult, scan_hygiene
+from returns.io import IOResult, IOSuccess
+
+from livespec_runtime.hygiene_scan import CommandResult, CommandUnavailable, scan_hygiene
 
 __all__: list[str] = []
 
@@ -158,6 +160,8 @@ class _FakeRunner:
     def __init__(self, responses: dict[tuple[str, ...], CommandResult]) -> None:
         self._responses = responses
 
-    def run(self, *, argv: list[str], cwd: Path) -> CommandResult:
+    def run(self, *, argv: list[str], cwd: Path) -> IOResult[CommandResult, CommandUnavailable]:
         _ = cwd
-        return self._responses.get(tuple(argv), CommandResult(returncode=1, stderr="unexpected"))
+        return IOSuccess(
+            self._responses.get(tuple(argv), CommandResult(returncode=1, stderr="unexpected"))
+        )
