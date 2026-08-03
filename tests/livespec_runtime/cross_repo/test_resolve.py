@@ -18,8 +18,10 @@ import time
 from typing import Any
 
 import pytest
+from returns.io import IOResult, IOSuccess
 
 from livespec_runtime.cross_repo.providers import github as gh_provider
+from livespec_runtime.cross_repo.providers.github import GithubQueryFailed
 from livespec_runtime.cross_repo.resolve import resolve_ref
 from livespec_runtime.cross_repo.types import (
     BranchDependency,
@@ -32,6 +34,15 @@ from livespec_runtime.cross_repo.types import (
 )
 
 __all__: list[str] = []
+
+# Named rather than written as bare `True`/`False` literals at the fake
+# provider's lift sites: `IOSuccess(...)` takes its value positionally, and a
+# positional boolean says nothing about WHICH of the two provider questions is
+# being answered.
+_BRANCH_IS_PRESENT = True
+_BRANCH_IS_ABSENT = False
+_BRANCH_IS_MERGED = True
+_BRANCH_IS_NOT_MERGED = False
 
 _MANIFEST = CrossRepoManifest(
     targets={
@@ -104,7 +115,9 @@ def test_pull_request_unknown_repo_returns_unknown() -> None:
 
 
 def test_pull_request_open_returns_open(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(gh_provider, "query_pull_request_state", lambda **_kwargs: "OPEN")
+    monkeypatch.setattr(
+        gh_provider, "query_pull_request_state", lambda **_kwargs: IOSuccess("OPEN")
+    )
     entry = PullRequestDependency(repo="livespec", number=42)
     status = resolve_ref(
         entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN
@@ -113,7 +126,9 @@ def test_pull_request_open_returns_open(monkeypatch: pytest.MonkeyPatch) -> None
 
 
 def test_pull_request_merged_returns_closed(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(gh_provider, "query_pull_request_state", lambda **_kwargs: "MERGED")
+    monkeypatch.setattr(
+        gh_provider, "query_pull_request_state", lambda **_kwargs: IOSuccess("MERGED")
+    )
     entry = PullRequestDependency(repo="livespec", number=42)
     status = resolve_ref(
         entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN
@@ -122,7 +137,9 @@ def test_pull_request_merged_returns_closed(monkeypatch: pytest.MonkeyPatch) -> 
 
 
 def test_pull_request_closed_returns_closed(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(gh_provider, "query_pull_request_state", lambda **_kwargs: "CLOSED")
+    monkeypatch.setattr(
+        gh_provider, "query_pull_request_state", lambda **_kwargs: IOSuccess("CLOSED")
+    )
     entry = PullRequestDependency(repo="livespec", number=42)
     status = resolve_ref(
         entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN
@@ -151,7 +168,9 @@ def test_branch_unknown_repo_returns_unknown() -> None:
 
 
 def test_branch_absent_on_remote_returns_closed(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(gh_provider, "branch_exists_on_remote", lambda **_kwargs: False)
+    monkeypatch.setattr(
+        gh_provider, "branch_exists_on_remote", lambda **_kwargs: IOSuccess(_BRANCH_IS_ABSENT)
+    )
     entry = BranchDependency(repo="livespec", name="feat/foo")
     status = resolve_ref(
         entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN
@@ -160,8 +179,12 @@ def test_branch_absent_on_remote_returns_closed(monkeypatch: pytest.MonkeyPatch)
 
 
 def test_branch_present_and_merged_returns_closed(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(gh_provider, "branch_exists_on_remote", lambda **_kwargs: True)
-    monkeypatch.setattr(gh_provider, "branch_merged_into_default", lambda **_kwargs: True)
+    monkeypatch.setattr(
+        gh_provider, "branch_exists_on_remote", lambda **_kwargs: IOSuccess(_BRANCH_IS_PRESENT)
+    )
+    monkeypatch.setattr(
+        gh_provider, "branch_merged_into_default", lambda **_kwargs: IOSuccess(_BRANCH_IS_MERGED)
+    )
     entry = BranchDependency(repo="livespec", name="feat/foo")
     status = resolve_ref(
         entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN
@@ -170,8 +193,14 @@ def test_branch_present_and_merged_returns_closed(monkeypatch: pytest.MonkeyPatc
 
 
 def test_branch_present_and_not_merged_returns_open(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(gh_provider, "branch_exists_on_remote", lambda **_kwargs: True)
-    monkeypatch.setattr(gh_provider, "branch_merged_into_default", lambda **_kwargs: False)
+    monkeypatch.setattr(
+        gh_provider, "branch_exists_on_remote", lambda **_kwargs: IOSuccess(_BRANCH_IS_PRESENT)
+    )
+    monkeypatch.setattr(
+        gh_provider,
+        "branch_merged_into_default",
+        lambda **_kwargs: IOSuccess(_BRANCH_IS_NOT_MERGED),
+    )
     entry = BranchDependency(repo="livespec", name="feat/foo")
     status = resolve_ref(
         entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN
@@ -195,7 +224,9 @@ def test_branch_merged_check_retry_exhausted_returns_unknown(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(time, "sleep", lambda _seconds: None)
-    monkeypatch.setattr(gh_provider, "branch_exists_on_remote", lambda **_kwargs: True)
+    monkeypatch.setattr(
+        gh_provider, "branch_exists_on_remote", lambda **_kwargs: IOSuccess(_BRANCH_IS_PRESENT)
+    )
     monkeypatch.setattr(gh_provider, "branch_merged_into_default", _raise_runtime_error)
     entry = BranchDependency(repo="livespec", name="feat/foo")
     status = resolve_ref(
@@ -207,11 +238,13 @@ def test_branch_merged_check_retry_exhausted_returns_unknown(
 def test_branch_uses_target_default_branch(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: list[dict[str, Any]] = []
 
-    def fake_merged(**kwargs: Any) -> bool:
+    def fake_merged(**kwargs: Any) -> IOResult[bool, GithubQueryFailed]:
         captured.append(kwargs)
-        return True
+        return IOSuccess(_BRANCH_IS_MERGED)
 
-    monkeypatch.setattr(gh_provider, "branch_exists_on_remote", lambda **_kwargs: True)
+    monkeypatch.setattr(
+        gh_provider, "branch_exists_on_remote", lambda **_kwargs: IOSuccess(_BRANCH_IS_PRESENT)
+    )
     monkeypatch.setattr(gh_provider, "branch_merged_into_default", fake_merged)
     entry = BranchDependency(repo="runtime", name="feat/foo")
     _ = resolve_ref(entry=entry, manifest=_MANIFEST, local_status_lookup=lambda _wi: RefStatus.OPEN)

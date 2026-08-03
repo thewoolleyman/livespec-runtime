@@ -18,8 +18,11 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from returns.io import IOFailure
+from returns.unsafe import unsafe_perform_io
 
 from livespec_runtime.cross_repo.providers.github import (
+    GithubQueryFailed,
     NonCanonicalGithubUrlError,
     branch_exists_on_remote,
     branch_merged_into_default,
@@ -56,6 +59,18 @@ def _make_called_process_error(*, stderr: str) -> subprocess.CalledProcessError:
     return exc
 
 
+def _answer(outcome: object) -> object:
+    """The value on a query's success track, asserting it did not fail."""
+    assert not isinstance(outcome, IOFailure)
+    return unsafe_perform_io(outcome.unwrap())  # pyright: ignore[reportAttributeAccessIssue]
+
+
+def _failure(outcome: object) -> GithubQueryFailed:
+    """The `GithubQueryFailed` a query carries, asserting it took the failure track."""
+    assert isinstance(outcome, IOFailure)
+    return unsafe_perform_io(outcome.failure())
+
+
 def test_query_pull_request_state_returns_open(monkeypatch: pytest.MonkeyPatch) -> None:
     captured_argv: list[list[str]] = []
 
@@ -68,7 +83,7 @@ def test_query_pull_request_state_returns_open(monkeypatch: pytest.MonkeyPatch) 
         github_url="https://github.com/thewoolleyman/livespec",
         number=42,
     )
-    assert state == "OPEN"
+    assert _answer(state) == "OPEN"
 
 
 def test_query_pull_request_state_returns_merged(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -80,7 +95,7 @@ def test_query_pull_request_state_returns_merged(monkeypatch: pytest.MonkeyPatch
         github_url="https://github.com/thewoolleyman/livespec",
         number=42,
     )
-    assert state == "MERGED"
+    assert _answer(state) == "MERGED"
 
 
 def test_query_pull_request_state_returns_closed(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -92,7 +107,7 @@ def test_query_pull_request_state_returns_closed(monkeypatch: pytest.MonkeyPatch
         github_url="https://github.com/thewoolleyman/livespec",
         number=42,
     )
-    assert state == "CLOSED"
+    assert _answer(state) == "CLOSED"
 
 
 def test_query_pull_request_state_invokes_gh_pr_view(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -130,9 +145,11 @@ def test_branch_exists_on_remote_true_on_present(monkeypatch: pytest.MonkeyPatch
 
     monkeypatch.setattr(subprocess, "run", fake_run)
     assert (
-        branch_exists_on_remote(
-            github_url="https://github.com/thewoolleyman/livespec",
-            name="feat/foo",
+        _answer(
+            branch_exists_on_remote(
+                github_url="https://github.com/thewoolleyman/livespec",
+                name="feat/foo",
+            )
         )
         is True
     )
@@ -144,9 +161,11 @@ def test_branch_exists_on_remote_false_on_404(monkeypatch: pytest.MonkeyPatch) -
 
     monkeypatch.setattr(subprocess, "run", fake_run)
     assert (
-        branch_exists_on_remote(
-            github_url="https://github.com/thewoolleyman/livespec",
-            name="missing",
+        _answer(
+            branch_exists_on_remote(
+                github_url="https://github.com/thewoolleyman/livespec",
+                name="missing",
+            )
         )
         is False
     )
@@ -157,11 +176,13 @@ def test_branch_exists_on_remote_propagates_non_404(monkeypatch: pytest.MonkeyPa
         raise _make_called_process_error(stderr="gh: auth failure (HTTP 401)")
 
     monkeypatch.setattr(subprocess, "run", fake_run)
-    with pytest.raises(subprocess.CalledProcessError):
-        _ = branch_exists_on_remote(
+    failure = _failure(
+        branch_exists_on_remote(
             github_url="https://github.com/thewoolleyman/livespec",
             name="feat/foo",
         )
+    )
+    assert not failure.http_404
 
 
 def test_branch_exists_on_remote_propagates_when_stderr_empty(
@@ -171,11 +192,13 @@ def test_branch_exists_on_remote_propagates_when_stderr_empty(
         raise _make_called_process_error(stderr="")
 
     monkeypatch.setattr(subprocess, "run", fake_run)
-    with pytest.raises(subprocess.CalledProcessError):
-        _ = branch_exists_on_remote(
+    failure = _failure(
+        branch_exists_on_remote(
             github_url="https://github.com/thewoolleyman/livespec",
             name="feat/foo",
         )
+    )
+    assert not failure.http_404
 
 
 def test_branch_exists_on_remote_propagates_when_unrelated_404_substring(
@@ -196,11 +219,13 @@ def test_branch_exists_on_remote_propagates_when_unrelated_404_substring(
         raise _make_called_process_error(stderr=unrelated_stderr)
 
     monkeypatch.setattr(subprocess, "run", fake_run)
-    with pytest.raises(subprocess.CalledProcessError):
-        _ = branch_exists_on_remote(
+    failure = _failure(
+        branch_exists_on_remote(
             github_url="https://github.com/thewoolleyman/livespec",
             name="feat/foo",
         )
+    )
+    assert not failure.http_404
 
 
 def test_branch_exists_on_remote_invokes_gh_api(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -246,10 +271,12 @@ def test_branch_merged_into_default_true_when_identical(
 
     monkeypatch.setattr(subprocess, "run", fake_run)
     assert (
-        branch_merged_into_default(
-            github_url="https://github.com/thewoolleyman/livespec",
-            name="feat/foo",
-            default_branch="master",
+        _answer(
+            branch_merged_into_default(
+                github_url="https://github.com/thewoolleyman/livespec",
+                name="feat/foo",
+                default_branch="master",
+            )
         )
         is True
     )
@@ -264,10 +291,12 @@ def test_branch_merged_into_default_true_when_behind(monkeypatch: pytest.MonkeyP
 
     monkeypatch.setattr(subprocess, "run", fake_run)
     assert (
-        branch_merged_into_default(
-            github_url="https://github.com/thewoolleyman/livespec",
-            name="feat/foo",
-            default_branch="master",
+        _answer(
+            branch_merged_into_default(
+                github_url="https://github.com/thewoolleyman/livespec",
+                name="feat/foo",
+                default_branch="master",
+            )
         )
         is True
     )
@@ -282,10 +311,12 @@ def test_branch_merged_into_default_false_when_ahead(monkeypatch: pytest.MonkeyP
 
     monkeypatch.setattr(subprocess, "run", fake_run)
     assert (
-        branch_merged_into_default(
-            github_url="https://github.com/thewoolleyman/livespec",
-            name="feat/foo",
-            default_branch="master",
+        _answer(
+            branch_merged_into_default(
+                github_url="https://github.com/thewoolleyman/livespec",
+                name="feat/foo",
+                default_branch="master",
+            )
         )
         is False
     )
@@ -302,10 +333,12 @@ def test_branch_merged_into_default_false_when_diverged(
 
     monkeypatch.setattr(subprocess, "run", fake_run)
     assert (
-        branch_merged_into_default(
-            github_url="https://github.com/thewoolleyman/livespec",
-            name="feat/foo",
-            default_branch="master",
+        _answer(
+            branch_merged_into_default(
+                github_url="https://github.com/thewoolleyman/livespec",
+                name="feat/foo",
+                default_branch="master",
+            )
         )
         is False
     )
@@ -427,3 +460,91 @@ def test_non_canonical_github_url_error_catchable_as_domain_type() -> None:
 def test_fixture_payload_round_trips_through_json() -> None:
     payload: dict[str, Any] = json.loads(_load_fixture(name="branch_compare_identical.json"))
     assert payload["status"] == "identical"
+
+
+def test_query_pull_request_state_reports_an_undecodable_response(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """`gh` answered with something that is not JSON — transport-shaped, so it fails."""
+
+    def fake_run(argv: list[str], **_kwargs: Any) -> subprocess.CompletedProcess[str]:
+        return _make_completed_process(args=argv, stdout="not json at all")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    failure = _failure(
+        query_pull_request_state(
+            github_url="https://github.com/thewoolleyman/livespec",
+            number=42,
+        )
+    )
+
+    assert failure.argv.startswith("gh pr view 42")
+    assert "undecodable response" in failure.detail
+
+
+def test_query_pull_request_state_reports_a_payload_missing_its_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A well-formed payload with no `state` used to raise a bare `KeyError`."""
+
+    def fake_run(argv: list[str], **_kwargs: Any) -> subprocess.CompletedProcess[str]:
+        return _make_completed_process(args=argv, stdout="{}")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    failure = _failure(
+        query_pull_request_state(
+            github_url="https://github.com/thewoolleyman/livespec",
+            number=42,
+        )
+    )
+
+    assert "no 'state' string" in failure.detail
+
+
+def test_branch_exists_on_remote_reports_an_unspawnable_gh(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """`gh` absent from PATH is a configuration error, not a missing branch.
+
+    ⛔ It MUST NOT be mistaken for a 404: reporting "the branch is gone"
+    because the CLI is not installed would delete-by-implication every
+    branch the resolver was asked about.
+    """
+
+    def fake_run(_argv: list[str], **_kwargs: Any) -> subprocess.CompletedProcess[str]:
+        raise FileNotFoundError(2, "No such file or directory", "gh")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    failure = _failure(
+        branch_exists_on_remote(
+            github_url="https://github.com/thewoolleyman/livespec",
+            name="feat/foo",
+        )
+    )
+
+    assert not failure.http_404
+    assert "No such file or directory" in failure.detail
+
+
+def test_branch_merged_into_default_reports_a_failed_compare(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The compare query has no 404-is-an-answer case; every failure is a failure."""
+
+    def fake_run(_argv: list[str], **_kwargs: Any) -> subprocess.CompletedProcess[str]:
+        raise _make_called_process_error(stderr="gh: branch not found (HTTP 404)")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    failure = _failure(
+        branch_merged_into_default(
+            github_url="https://github.com/thewoolleyman/livespec",
+            name="feat/foo",
+            default_branch="master",
+        )
+    )
+
+    assert failure.argv.startswith("gh api repos/thewoolleyman/livespec/compare/")
