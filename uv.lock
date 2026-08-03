@@ -159,7 +159,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -400,12 +400,12 @@ wheels = [
 
 [[package]]
 name = "livespec-dev-tooling"
-version = "1.17.1"
-source = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git?tag=v1.17.1#e5b784218251341ac38d94a876bf4abebb62ac91" }
+version = "1.18.2"
+source = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git?tag=v1.18.2#a7a34d3a8559b580913ea5cc0ad3bcdff42f85ce" }
 
 [[package]]
 name = "livespec-runtime"
-version = "0.13.1"
+version = "0.15.0"
 source = { editable = "." }
 dependencies = [
     { name = "returns", version = "0.26.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -439,7 +439,7 @@ dev = [
     { name = "hypothesis", specifier = "==6.122.3" },
     { name = "hypothesis-jsonschema", specifier = "==0.23.1" },
     { name = "import-linter", specifier = "==2.1" },
-    { name = "livespec-dev-tooling", git = "https://github.com/thewoolleyman/livespec-dev-tooling.git?tag=v1.17.1" },
+    { name = "livespec-dev-tooling", git = "https://github.com/thewoolleyman/livespec-dev-tooling.git?tag=v1.18.2" },
     { name = "mutmut", specifier = "==3.2.3" },
     { name = "pyright", specifier = "==1.1.391" },
     { name = "pytest", specifier = "==8.3.4" },
