@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.15.0...v0.16.0) (2026-08-03)
+
+
+### Features
+
+* **github-auth:** put the App mint on the IOResult railway ([9b4c518](https://github.com/thewoolleyman/livespec-runtime/commit/9b4c518e49d0b44e9eeb2990e50ee725525dd51b))
+
 ## [0.15.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.14.0...v0.15.0) (2026-08-03)
 
 
