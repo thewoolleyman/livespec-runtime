@@ -17,7 +17,8 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-import pytest
+from returns.io import IOFailure, IOResult, IOSuccess
+from returns.unsafe import unsafe_perform_io
 
 from livespec_runtime.github_auth.errors import GithubAppAuthError
 from livespec_runtime.github_auth.signing import (
@@ -28,6 +29,12 @@ from livespec_runtime.github_auth.signing import (
 )
 
 __all__: list[str] = []
+
+
+def _signed(outcome: IOResult[bytes, GithubAppAuthError]) -> bytes:
+    """The signature bytes, asserting the signer took the success track."""
+    assert isinstance(outcome, IOSuccess)
+    return unsafe_perform_io(outcome.unwrap())
 
 
 def _decode_b64url_json(part: str) -> dict[str, Any]:
@@ -104,7 +111,7 @@ def _generate_rsa_key(tmp_path: Path) -> tuple[str, Path]:
 
 def test_sign_rs256_with_openssl_round_trips_with_openssl_verify(tmp_path: Path) -> None:
     pem, pub_path = _generate_rsa_key(tmp_path)
-    signature = sign_rs256_with_openssl(signing_input="header.payload", pem=pem)
+    signature = _signed(sign_rs256_with_openssl(signing_input="header.payload", pem=pem))
     assert signature != b""
     sig_path = tmp_path / "sig.bin"
     _ = sig_path.write_bytes(signature)
@@ -128,16 +135,25 @@ def test_sign_rs256_with_openssl_round_trips_with_openssl_verify(tmp_path: Path)
 def test_sign_rs256_with_openssl_accepts_flattened_pem_after_normalize(tmp_path: Path) -> None:
     pem, _pub_path = _generate_rsa_key(tmp_path)
     flattened = pem.replace("\n", "\\n")
-    signature = sign_rs256_with_openssl(
-        signing_input="header.payload", pem=normalize_pem(raw=flattened)
+    signature = _signed(
+        sign_rs256_with_openssl(signing_input="header.payload", pem=normalize_pem(raw=flattened))
     )
     assert signature != b""
 
 
-def test_sign_rs256_with_openssl_unloadable_key_raises_actionable_error() -> None:
-    with pytest.raises(GithubAppAuthError) as excinfo:
-        _ = sign_rs256_with_openssl(signing_input="header.payload", pem="not a key")
-    assert "openssl could not sign" in excinfo.value.detail
+def test_sign_rs256_with_openssl_unloadable_key_reports_actionably() -> None:
+    """The diagnostic is unchanged; only the channel it travels on is.
+
+    It used to be raised and is now carried on the failure track, so the
+    assertion moved from `pytest.raises` to the failure value — the same
+    type, the same `detail`.
+    """
+    outcome = sign_rs256_with_openssl(signing_input="header.payload", pem="not a key")
+
+    assert isinstance(outcome, IOFailure)
+    failure = unsafe_perform_io(outcome.failure())
+    assert isinstance(failure, GithubAppAuthError)
+    assert "openssl could not sign" in failure.detail
 
 
 def test_github_app_auth_error_str_is_detail() -> None:
