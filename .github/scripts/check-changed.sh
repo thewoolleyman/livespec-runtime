@@ -11,4 +11,4 @@ fi
 echo ":: check-changed: scoping the test subset + per-file coverage gate to ${#changed[@]} changed .py:"
 printf '   %s\n' "${changed[@]}"
 echo ":: INNER-LOOP ONLY - 'just check' runs the FULL suite/AST scans at pre-push + CI"
-just check-check-coverage-incremental "${changed[@]}"
+just check-check-coverage-incremental --paths "${changed[@]}"
