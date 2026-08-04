@@ -19,26 +19,10 @@
 #   from livespec-dev-tooling v0.4.0 onwards (epic li-univck Phase
 #   3.3, work-item li-runwir).
 
-# `skip` — space-separated list of `check:` aggregate targets to omit
-# from a single run (epic li-cvaudit, cvredmd + cvnoarg). Default empty:
-# the full aggregate runs. The Red-mode pre-commit overrides it on the
-# command line — `just skip="check-coverage check-per-file-coverage" check`
-# — so the coverage gates are not run at the Red commit (coverage is
-# verified at the Green amend). The Green-amend pre-commit overrides it
-# with `just skip="check-red-green-replay" check` so the no-arg replay
-# variant does not reject the in-progress Red HEAD. This is a
-# self-contained just variable; it replaces the prior ambient
-# `LIVESPEC_PRECOMMIT_RED_MODE` env var with no env var and no spec change.
-skip := ""
-
-# pytest-xdist worker count, lane-aware (plan/fabro-ci-image-factoring cont.5).
+# pytest-xdist worker count is resolved by `.github/scripts/test-nprocs.sh`.
 # GitHub-hosted CI (LIVESPEC_CI_LANE=hosted, set from CI_RUNNER_LABELS in
-# ci.yml) uses all cores (-n auto — GH runners are small + dedicated). The
-# self-hosted/local lane throttles to LIVESPEC_TEST_PARALLELISM, defaulting to
-# 25% of cores (min 1) so a shared host is never oversubscribed. Tune per host
-# by exporting LIVESPEC_TEST_PARALLELISM (a dedicated box can set it to `auto`
-# or a high N); local dev may export it to speed a laptop run.
-test_nprocs := if env_var_or_default("LIVESPEC_CI_LANE", "local") == "hosted" { "auto" } else { env_var_or_default("LIVESPEC_TEST_PARALLELISM", `c=$(nproc 2>/dev/null || echo 4); n=$(( c / 4 )); [ "$n" -ge 1 ] || n=1; echo "$n"`) }
+# ci.yml) uses all cores; self-hosted/local lanes throttle to
+# LIVESPEC_TEST_PARALLELISM or 25% of cores (min 1).
 
 # Default to listing targets when no recipe is invoked.
 default:
@@ -47,17 +31,7 @@ default:
 # Factory-sandbox guard: implementation branches must not carry workflow
 # changes. Maintainer-side workflow landings are handled outside Fabro.
 check-no-workflow-edits:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    base_ref="master"
-    if ! git rev-parse --verify --quiet "$base_ref" >/dev/null; then
-        base_ref="origin/master"
-    fi
-    if ! git diff --quiet "$base_ref"...HEAD -- .github/workflows/; then
-        echo "ERROR: factory branch modifies .github/workflows/:" >&2
-        git diff --name-status "$base_ref"...HEAD -- .github/workflows/ >&2
-        exit 1
-    fi
+    .github/scripts/no-workflow-edits.sh
 
 # ---------------------------------------------------------------
 # First-time setup.
@@ -140,21 +114,7 @@ ensure-plugins:
 # is an optional dogfooding runtime; bootstrap skips this target when the CLI is
 # absent but fails on real install errors when Codex is present.
 ensure-codex-plugins:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if ! command -v codex >/dev/null 2>&1; then
-        echo "codex CLI not found; skipping host-wide Codex plugin install." >&2
-        exit 0
-    fi
-    codex plugin marketplace add thewoolleyman/livespec --ref release
-    codex plugin marketplace add thewoolleyman/livespec-driver-codex --ref release
-    codex plugin marketplace add thewoolleyman/livespec-orchestrator-beads-fabro --ref release
-    codex plugin marketplace upgrade livespec
-    codex plugin marketplace upgrade livespec-driver-codex
-    codex plugin marketplace upgrade livespec-orchestrator-beads-fabro
-    codex plugin add livespec@livespec
-    codex plugin add livespec@livespec-driver-codex
-    codex plugin add livespec-orchestrator-beads-fabro@livespec-orchestrator-beads-fabro
+    .github/scripts/ensure-codex-plugins.sh
 
 # ---------------------------------------------------------------
 # Aggregate check — wires EVERY canonical check slug emitted by
@@ -167,143 +127,9 @@ ensure-codex-plugins:
 # with the failure list if any target failed.
 # ---------------------------------------------------------------
 
-check:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    # `skip` is a just VARIABLE (declared at the top of this justfile,
-    # default empty): a space-separated list of target names to omit from
-    # this run (epic li-cvaudit, cvredmd + cvnoarg). The Red-mode pre-commit
-    # invokes `just skip="check-coverage check-per-file-coverage" check` so
-    # coverage is not gated at the Red commit (it is verified at the Green
-    # amend); the Green-amend pre-commit invokes
-    # `just skip="check-red-green-replay" check` so the no-arg replay variant
-    # does not reject the in-progress Red HEAD — both self-contained just
-    # variables that replace the prior ambient `LIVESPEC_PRECOMMIT_RED_MODE`
-    # env var. The recipe header stays the bare `check:` the
-    # wiring-completeness checks parse for. Pre-push and CI invoke
-    # `just check` with no `skip`, so the full aggregate stays the safety net.
-    read -ra skip_targets <<< "{{skip}}"
-    # Sync the environment ONCE per aggregate pass, then run every
-    # target with UV_NO_SYNC=1 so the ~44 per-target `uv run`
-    # invocations skip their redundant per-invocation re-sync
-    # (work-item livespec-runtime-90k). The single up-front sync
-    # keeps the freshness guarantee — a stale lockfile/venv still
-    # fails here, loudly, before any target runs. This also caps the
-    # cost of a corrupted-venv re-sync loop (e.g. an orphaned
-    # dist-info missing its RECORD file, which a sync can never
-    # uninstall and therefore retries on EVERY invocation) at one
-    # sync attempt per pass instead of one per target, and shrinks
-    # the concurrent-sync race window that produces that corruption
-    # in the first place. Standalone `just check-<x>` invocations
-    # keep uv's default sync-on-run behavior; CI's per-target matrix
-    # jobs each sync their own fresh runner and are unaffected.
-    if ! uv sync --all-groups; then
-        echo "ERROR: up-front 'uv sync --all-groups' failed; aborting the check aggregate" >&2
-        exit 1
-    fi
-    export UV_NO_SYNC=1
-    targets=(
-        check-agents-ai-references-resolve
-        check-aggregate-completeness
-        check-all-declared
-        check-assert-never-exhaustiveness
-        check-branch-protection-alignment
-        check-canonical-recipe-fidelity
-        check-check-coverage-incremental
-        check-check-mutation
-        check-check-tools
-        check-ci-matrix-completeness
-        check-claude-md-coverage
-        check-comment-line-anchors
-        check-commit-pairs-source-and-test
-        check-file-lloc
-        check-fleet-marketplace-relative-sources
-        check-global-writes
-        check-handoff-dispatch-routing
-        check-heading-coverage
-        check-hook-trees-not-io-exempt
-        check-keyword-only-args
-        check-local-memory-drift-audit
-        check-main-guard
-        check-master-ci-green
-        check-match-keyword-only
-        check-newtype-domain-primitives
-        check-no-direct-destructive-cli
-        check-no-direct-tool-invocation
-        check-no-except-outside-io
-        check-no-fmt-directives
-        check-no-inheritance
-        check-no-lloc-soft-warnings
-        check-no-raise-outside-io
-        check-no-shadow-ledger-body-identical
-        check-no-shadow-ledger-body-typechecks
-        check-no-todo-registry
-        check-no-write-direct
-        check-partition-completeness
-        check-pbt-coverage-pure-modules
-        check-per-file-coverage
-        check-plan-thread-anchor-declared
-        check-plan-thread-epic-parity
-        check-plugin-resolution
-        check-primary-checkout-commit-refuse-hook-installed
-        check-private-calls
-        check-public-api-result-typed
-        check-red-green-replay
-        check-required-role-keys-declared
-        check-rop-pipeline-shape
-        check-self-hosted-routing
-        check-skill-invocation-paths
-        check-source-trees-scoped-to-consumer
-        check-supervisor-discipline
-        check-tests-mirror-pairing
-        check-tests-no-subprocess-spawn
-        check-tool-backed-check-completeness
-        check-vendor-manifest
-        check-wrapper-shape
-        # ---- Repo-private block (extends after canonical) ----
-        # Tool-backed checks that are NOT canonical slugs (absent from
-        # `livespec_dev_tooling.canonical_checks`) but still gate the
-        # aggregate. They appear AFTER the canonical block per the
-        # wiring-completeness invariant (which only constrains the
-        # canonical block to be exact + alphabetical). `check-lint`,
-        # `check-format`, `check-types`, and `check-coverage` are the
-        # four tool-backed slugs the canonical `check-tool-backed-check-
-        # completeness` meta-check (v0.9.0) requires as literal members
-        # of BOTH this targets array AND the CI matrix. Mirrors how
-        # livespec-core and livespec-orchestrator-git-jsonl wire them.
-        check-lint
-        check-format
-        check-types
-        check-coverage
-        check-doctor-static
-    )
-    failed=()
-    ran=0
-    for t in "${targets[@]}"; do
-        skip_this=0
-        for s in "${skip_targets[@]:-}"; do
-            if [[ "$t" == "$s" ]]; then
-                skip_this=1
-                break
-            fi
-        done
-        if [[ "$skip_this" -eq 1 ]]; then
-            printf '\n::: just %s (skipped)\n' "$t"
-            continue
-        fi
-        ran=$((ran + 1))
-        printf '\n::: just %s\n' "$t"
-        if ! just "$t"; then
-            failed+=("$t")
-        fi
-    done
-    if [[ ${#failed[@]} -gt 0 ]]; then
-        printf '\nFailed targets (%d):\n' "${#failed[@]}"
-        printf '  - %s\n' "${failed[@]}"
-        exit 1
-    fi
-    printf '\nAll %d targets passed.\n' "$ran"
-    if [[ -z "{{skip}}" ]]; then uv run python -m livespec_dev_tooling.green_token write || true; fi
+[positional-arguments]
+check *skip_targets:
+    .github/scripts/check.sh "$@"
 
 # ---------------------------------------------------------------
 # Tool-backed checks. The slugs `check-lint` / `check-format` /
@@ -332,15 +158,7 @@ check-types:
 # amend), so no ambient env-var read is needed here (epic li-cvaudit,
 # cvredmd).
 check-coverage:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    if [[ -f .coverage ]]; then
-        echo ":: check-coverage: reading existing .coverage (produced by check-per-file-coverage); no duplicate suite run"
-        uv run coverage report --fail-under=100
-    else
-        echo ":: check-coverage: no .coverage data file (CI standalone job); running the suite"
-        uv run pytest -n {{test_nprocs}} --cov --cov-branch --cov-config=pyproject.toml --cov-report=term-missing
-    fi
+    .github/scripts/check-coverage.sh
 
 # livespec core's doctor STATIC phase (reference-discipline + out-of-band
 # invariants) against THIS repo's SPECIFICATION/ tree, wired fleet-wide per
@@ -355,21 +173,7 @@ check-coverage:
 # history backfill into the worktree and fails, and committing that backfill
 # heals the track; on a clean tree it never fires.
 check-doctor-static:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    core_root="${LIVESPEC_CORE_PLUGIN_ROOT:-}"
-    if [ -z "$core_root" ]; then
-      # Resolve the CURRENT released core build (== marketplace clone HEAD), NOT
-      # installed_plugins.json[...]["livespec@livespec"][0] — that per-project list is
-      # unordered and its first row can be a different, stale project on a mixed-build
-      # host, which the c1k9 currency gate then correctly blocks (livespec-q2me).
-      core_root="$(python3 -c 'import subprocess, pathlib; mk = pathlib.Path.home() / ".claude" / "plugins" / "marketplaces" / "livespec"; head = subprocess.run(["git", "-C", str(mk), "rev-parse", "--short=12", "HEAD"], capture_output=True, text=True).stdout.strip().lower(); cache = pathlib.Path.home() / ".claude" / "plugins" / "cache" / "livespec" / "livespec" / head; print(cache if head and (cache / "scripts" / "bin" / "doctor_static.py").is_file() else "")' 2>/dev/null || true)"
-    fi
-    if [ -z "$core_root" ] || [ ! -f "$core_root/scripts/bin/doctor_static.py" ]; then
-      echo "livespec core not found. Set LIVESPEC_CORE_PLUGIN_ROOT to a livespec checkout's .claude-plugin, or install the livespec@livespec plugin (claude plugin install livespec@livespec)." >&2
-      exit 1
-    fi
-    python3 "$core_root/scripts/bin/doctor_static.py" --project-root .
+    .github/scripts/check-doctor-static.sh
 
 # `check-static` — fastest-first fail-fast helper for fast agent/dev
 # feedback (work-item livespec-dev-tooling-7us.8). Runs ONLY the cheap
@@ -385,11 +189,7 @@ check-doctor-static:
 # (still run at pre-push and in CI) — `check-static` is a fast
 # pre-flight, never a replacement for it.
 check-static:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    uv run ruff format --check .
-    uv run ruff check .
-    uv run pyright
+    .github/scripts/check-static.sh
 
 # `changed-files` — print the changed `.py` set this branch touches,
 # repo-root-relative, one path per line, sorted + de-duplicated
@@ -405,14 +205,7 @@ check-static:
 # aggregate `targets=(...)` array, NOT a canonical slug, NOT in the CI
 # matrix.
 changed-files:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    # `grep` exits 1 on zero matches; an empty changed set is normal (a
-    # clean branch), so swallow that into exit 0 via `|| true` — the
-    # consuming `check-changed` treats empty as "nothing to gate".
-    { git diff --name-only origin/master...HEAD;
-      git diff --cached --name-only --diff-filter=AM; } \
-        | { grep -E '\.py$' || true; } | sort -u
+    .github/scripts/changed-files.sh
 
 # `check-changed` — modified-files INNER-LOOP gate for fast scoped
 # feedback during iteration (work-item livespec-dev-tooling-7us.9). Feeds
@@ -432,18 +225,7 @@ changed-files:
 # of the `check:` aggregate `targets=(...)` array, NOT a canonical slug,
 # and NOT in the CI matrix.
 check-changed:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    mapfile -t changed < <(just changed-files)
-    if [[ "${#changed[@]}" -eq 0 ]]; then
-        echo ":: check-changed: no changed .py vs origin/master (and none staged); nothing to gate"
-        echo ":: the authoritative full gate remains 'just check' (run at pre-push + CI)"
-        exit 0
-    fi
-    echo ":: check-changed: scoping the test subset + per-file coverage gate to ${#changed[@]} changed .py:"
-    printf '   %s\n' "${changed[@]}"
-    echo ":: INNER-LOOP ONLY — 'just check' runs the FULL suite/AST scans at pre-push + CI"
-    just check-check-coverage-incremental --paths "${changed[@]}"
+    .github/scripts/check-changed.sh
 
 # ---------------------------------------------------------------
 # Canonical aggregate recipes — one per canonical slug emitted by
@@ -481,8 +263,9 @@ check-branch-protection-alignment:
 # gates those — no longer a no-op (epic li-cvaudit, cvnoarg). The
 # interactive developer use case still passes `--paths` explicitly:
 # `just check-check-coverage-incremental --paths livespec_runtime/cross_repo/foo.py`.
+[positional-arguments]
 check-check-coverage-incremental *args:
-    uv run python -m livespec_dev_tooling.checks.check_coverage_incremental {{args}}
+    uv run python -m livespec_dev_tooling.checks.check_coverage_incremental "$@"
 
 # Always invoked plainly; the module self-manages its RUN/SKIP lever
 # (epic li-cvaudit, cvtodo). `LIVESPEC_RUN_MUTATION` unset → the check
@@ -588,10 +371,7 @@ check-pbt-coverage-pure-modules:
 # amend), so no ambient env-var read is needed here (epic li-cvaudit,
 # cvredmd).
 check-per-file-coverage:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    uv run pytest -n {{test_nprocs}} --cov --cov-branch --cov-config=pyproject.toml --cov-report=term-missing
-    uv run python -m livespec_dev_tooling.checks.per_file_coverage
+    .github/scripts/check-per-file-coverage.sh
 
 # Baseline harness plugin-resolution Verifier: asserts each declared
 # harness in `.livespec.jsonc` `harnesses` resolves its command/skill
@@ -623,8 +403,9 @@ check-public-api-result-typed:
 # `just check` invokes this with NO msg_path; the module then DERIVES
 # the message from `git log -1 --format=%B` (HEAD) and validates it —
 # no longer a no-op (epic li-cvaudit, cvnoarg).
+[positional-arguments]
 check-red-green-replay *args:
-    uv run python -m livespec_dev_tooling.checks.red_green_replay {{args}}
+    uv run python -m livespec_dev_tooling.checks.red_green_replay "$@"
 
 check-rop-pipeline-shape:
     uv run python -m livespec_dev_tooling.checks.rop_pipeline_shape
@@ -650,6 +431,9 @@ check-vendor-manifest:
 check-wrapper-shape:
     uv run python -m livespec_dev_tooling.checks.wrapper_shape
 
+check-shell-quality:
+    uv run python -m livespec_dev_tooling.checks.shell_quality
+
 # ---------------------------------------------------------------
 # Pre-commit aggregate — Red-mode-aware. Classifies the staged
 # tree shape; in Red mode it passes `skip="check-coverage
@@ -661,76 +445,18 @@ check-wrapper-shape:
 # ---------------------------------------------------------------
 
 check-pre-commit:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    staged=$(git diff --cached --name-only --diff-filter=AM)
-    py_staged=$(echo "$staged" | grep -E '\.py$' || true)
-    test_staged=$(echo "$staged" | grep -E '^tests/.*\.py$' || true)
-    impl_staged=$(echo "$staged" | grep -E '^livespec_runtime/.*\.py$' || true)
-    test_count=0
-    impl_count=0
-    [[ -n "$test_staged" ]] && test_count=$(echo "$test_staged" | wc -l)
-    [[ -n "$impl_staged" ]] && impl_count=$(echo "$impl_staged" | wc -l)
-    if [[ -z "$py_staged" ]]; then
-        echo ":: doc-only mode detected (zero .py files staged): running just check-pre-commit-doc-only"
-        echo ":: pre-push + CI keep the full aggregate as the load-bearing safety net"
-        just check-pre-commit-doc-only
-        exit $?
-    fi
-    if [[ "$test_count" -eq 1 ]] && [[ "$impl_count" -eq 0 ]]; then
-        echo ":: Red-mode shape detected: $test_staged"
-        echo ":: skipping coverage gates (commit-msg replay hook is the verifier; coverage runs at Green amend)"
-        just skip="check-coverage check-per-file-coverage" check
-        exit $?
-    fi
-    # Green-amend shape: impl staged while HEAD still carries Red-only
-    # trailers (the Green amend has not yet written its TDD-Green-*
-    # trailers — the commit-msg `check-red-green-replay {1}` hook writes
-    # AND verifies them immediately after this pre-commit pass). The
-    # no-arg `check-red-green-replay` aggregate variant validates HEAD,
-    # which during a Green amend is the in-progress Red commit; it would
-    # otherwise reject a perfectly valid Green amend. Skip the aggregate
-    # variant here (the commit-msg hook is the load-bearing per-commit
-    # verifier); pre-push + CI re-run the full no-arg aggregate against
-    # the completed Red->Green HEAD as the safety net.
-    head_msg=$(git log -1 --format=%B 2>/dev/null || true)
-    if [[ "$impl_count" -ge 1 ]] \
-        && grep -q 'TDD-Red-Test-File-Checksum:' <<< "$head_msg" \
-        && ! grep -q 'TDD-Green-Verified-At:' <<< "$head_msg"; then
-        echo ":: Green-amend shape detected (impl staged; HEAD carries Red-only trailers)"
-        echo ":: skipping no-arg check-red-green-replay (commit-msg replay hook verifies the Green amend)"
-        just skip="check-red-green-replay" check
-        exit $?
-    fi
-    just check
+    .github/scripts/check-pre-commit.sh
 
 # When zero `.py` files are staged, `check-pre-commit` delegates here.
 # Pre-push delegates here via `check-pre-push` for zero-py changesets.
 check-pre-commit-doc-only:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    echo ":: doc-only subset (no repo-metadata checks wired yet)"
-    exit 0
+    printf '%s\n' ":: doc-only subset (no repo-metadata checks wired yet)"
 
 # Skip the Python-code check subset when the pushed commits contain
 # zero `.py` changes. Falls back to `origin/master` when no upstream
 # branch is configured locally.
 check-pre-push:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2>/dev/null || echo "origin/master")
-    changeset=$(git diff --name-only "${upstream}..HEAD")
-    py_changed=$(echo "$changeset" | grep -E '\.py$' || true)
-    if [[ -z "$py_changed" ]]; then
-        echo ":: doc-only push detected (zero .py changes vs ${upstream}): running check-pre-commit-doc-only"
-        just check-pre-commit-doc-only
-        exit $?
-    fi
-    if uv run python -m livespec_dev_tooling.green_token check 2>&1; then
-        echo ":: pre-push: green token matched — tree byte-identical to last green check; skipping full aggregate (CI is authoritative)"
-        exit 0
-    fi
-    just check
+    .github/scripts/check-pre-push.sh
 
 # ---------------------------------------------------------------
 # Pre-commit auxiliary gates.
@@ -741,15 +467,7 @@ check-pre-push:
 # to check-lint / check-format inside `just check` later. Re-stages
 # post-autofix bytes.
 lint-autofix-staged:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    staged=$(git diff --cached --name-only --diff-filter=AM | grep -E '\.py$' || true)
-    if [[ -z "$staged" ]]; then
-        exit 0
-    fi
-    echo "$staged" | xargs uv run ruff check --fix --exit-zero
-    echo "$staged" | xargs uv run ruff format
-    echo "$staged" | xargs git add
+    .github/scripts/lint-autofix-staged.sh
 
 # ---------------------------------------------------------------
 # Mutating targets (opt-in; not run in CI).
