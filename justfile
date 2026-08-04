@@ -431,9 +431,6 @@ check-vendor-manifest:
 check-wrapper-shape:
     uv run python -m livespec_dev_tooling.checks.wrapper_shape
 
-check-shell-quality:
-    uv run python -m livespec_dev_tooling.checks.shell_quality
-
 # ---------------------------------------------------------------
 # Pre-commit aggregate — Red-mode-aware. Classifies the staged
 # tree shape; in Red mode it passes `skip="check-coverage
