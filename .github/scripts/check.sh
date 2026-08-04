@@ -63,6 +63,7 @@ targets=(
     check-required-role-keys-declared
     check-rop-pipeline-shape
     check-self-hosted-routing
+    check-shell-quality
     check-skill-invocation-paths
     check-source-trees-scoped-to-consumer
     check-supervisor-discipline
