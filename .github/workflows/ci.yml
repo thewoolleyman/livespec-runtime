@@ -280,6 +280,7 @@ jobs:
           - check-heading-coverage
           - check-required-role-keys-declared
           - check-self-hosted-routing
+          - check-shell-quality
           - check-source-trees-scoped-to-consumer
           - check-vendor-manifest
           - check-no-direct-tool-invocation
