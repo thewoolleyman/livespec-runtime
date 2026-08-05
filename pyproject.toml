@@ -169,6 +169,7 @@ livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-to
 # and the fleet-check-coverage golden rules). Requires livespec-dev-tooling >=
 # v0.39.0 (the flip lever; this repo is pinned at v0.39.0 above).
 file_lloc_hard_gate = true
+plan_lifecycle_anchor = true
 scenario_tiers = ["tests.consumer", "tests.e2e"]
 
 # e9j Wave-1 B-rt (role-key declaration). `source_trees` arms the ROP checks
