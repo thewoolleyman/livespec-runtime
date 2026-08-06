@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.16.1...v0.17.0) (2026-08-06)
+
+
+### Features
+
+* mitigate github request budget pressure ([c77f2d7](https://github.com/thewoolleyman/livespec-runtime/commit/c77f2d772c8e9b2f6bd934646aadd98a78feabf0))
+
 ## [0.16.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.16.0...v0.16.1) (2026-08-06)
 
 
