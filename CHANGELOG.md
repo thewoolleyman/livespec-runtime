@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.16.0...v0.16.1) (2026-08-06)
+
+
+### Bug Fixes
+
+* measure github request budget ([9f28c77](https://github.com/thewoolleyman/livespec-runtime/commit/9f28c77818ddaba454c50068a7e9543617485cf8))
+
 ## [0.16.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.15.0...v0.16.0) (2026-08-03)
 
 
