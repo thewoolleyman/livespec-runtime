@@ -39,7 +39,7 @@ def test_compose_needs_attention_normalizes_primitives_to_attention_list() -> No
             PlanThreadOutput(
                 topic="needs-attention",
                 path="plan/needs-attention/research/design.md",
-                summary="Resolve the plan thread.",
+                summary="Resolve the plan.",
                 command="codex exec livespec-orchestrator-beads-fabro:orchestrate",
             ),
         ),
