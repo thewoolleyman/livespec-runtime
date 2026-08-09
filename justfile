@@ -153,6 +153,9 @@ check-format:
 check-types:
     uv run pyright
 
+check-spec-governance-default-block:
+    uv run python .github/scripts/check-spec-governance-default-block.py
+
 # In Red-mode pre-commit this target is omitted by `check-pre-commit`
 # via the `check skip=...` argument (coverage is verified at the Green
 # amend), so no ambient env-var read is needed here (epic li-cvaudit,

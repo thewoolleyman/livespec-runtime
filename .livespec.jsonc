@@ -24,6 +24,18 @@
   "template": "livespec",
   "spec_root": "SPECIFICATION",
   "implementation": { "plugin": "livespec-orchestrator-beads-fabro" },
+  // Optional — spec_governance:
+  // "spec_governance": {
+  //   "propose_change_mode": "interactive",
+  //   "critique_mode": "interactive",
+  //   "in_flight_alignment": "prompt",
+  //   "doctor_dispositions": {},
+  //   "revise_decision_mode": "manual",
+  //   "drift_acceptance_mode": "human",
+  //   "ratification_review": "manual-spawn",
+  //   "ratification_reviewer_model": null,
+  //   "ratification_min_review_age_seconds": 1
+  // }
   // Credential-injection wrapper (fleet default) prefixed to the beads CLIs so a bare invocation self-heals its tenant secret.
   "credential_wrapper": ["/usr/local/bin/with-livespec-env.sh", "--"],
   "harnesses": {
