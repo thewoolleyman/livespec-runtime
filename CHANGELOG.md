@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.17.0...v0.18.0) (2026-08-09)
+
+
+### Features
+
+* host spec governance default-block test ([e60b0a9](https://github.com/thewoolleyman/livespec-runtime/commit/e60b0a94588a43fbb1a52193dd4a370df101dc3e))
+
 ## [0.17.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.16.1...v0.17.0) (2026-08-06)
 
 
