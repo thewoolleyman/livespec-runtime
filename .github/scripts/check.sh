@@ -75,6 +75,7 @@ targets=(
     check-lint
     check-format
     check-types
+    check-spec-governance-default-block
     check-coverage
     check-doctor-static
 )
