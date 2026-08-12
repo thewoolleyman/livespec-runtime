@@ -231,23 +231,31 @@ covered_trees = []
 #
 # MEASURED, NOT ASSERTED — and taken from the CENTRAL vantage rather than from
 # here. `livespec-dev-tooling`'s fleet consumption row read all nine members'
-# master tarballs (0 skipped, 0 unparsed) and found ELEVEN functions this repo
-# defines and siblings import across 23 sites, against a declaration that named
-# NOTHING. Filed as `livespec-dev-tooling-nkkv`; the record with every
-# consumption site is `plan/rop-railway-enforcement/5cai-fleet-measurement.md`
+# master tarballs (0 skipped, 0 unparsed) and initially found ELEVEN functions
+# this repo defines and siblings import across 23 sites, against a declaration
+# that named NOTHING. Filed as `livespec-dev-tooling-nkkv`; the record with
+# every consumption site is `plan/rop-railway-enforcement/5cai-fleet-measurement.md`
 # in that repo.
 #
-# ALL ELEVEN ARE v178 CLAUSE-1 PRODUCT IMPORTS, not test imports: the consumers
-# are `store.py`, `_ids.py`, `bin/_bootstrap.py` and `commands/*.py` in two
-# orchestrators and, for `parse_cross_repo_manifest`, in `livespec` itself. The
-# blast radius of ever converting one is the `livespec-dev-tooling-dx8l` shape
-# exactly — dual-shape consumer wiring lands FIRST, in the consuming repo, and
-# the signature change only after. Declaring a name here does NOT convert it;
-# it makes the rule able to see it.
+# ALL ORIGINAL ELEVEN ARE v178 CLAUSE-1 PRODUCT IMPORTS, not test imports: the
+# consumers are `store.py`, `_ids.py`, `bin/_bootstrap.py` and `commands/*.py`
+# in two orchestrators and, for `parse_cross_repo_manifest`, in `livespec`
+# itself. The blast radius of ever converting one is the
+# `livespec-dev-tooling-dx8l` shape exactly — dual-shape consumer wiring lands
+# FIRST, in the consuming repo, and the signature change only after. Declaring
+# a name here does NOT convert it; it makes the rule able to see it.
+#
+# A later central fleet run found THREE more v178 clause-1 product imports from
+# `livespec` after spec-governance defaults moved into this runtime package.
+# Each entry below names the consuming member and file individually; the related
+# guard reading is recorded on work-item `livespec-runtime-0u8`.
 cross_repo_public_api = [
     { file = "livespec_runtime/credentials.py", function = "decide_credentials", reason = "product import: livespec-orchestrator-beads-fabro's .claude-plugin/scripts/bin/_bootstrap.py" },
     { file = "livespec_runtime/credentials.py", function = "wrapper_launch_failure", reason = "product import: livespec-orchestrator-beads-fabro's .claude-plugin/scripts/bin/_bootstrap.py" },
     { file = "livespec_runtime/cross_repo/types.py", function = "parse_cross_repo_manifest", reason = "product import by THREE members: livespec-orchestrator-beads-fabro's commands/_cross_repo.py, livespec-orchestrator-git-jsonl's io/_cross_repo.py, and livespec's parse/cross_repo.py" },
+    { file = "livespec_runtime/spec_governance.py", function = "documented_defaults", reason = "product import: livespec's .claude-plugin/scripts/livespec/spec_governance/default_block.py" },
+    { file = "livespec_runtime/spec_governance.py", function = "manifest_rows", reason = "product import by livespec's .claude-plugin/scripts/livespec/spec_governance/registry.py and dev-tooling/checks/spec_governance_manifest.py" },
+    { file = "livespec_runtime/spec_governance.py", function = "verify_default_block", reason = "product import by livespec's .claude-plugin/scripts/livespec/spec_governance/default_block.py and dev-tooling/checks/spec_governance_template.py" },
     { file = "livespec_runtime/work_items/lifecycle.py", function = "is_item_ready", reason = "product import: livespec-orchestrator-beads-fabro's _dispatcher_loop_selection.py, list_work_items.py and next.py" },
     { file = "livespec_runtime/work_items/lifecycle.py", function = "lane_of", reason = "product import: livespec-orchestrator-beads-fabro's _needs_attention_work_items.py and list_work_items.py, and livespec-orchestrator-git-jsonl's commands/attention_impl.py" },
     { file = "livespec_runtime/work_items/rank.py", function = "key_between", reason = "product import: livespec-orchestrator-beads-fabro's _orchestrator_gap_capture.py and groom.py, and livespec-orchestrator-git-jsonl's migration/beads_to_jsonl.py" },
