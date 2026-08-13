@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.18.1...v0.18.2) (2026-08-13)
+
+
+### Bug Fixes
+
+* **ci:** unshallow self-hosted checkout so origin/master..HEAD ranges resolve ([8fc4197](https://github.com/thewoolleyman/livespec-runtime/commit/8fc419773eef26b5cbdbc5764f4d7139548ee6e6))
+
 ## [0.18.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.18.0...v0.18.1) (2026-08-13)
 
 
