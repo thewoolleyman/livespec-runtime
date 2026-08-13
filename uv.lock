@@ -400,12 +400,12 @@ wheels = [
 
 [[package]]
 name = "livespec-dev-tooling"
-version = "1.20.6"
-source = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git?tag=v1.20.6#49cbfbe5c3bf4c704d84990a88e1605f3de419d7" }
+version = "1.21.0"
+source = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git?tag=v1.21.0#99ee77fae0a48cf64bd253ceb04d64ac6cf85011" }
 
 [[package]]
 name = "livespec-runtime"
-version = "0.18.0"
+version = "0.18.1"
 source = { editable = "." }
 dependencies = [
     { name = "returns", version = "0.26.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -439,7 +439,7 @@ dev = [
     { name = "hypothesis", specifier = "==6.122.3" },
     { name = "hypothesis-jsonschema", specifier = "==0.23.1" },
     { name = "import-linter", specifier = "==2.1" },
-    { name = "livespec-dev-tooling", git = "https://github.com/thewoolleyman/livespec-dev-tooling.git?tag=v1.20.6" },
+    { name = "livespec-dev-tooling", git = "https://github.com/thewoolleyman/livespec-dev-tooling.git?tag=v1.21.0" },
     { name = "mutmut", specifier = "==3.2.3" },
     { name = "pyright", specifier = "==1.1.391" },
     { name = "pytest", specifier = "==8.3.4" },
