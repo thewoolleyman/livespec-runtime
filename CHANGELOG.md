@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.18.2...v0.19.0) (2026-08-13)
+
+
+### Features
+
+* expose spec PR merge governance key ([c230a31](https://github.com/thewoolleyman/livespec-runtime/commit/c230a31220f586fa0d4108fa0186868ba4e99ede))
+
 ## [0.18.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.18.1...v0.18.2) (2026-08-13)
 
 
