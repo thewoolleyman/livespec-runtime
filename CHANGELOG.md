@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.18.0...v0.18.1) (2026-08-13)
+
+
+### Bug Fixes
+
+* **ci:** add MISE_HTTP_RETRIES alongside UV_HTTP_RETRIES ([40f8166](https://github.com/thewoolleyman/livespec-runtime/commit/40f81669d85554fe5a07ad1224441e14f3992cba))
+
 ## [0.18.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.17.0...v0.18.0) (2026-08-09)
 
 
