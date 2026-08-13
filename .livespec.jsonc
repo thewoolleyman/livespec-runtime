@@ -21,6 +21,12 @@
 // the .livespec.jsonc and the package skeleton; the cross_repo impl
 // lands via li-aclzfe against the seeded spec.
 {
+  // Worktree-discipline pack policy. "required" — the DEFAULT, and what an
+  // absent key means — makes `just check` fail when the canonical pack is not
+  // installed and imported by the root justfile. "optional" is the sanctioned,
+  // reviewable opt-out. Written explicitly at install time so the obligation is
+  // readable here rather than inferred from a verifier failure.
+  "worktree_discipline": { "pack": "required" },
   "template": "livespec",
   "spec_root": "SPECIFICATION",
   "implementation": { "plugin": "livespec-orchestrator-beads-fabro" },
@@ -34,7 +40,8 @@
   //   "drift_acceptance_mode": "human",
   //   "ratification_review": "manual-spawn",
   //   "ratification_reviewer_model": null,
-  //   "ratification_min_review_age_seconds": 1
+  //   "ratification_min_review_age_seconds": 1,
+  //   "spec_pr_merge": "manual"
   // }
   // Credential-injection wrapper (fleet default) prefixed to the beads CLIs so a bare invocation self-heals its tenant secret.
   "credential_wrapper": ["/usr/local/bin/with-livespec-env.sh", "--"],
