@@ -29,6 +29,7 @@ def test_manifest_hosts_current_spec_governance_keys() -> None:
         "ratification_review",
         "ratification_reviewer_model",
         "ratification_min_review_age_seconds",
+        "spec_pr_merge",
     ]
 
 
@@ -154,10 +155,10 @@ def test_parser_ignores_non_comment_lines_inside_balanced_block() -> None:
 
 def test_braces_and_escaped_quotes_inside_strings_do_not_close_block() -> None:
     text = _livespec_jsonc_text().replace(
-        '  //   "ratification_min_review_age_seconds": 1\n',
+        '  //   "spec_pr_merge": "manual"\n',
         "".join(
             [
-                '  //   "ratification_min_review_age_seconds": 1,\n',
+                '  //   "spec_pr_merge": "manual",\n',
                 '  //   "extra_documented_key": "c:\\\\tmp { } still string"\n',
             ]
         ),
@@ -204,7 +205,8 @@ def _livespec_jsonc_text() -> str:
   //   "drift_acceptance_mode": "human",
   //   "ratification_review": "manual-spawn",
   //   "ratification_reviewer_model": null,
-  //   "ratification_min_review_age_seconds": 1
+  //   "ratification_min_review_age_seconds": 1,
+  //   "spec_pr_merge": "manual"
   // }
   // Optional — credential_wrapper:
   "required_secret_env": []
