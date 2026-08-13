@@ -73,7 +73,7 @@
       // contract-version-compatibility invariant currently fires `warn`
       // against "master" pins, which is expected during bootstrap.
       "livespec": ">=0.1.0,<1.0.0",
-      "pinned": "v0.33.5"
+      "pinned": "v0.33.6"
     }
   },
   "livespec-orchestrator-beads-fabro": {
@@ -84,7 +84,7 @@
     "format": "beads",
     "compat": {
       "livespec": ">=0.1.0,<1.0.0",
-      "pinned": "v0.33.5"
+      "pinned": "v0.33.6"
     },
     // Per-repo beads tenant CONNECTION block, read by the plugin's
     // commands/_config.py and overlaid by LIVESPEC_BD_PATH /
