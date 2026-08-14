@@ -43,6 +43,12 @@
   //   "ratification_min_review_age_seconds": 1,
   //   "spec_pr_merge": "manual"
   // }
+  // Active spec_governance overrides. Non-interactive propose-change is armed
+  // fleet-wide (maintainer-directed); every other setting keeps its default
+  // as documented in the comment block above.
+  "spec_governance": {
+    "propose_change_mode": "batch"
+  },
   // Credential-injection wrapper (fleet default) prefixed to the beads CLIs so a bare invocation self-heals its tenant secret.
   "credential_wrapper": ["/usr/local/bin/with-livespec-env.sh", "--"],
   "harnesses": {
