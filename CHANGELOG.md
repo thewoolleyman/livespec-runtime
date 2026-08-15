@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.19.0...v0.20.0) (2026-08-15)
+
+
+### Features
+
+* add awaits_scope_override field to WorkItem ([5bd4677](https://github.com/thewoolleyman/livespec-runtime/commit/5bd4677cc381d2b981c526e586f60fefade59201))
+
 ## [0.19.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.18.2...v0.19.0) (2026-08-13)
 
 
