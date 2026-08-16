@@ -43,11 +43,20 @@
   //   "ratification_min_review_age_seconds": 1,
   //   "spec_pr_merge": "manual"
   // }
-  // Active spec_governance overrides. Non-interactive propose-change is armed
-  // fleet-wide (maintainer-directed); every other setting keeps its default
-  // as documented in the comment block above.
+  // Active spec_governance overrides (maintainer-directed fleet-wide
+  // spec-side-autonomy lever rollout, epic livespec-jvdvx4). Every remaining
+  // key keeps the shipped default documented in the comment block above,
+  // except drift_acceptance_mode (no safe autonomous value exists yet — it
+  // is fail-closed pending the unbuilt Increment-3 consensus panel) and
+  // doctor_dispositions (deferred to a separate follow-up; populating it
+  // needs real per-check-id judgment).
   "spec_governance": {
-    "propose_change_mode": "batch"
+    "propose_change_mode": "batch",
+    "critique_mode": "batch",
+    "in_flight_alignment": "default-align",
+    "revise_decision_mode": "delegated",
+    "ratification_review": "auto-spawn",
+    "spec_pr_merge": "auto-on-green"
   },
   // Credential-injection wrapper (fleet default) prefixed to the beads CLIs so a bare invocation self-heals its tenant secret.
   "credential_wrapper": ["/usr/local/bin/with-livespec-env.sh", "--"],
