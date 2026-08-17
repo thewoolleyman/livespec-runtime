@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.0...v0.21.1) (2026-08-17)
+
+
+### Bug Fixes
+
+* **ci:** make export-ci-telemetry.sh ARG_MAX-safe ([ecbfa62](https://github.com/thewoolleyman/livespec-runtime/commit/ecbfa628224deff20983f460fea708a446ddf3ab))
+
 ## [0.21.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.20.2...v0.21.0) (2026-08-17)
 
 
