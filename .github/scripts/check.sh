@@ -53,8 +53,8 @@ targets=(
     check-partition-completeness
     check-pbt-coverage-pure-modules
     check-per-file-coverage
-    check-plan-thread-anchor-declared
-    check-plan-thread-epic-parity
+    check-plan-anchor-declared
+    check-plan-epic-parity
     check-plugin-resolution
     check-primary-checkout-commit-refuse-hook-installed
     check-private-calls
