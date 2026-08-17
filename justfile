@@ -453,7 +453,7 @@ check-pre-commit:
 # When zero `.py` files are staged, `check-pre-commit` delegates here.
 # Pre-push delegates here via `check-pre-push` for zero-py changesets.
 check-pre-commit-doc-only:
-    printf '%s\n' ":: doc-only subset (no repo-metadata checks wired yet)"
+    .github/scripts/check-pre-commit-doc-only.sh
 
 # Skip the Python-code check subset when the pushed commits contain
 # zero `.py` changes. Falls back to `origin/master` when no upstream
