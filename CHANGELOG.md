@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.20.2...v0.21.0) (2026-08-17)
+
+
+### Features
+
+* **ci:** batch the cheap checks — the matrices become batch jobs ([5210106](https://github.com/thewoolleyman/livespec-runtime/commit/52101068c0313c077658d87198db4a46a57b8c03))
+
 ## [0.20.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.20.1...v0.20.2) (2026-08-17)
 
 
