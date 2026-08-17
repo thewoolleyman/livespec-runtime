@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.20.1...v0.20.2) (2026-08-17)
+
+
+### Bug Fixes
+
+* **pre-commit:** wire repo-state checks into the doc-only subset ([ac8eab7](https://github.com/thewoolleyman/livespec-runtime/commit/ac8eab7d4986ed94da7083296d3f3b7eb7910b10))
+
 ## [0.20.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.20.0...v0.20.1) (2026-08-17)
 
 
