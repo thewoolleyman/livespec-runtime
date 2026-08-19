@@ -159,7 +159,7 @@ jobs:
     # red-in-sandbox drift this epic exists to remove, on either lane.
     runs-on: ${{ fromJSON(vars.CI_RUNNER_LABELS || '["ubuntu-latest"]') }}
     container:
-      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.8
+      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.10
     env:
       MISE_DATA_DIR: /root/.local/share/mise
       MISE_NOT_FOUND_AUTO_INSTALL: "0"
@@ -247,7 +247,7 @@ jobs:
     needs: setup
     runs-on: ${{ fromJSON(vars.CI_RUNNER_LABELS || '["ubuntu-latest"]') }}
     container:
-      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.8
+      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.10
     env:
       MISE_DATA_DIR: /root/.local/share/mise
       MISE_NOT_FOUND_AUTO_INSTALL: "0"
@@ -320,7 +320,7 @@ jobs:
     needs: [setup, check-per-file-coverage]
     runs-on: ${{ fromJSON(vars.CI_RUNNER_LABELS || '["ubuntu-latest"]') }}
     container:
-      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.8
+      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.10
     env:
       MISE_DATA_DIR: /root/.local/share/mise
       MISE_NOT_FOUND_AUTO_INSTALL: "0"
@@ -391,7 +391,7 @@ jobs:
     needs: setup
     runs-on: ${{ fromJSON(vars.CI_RUNNER_LABELS || '["ubuntu-latest"]') }}
     container:
-      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.8
+      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.10
     env:
       MISE_DATA_DIR: /root/.local/share/mise
       MISE_NOT_FOUND_AUTO_INSTALL: "0"
@@ -458,7 +458,7 @@ jobs:
     # Self-hosted in the baked image, same rationale as check-python above.
     runs-on: ${{ fromJSON(vars.CI_RUNNER_LABELS || '["ubuntu-latest"]') }}
     container:
-      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.8
+      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.10
     env:
       MISE_DATA_DIR: /root/.local/share/mise
       MISE_NOT_FOUND_AUTO_INSTALL: "0"
@@ -583,7 +583,7 @@ jobs:
     name: check-metadata-batch
     runs-on: ${{ fromJSON(vars.CI_RUNNER_LABELS || '["ubuntu-latest"]') }}
     container:
-      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.8
+      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.10
     env:
       MISE_DATA_DIR: /root/.local/share/mise
       MISE_NOT_FOUND_AUTO_INSTALL: "0"
@@ -659,7 +659,7 @@ jobs:
     # preserved).
     runs-on: ${{ fromJSON(vars.CI_RUNNER_LABELS || '["ubuntu-latest"]') }}
     container:
-      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.8
+      image: ghcr.io/thewoolleyman/livespec-fabro-sandbox:python-v1.28.10
     env:
       MISE_DATA_DIR: /root/.local/share/mise
       MISE_NOT_FOUND_AUTO_INSTALL: "0"
