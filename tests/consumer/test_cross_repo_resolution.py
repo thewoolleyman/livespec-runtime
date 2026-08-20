@@ -37,6 +37,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from returns.pipeline import is_successful
 
 # Every import below is part of `livespec_runtime`'s public surface per
 # contracts.md: the parse boundary, the
@@ -155,7 +156,7 @@ def test_pull_request_dependency_resolution_paths(monkeypatch: pytest.MonkeyPatc
 
     merged_entry = parse_depends_on_entry(
         parsed={"kind": "pull_request", "repo": "livespec", "number": 166}
-    )
+    ).unwrap()
     _patch_gh(monkeypatch, pr_state_fixture="pr_view_merged.json")
     assert (
         resolve_ref(entry=merged_entry, manifest=manifest, local_status_lookup=_open_lookup)
@@ -164,7 +165,7 @@ def test_pull_request_dependency_resolution_paths(monkeypatch: pytest.MonkeyPatc
 
     open_entry = parse_depends_on_entry(
         parsed={"kind": "pull_request", "repo": "livespec-runtime", "number": 2}
-    )
+    ).unwrap()
     _patch_gh(monkeypatch, pr_state_fixture="pr_view_open.json")
     assert (
         resolve_ref(entry=open_entry, manifest=manifest, local_status_lookup=_open_lookup)
@@ -193,7 +194,9 @@ def test_pull_request_dependency_retry_exhaustion_is_unknown(
     manifest = _manifest_from_jsonc(
         block={"livespec": {"github_url": "https://github.com/thewoolleyman/livespec"}}
     )
-    entry = parse_depends_on_entry(parsed={"kind": "pull_request", "repo": "livespec", "number": 2})
+    entry = parse_depends_on_entry(
+        parsed={"kind": "pull_request", "repo": "livespec", "number": 2}
+    ).unwrap()
     assert (
         resolve_ref(entry=entry, manifest=manifest, local_status_lookup=_open_lookup)
         == RefStatus.UNKNOWN
@@ -221,7 +224,7 @@ def test_pull_request_dependency_unknown_repo_slug_is_unknown(
     )
     entry = parse_depends_on_entry(
         parsed={"kind": "pull_request", "repo": "livespec-runtime", "number": 2}
-    )
+    ).unwrap()
     assert (
         resolve_ref(entry=entry, manifest=manifest, local_status_lookup=_open_lookup)
         == RefStatus.UNKNOWN
@@ -254,7 +257,7 @@ def test_branch_dependency_resolution_paths(monkeypatch: pytest.MonkeyPatch) -> 
 
     gone_entry = parse_depends_on_entry(
         parsed={"kind": "branch", "repo": "livespec-runtime", "name": "feat/old-merged-branch"}
-    )
+    ).unwrap()
     _patch_gh(monkeypatch, branch_present=False)
     assert (
         resolve_ref(entry=gone_entry, manifest=manifest, local_status_lookup=_open_lookup)
@@ -267,7 +270,7 @@ def test_branch_dependency_resolution_paths(monkeypatch: pytest.MonkeyPatch) -> 
             "repo": "livespec-runtime",
             "name": "feat/cross-repo-types-li-aclzfe",
         }
-    )
+    ).unwrap()
     _patch_gh(monkeypatch, branch_present=True, compare_fixture="branch_compare_ahead.json")
     assert (
         resolve_ref(entry=unmerged_entry, manifest=manifest, local_status_lookup=_open_lookup)
@@ -276,7 +279,7 @@ def test_branch_dependency_resolution_paths(monkeypatch: pytest.MonkeyPatch) -> 
 
     merged_entry = parse_depends_on_entry(
         parsed={"kind": "branch", "repo": "livespec-runtime", "name": "some-merged-branch"}
-    )
+    ).unwrap()
     _patch_gh(monkeypatch, branch_present=True, compare_fixture="branch_compare_identical.json")
     assert (
         resolve_ref(entry=merged_entry, manifest=manifest, local_status_lookup=_open_lookup)
@@ -317,7 +320,7 @@ def test_local_dependency_delegates_to_caller_lookup() -> None:
     never touches `subprocess`).
     """
     manifest = CrossRepoManifest(targets={})
-    entry = parse_depends_on_entry(parsed={"kind": "local", "work_item_id": "li-aclzfe"})
+    entry = parse_depends_on_entry(parsed={"kind": "local", "work_item_id": "li-aclzfe"}).unwrap()
 
     def lookup(work_item_id: str) -> RefStatus:
         return RefStatus.OPEN if work_item_id == "li-aclzfe" else RefStatus.UNKNOWN
@@ -343,7 +346,7 @@ def test_sibling_work_item_without_lookup_is_unknown(monkeypatch: pytest.MonkeyP
     )
     entry = parse_depends_on_entry(
         parsed={"kind": "sibling_work_item", "repo": "livespec", "work_item_id": "li-e7h6ki"}
-    )
+    ).unwrap()
     assert (
         resolve_ref(entry=entry, manifest=manifest, local_status_lookup=_open_lookup)
         == RefStatus.UNKNOWN
@@ -362,9 +365,9 @@ def test_parse_depends_on_entry_rejects_unknown_kind() -> None:
     whose `detail` names the offending kind and enumerates the four
     valid kinds.
     """
-    with pytest.raises(CrossRepoSchemaError) as excinfo:
-        _ = parse_depends_on_entry(parsed={"kind": "slack_thread", "channel": "#engineering"})
-    detail = excinfo.value.detail
+    result = parse_depends_on_entry(parsed={"kind": "slack_thread", "channel": "#engineering"})
+    assert not is_successful(result)
+    detail = result.failure().detail
     assert "slack_thread" in detail
     for valid_kind in ("local", "sibling_work_item", "pull_request", "branch"):
         assert valid_kind in detail
@@ -376,9 +379,9 @@ def test_parse_depends_on_entry_rejects_missing_required_field() -> None:
     A `pull_request` entry missing `number` raises
     `CrossRepoSchemaError` whose `detail` names the missing field.
     """
-    with pytest.raises(CrossRepoSchemaError) as excinfo:
-        _ = parse_depends_on_entry(parsed={"kind": "pull_request", "repo": "livespec"})
-    assert "number" in excinfo.value.detail
+    result = parse_depends_on_entry(parsed={"kind": "pull_request", "repo": "livespec"})
+    assert not is_successful(result)
+    assert "number" in result.failure().detail
 
 
 def test_parse_cross_repo_manifest_accepts_minimal_target() -> None:
