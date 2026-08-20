@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.21.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.1...v0.21.2) (2026-08-20)
+
+
+### Bug Fixes
+
+* **cross-repo:** put parse_depends_on_entry on the Result railway ([6bb42dc](https://github.com/thewoolleyman/livespec-runtime/commit/6bb42dc28bbdcbefa2d08aa2f3679c0dcc822dbf))
+* **github-auth:** put load_github_app_config on the Result railway ([e60c681](https://github.com/thewoolleyman/livespec-runtime/commit/e60c6815ebece4e648c9c6efd9406b254e9cf2be))
+
 ## [0.21.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.0...v0.21.1) (2026-08-17)
 
 
