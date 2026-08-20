@@ -10,6 +10,7 @@ Schema reference: livespec/SPECIFICATION/contracts.md v072.
 from pathlib import Path
 
 import pytest
+from returns.pipeline import is_successful
 
 from livespec_runtime.cross_repo.errors import CrossRepoSchemaError
 from livespec_runtime.cross_repo.types import (
@@ -108,7 +109,7 @@ def test_cross_repo_manifest_construction_with_targets() -> None:
 
 
 def test_parse_depends_on_entry_local() -> None:
-    entry = parse_depends_on_entry(parsed={"kind": "local", "work_item_id": "li-abc"})
+    entry = parse_depends_on_entry(parsed={"kind": "local", "work_item_id": "li-abc"}).unwrap()
     assert isinstance(entry, LocalDependency)
     assert entry.work_item_id == "li-abc"
 
@@ -116,7 +117,7 @@ def test_parse_depends_on_entry_local() -> None:
 def test_parse_depends_on_entry_sibling_work_item() -> None:
     entry = parse_depends_on_entry(
         parsed={"kind": "sibling_work_item", "repo": "impl", "work_item_id": "li-xyz"},
-    )
+    ).unwrap()
     assert isinstance(entry, SiblingWorkItemDependency)
     assert entry.repo == "impl"
     assert entry.work_item_id == "li-xyz"
@@ -125,7 +126,7 @@ def test_parse_depends_on_entry_sibling_work_item() -> None:
 def test_parse_depends_on_entry_pull_request() -> None:
     entry = parse_depends_on_entry(
         parsed={"kind": "pull_request", "repo": "impl", "number": 42},
-    )
+    ).unwrap()
     assert isinstance(entry, PullRequestDependency)
     assert entry.repo == "impl"
     assert entry.number == 42
@@ -134,42 +135,46 @@ def test_parse_depends_on_entry_pull_request() -> None:
 def test_parse_depends_on_entry_branch() -> None:
     entry = parse_depends_on_entry(
         parsed={"kind": "branch", "repo": "impl", "name": "feat/foo"},
-    )
+    ).unwrap()
     assert isinstance(entry, BranchDependency)
     assert entry.repo == "impl"
     assert entry.name == "feat/foo"
 
 
 def test_parse_depends_on_entry_missing_kind_raises() -> None:
-    with pytest.raises(CrossRepoSchemaError, match="missing required field 'kind'"):
-        _ = parse_depends_on_entry(parsed={"work_item_id": "li-abc"})
+    result = parse_depends_on_entry(parsed={"work_item_id": "li-abc"})
+    assert not is_successful(result)
+    assert "missing required field 'kind'" in result.failure().detail
 
 
 def test_parse_depends_on_entry_unknown_kind_raises() -> None:
-    with pytest.raises(CrossRepoSchemaError, match="unknown kind"):
-        _ = parse_depends_on_entry(parsed={"kind": "garbage", "work_item_id": "li-abc"})
+    result = parse_depends_on_entry(parsed={"kind": "garbage", "work_item_id": "li-abc"})
+    assert not is_successful(result)
+    assert "unknown kind" in result.failure().detail
 
 
 def test_parse_depends_on_entry_local_missing_required_field_raises() -> None:
-    with pytest.raises(CrossRepoSchemaError, match="missing required field 'work_item_id'"):
-        _ = parse_depends_on_entry(parsed={"kind": "local"})
+    result = parse_depends_on_entry(parsed={"kind": "local"})
+    assert not is_successful(result)
+    assert "missing required field 'work_item_id'" in result.failure().detail
 
 
 def test_parse_depends_on_entry_sibling_work_item_missing_required_field_raises() -> None:
-    with pytest.raises(CrossRepoSchemaError, match="missing required field 'repo'"):
-        _ = parse_depends_on_entry(
-            parsed={"kind": "sibling_work_item", "work_item_id": "li-xyz"},
-        )
+    result = parse_depends_on_entry(parsed={"kind": "sibling_work_item", "work_item_id": "li-xyz"})
+    assert not is_successful(result)
+    assert "missing required field 'repo'" in result.failure().detail
 
 
 def test_parse_depends_on_entry_pull_request_missing_required_field_raises() -> None:
-    with pytest.raises(CrossRepoSchemaError, match="missing required field 'number'"):
-        _ = parse_depends_on_entry(parsed={"kind": "pull_request", "repo": "impl"})
+    result = parse_depends_on_entry(parsed={"kind": "pull_request", "repo": "impl"})
+    assert not is_successful(result)
+    assert "missing required field 'number'" in result.failure().detail
 
 
 def test_parse_depends_on_entry_branch_missing_required_field_raises() -> None:
-    with pytest.raises(CrossRepoSchemaError, match="missing required field 'name'"):
-        _ = parse_depends_on_entry(parsed={"kind": "branch", "repo": "impl"})
+    result = parse_depends_on_entry(parsed={"kind": "branch", "repo": "impl"})
+    assert not is_successful(result)
+    assert "missing required field 'name'" in result.failure().detail
 
 
 def test_parse_cross_repo_manifest_empty() -> None:
