@@ -291,6 +291,12 @@ cross_repo_public_api = [
 total_absence_returns = [
     { file = "livespec_runtime/github_budget_client_support.py", function = "header_value", reason = "A case-insensitive lookup of one header in a Mapping the caller ALREADY HOLDS. Total, no I/O, nothing fallible: None means 'no header of that name is present', an answer about the mapping's contents rather than a failure to obtain them. The HTTP exchange that could fail happened in the caller, which is why this helper takes headers rather than fetching them." },
     { file = "livespec_runtime/github_budget_client_support.py", function = "mapping_option", reason = "Reads one option out of an ALREADY-PARSED options mapping. Total, no I/O, nothing fallible: None means 'that option is not set'. ⚠️ RESIDUAL, and it is NOT about the None: the `cast` is unchecked, so an option that IS set but is not a Mapping[str, str] is returned wrongly-typed rather than as None. That is a separate defect in the SUCCESS path and does not make this None ambiguous; it is filed separately." },
+
+    # documented_defaults became declarable by CONVERSION, not by argument: c795205
+    # lifted its malformed-block failure out into an exception, leaving a None with
+    # exactly one meaning. ⚠️ It does NOT relieve verify_default_block, which is
+    # convicted by that raise propagating through an unguarded call, not by this None.
+    { file = "livespec_runtime/spec_governance.py", function = "documented_defaults", reason = "Extracts the commented `spec_governance` object from source TEXT the caller already holds. ⚠️ DECLARABLE ONLY SINCE c795205 (livespec-runtime-922) -- BEFORE that commit this None ALSO covered an UNTERMINATED comment block, which is a malformed-input FAILURE, and the entry would have been refused. That case now raises UnterminatedGovernanceBlockError, so it no longer reaches the return. Every REMAINING route to None is an absence: (1) _comment_block finds no `spec_governance` block at all -- this file documents no defaults; (2) the parsed `spec_governance` value is not a dict -- an answer about an ALREADY-PARSED value's shape, the jsonio.as_object family; (3) the block parses to an EMPTY dict, which documents nothing. The one fallible step, json.loads over the uncommented block, RAISES JSONDecodeError rather than returning None, and a test added in c795205 pins that. No I/O -- the read happened in the caller." },
 ]
 
 [tool.ruff]
