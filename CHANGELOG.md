@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.3](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.2...v0.21.3) (2026-08-21)
+
+
+### Bug Fixes
+
+* distinguish unterminated governance defaults ([c795205](https://github.com/thewoolleyman/livespec-runtime/commit/c795205e08e0fbd279e1ac0726608e7c12691017))
+
 ## [0.21.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.1...v0.21.2) (2026-08-20)
 
 
