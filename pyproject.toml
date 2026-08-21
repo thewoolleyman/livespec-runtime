@@ -272,6 +272,27 @@ cross_repo_public_api = [
 # livespec/SPECIFICATION/non-functional-requirements.md §"Linter rule set".
 # ---------------------------------------------------------------------------
 
+
+# ================= total_absence_returns, v179 member 2 =================
+# The fleet's declared `X | None` absence, exercised here for the first time.
+# 3 convicted-and-shaped candidates were re-derived at master 75bbd57 (universe
+# 39) and read ONE AT A TIME; 2 are declared and 1 was REFUSED.
+#
+# ⚠️ REFUSED: `spec_governance.documented_defaults`. `_comment_block` returns
+# None both when NO governance comment block is present (an absence) and when a
+# block OPENS AND NEVER BALANCES (a malformed block -- a failure). A truncated
+# block therefore reads as "this file documents no defaults", which is the wrong
+# direction for a drift detector. Filed for conversion, not exempted.
+#
+# THE TEST APPLIED: a `None` is an ABSENCE when every route to it answers the
+# function's own question negatively, and a FAILURE when some route means "I
+# could not obtain an answer". Fallible I/O, a parse, and a guard tripping are
+# the three shapes that make it the latter.
+total_absence_returns = [
+    { file = "livespec_runtime/github_budget_client_support.py", function = "header_value", reason = "A case-insensitive lookup of one header in a Mapping the caller ALREADY HOLDS. Total, no I/O, nothing fallible: None means 'no header of that name is present', an answer about the mapping's contents rather than a failure to obtain them. The HTTP exchange that could fail happened in the caller, which is why this helper takes headers rather than fetching them." },
+    { file = "livespec_runtime/github_budget_client_support.py", function = "mapping_option", reason = "Reads one option out of an ALREADY-PARSED options mapping. Total, no I/O, nothing fallible: None means 'that option is not set'. ⚠️ RESIDUAL, and it is NOT about the None: the `cast` is unchecked, so an option that IS set but is not a Mapping[str, str] is returned wrongly-typed rather than as None. That is a separate defect in the SUCCESS path and does not make this None ambiguous; it is filed separately." },
+]
+
 [tool.ruff]
 target-version = "py310"
 line-length = 100
