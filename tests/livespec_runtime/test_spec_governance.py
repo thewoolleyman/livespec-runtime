@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+import pytest
 from returns.result import Failure, Success
 
 from livespec_runtime import spec_governance
@@ -130,8 +131,16 @@ def test_empty_and_non_object_spec_governance_blocks_are_absent() -> None:
     )
 
 
-def test_unterminated_commented_block_is_absent() -> None:
-    assert (
+def test_unterminated_commented_block_raises_structural_error() -> None:
+    assert hasattr(spec_governance, "UnterminatedGovernanceBlockError")
+    error_type = spec_governance.UnterminatedGovernanceBlockError
+    assert isinstance(error_type, type)
+    assert issubclass(error_type, Exception)
+
+    with pytest.raises(
+        error_type,
+        match="unterminated spec_governance comment block",
+    ):
         documented_defaults(
             text="""{
   // Optional — spec_governance:
@@ -140,8 +149,23 @@ def test_unterminated_commented_block_is_absent() -> None:
   //   "propose_change_mode": "interactive"
 """
         )
-        is None
-    )
+
+
+def test_no_commented_block_is_absent() -> None:
+    assert documented_defaults(text="{}") is None
+
+
+def test_malformed_json_inside_balanced_block_still_raises_json_decode_error() -> None:
+    with pytest.raises(json.JSONDecodeError):
+        documented_defaults(
+            text="""{
+  // Optional — spec_governance:
+  // "spec_governance": {
+  //   "propose_change_mode": "interactive",
+  // }
+}
+"""
+        )
 
 
 def test_parser_ignores_non_comment_lines_inside_balanced_block() -> None:
