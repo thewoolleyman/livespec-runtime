@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.4](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.3...v0.21.4) (2026-08-25)
+
+
+### Bug Fixes
+
+* accept the internal prefix in the attention stable-ID grammar ([6421fcc](https://github.com/thewoolleyman/livespec-runtime/commit/6421fcc654c285c5fa11bac98d3a5a151febe04e))
+
 ## [0.21.3](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.2...v0.21.3) (2026-08-21)
 
 
