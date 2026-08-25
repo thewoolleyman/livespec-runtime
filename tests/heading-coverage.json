@@ -326,16 +326,16 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: validate_attention_item_id rejects an id whose component is purely decimal",
-    "test": "TODO",
-    "reason": "Describes already-shipped behavior; coverage deferred to the attention-family test pass charged by plan homelab-loop-hardening-runtime rather than mixed into this spec-only ratification changeset. Mapped test MUST sit at the integration tier or above (a consumer-shaped test importing livespec_runtime and driving a real workflow), per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\").",
+    "test": "tests.consumer.test_attention_id_grammar.test_rejects_an_id_whose_component_is_purely_decimal",
+    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\").",
     "work_item": "livespec-runtime-cr4"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: validate_attention_item_id accepts a well-formed three-part hygiene id",
-    "test": "TODO",
-    "reason": "Describes already-shipped behavior; coverage deferred to the attention-family test pass charged by plan homelab-loop-hardening-runtime rather than mixed into this spec-only ratification changeset. Mapped test MUST sit at the integration tier or above (a consumer-shaped test importing livespec_runtime and driving a real workflow), per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\").",
+    "test": "tests.consumer.test_attention_id_grammar.test_accepts_a_well_formed_three_part_hygiene_id",
+    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\").",
     "work_item": "livespec-runtime-cr4"
   },
   {
