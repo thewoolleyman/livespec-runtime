@@ -87,3 +87,21 @@ def test_validate_attention_item_id_rejects_positional_or_malformed_keys() -> No
     )
 
     assert not any(validate_attention_item_id(id=value) for value in invalid_ids)
+
+
+def test_validate_attention_item_id_accepts_internal_prefix() -> None:
+    """`internal` is a first-class AttentionKind, so its natural key must validate.
+
+    Regression for livespec-runtime-dnu: the accepted-prefix set omitted
+    `internal` even though `kind="internal"` is ratified, so the shipped
+    schema rejected its own natural key. SPECIFICATION/constraints.md
+    requires every AttentionKind member to have a matching accepted prefix.
+    """
+    assert validate_attention_item_id(id="internal:overseer-restart:my-repo") is True
+
+
+def test_validate_attention_item_id_rejects_malformed_internal_keys() -> None:
+    """Admitting `internal` must not weaken the grammar's component rules."""
+    assert validate_attention_item_id(id="internal:my-repo") is False
+    assert validate_attention_item_id(id="internal:overseer-restart:7") is False
+    assert validate_attention_item_id(id="internal::my-repo") is False
