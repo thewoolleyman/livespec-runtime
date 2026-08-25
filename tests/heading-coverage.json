@@ -319,9 +319,8 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: every attention kind has a matching stable-ID prefix",
-    "test": "TODO",
-    "reason": "Ratified v012 as a DELIBERATE spec-to-implementation gap: constraints.md records the implementation NON-CONFORMANT in two places (kind `internal` has no accepted prefix, livespec-runtime/livespec-runtime-dnu; kind `human-valve` composes prefix `valve`). A test asserting the bijection cannot pass against shipped code until the gap-closing pass lands. Replace TODO with the real test id in that pass. Mapped test MUST sit at the integration tier or above (a consumer-shaped test importing livespec_runtime and driving a real workflow), per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\").",
-    "work_item": "livespec-runtime-wfl"
+    "test": "tests.consumer.test_attention_lockstep.test_declared_mapping_is_total_over_ratified_kinds",
+    "reason": "Covered by the consumer-tier lockstep test, which parses the ratified kind-to-prefix table in SPECIFICATION/contracts.md and asserts it is total over AttentionKind, injective into the prefixes, accepted at each declared arity and rejected at the wrong one. Ratified v013; the v012 non-conformance it was filed against is closed."
   },
   {
     "spec_root": "SPECIFICATION",
