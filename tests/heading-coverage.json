@@ -116,7 +116,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Boundary",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion: meta-prose stating which invariants this FILE covers and which belong to contracts.md or constraints.md. It is the placement litmus, not a rule an implementation can violate. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -124,7 +124,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Build and packaging",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion at runtime: it fixes build configuration (hatchling backend, a single wheel from livespec_runtime/). The declarations live in pyproject.toml and are exercised by the build itself -- a failing build is the signal, and an importable installed package is the evidence CI already produces. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -132,7 +132,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Inherited from livespec",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion: by construction it restates no rule of its own, adopting livespec-core's non-functional-requirements in full and listing notable inherited rules for orientation only. Anything testable here belongs to the upstream repo that owns the rule. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -140,7 +140,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Prose conventions",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion about the library: it constrains how this SPEC's prose is written (version references prefixed with the owning project name). Violating it produces a misleading document, not misbehaving code. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -148,7 +148,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Release flow",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No pytest test today, and the gap is TRACKED rather than dismissed: the section binds releases to release-please's manifest-mode config, but nothing asserts that the computed bump matches the ratified classification. That gap released 0.21.5 for a Major-classified change and is owned by livespec-runtime-mqsxsu.1; whatever closes it is the right mapping for this heading. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -156,7 +156,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Repo layout",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "Enforced by a CHECK rather than by a pytest test: the load-bearing clause -- that tests/ mirrors the livespec_runtime/ package layout -- is asserted by check-tests-mirror-pairing. The remaining bullets describe directory purposes, which carry no assertion. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -164,7 +164,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Spec evolution",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion: it describes this spec's own lifecycle and names compat.pinned as the authoritative consumed version. The lifecycle invariants are doctor's (see spec.md \u00a7'Lifecycle and evolution'); the pin is consumer configuration. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -172,7 +172,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Task-runner discipline",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "Enforced by CHECKS rather than by a pytest test: that `just` is the single canonical entry point, and that ruff/pyright/pytest are not invoked directly, is asserted by check-no-direct-tool-invocation and check-canonical-recipe-fidelity. A test asserting a check runs would be indirection, not coverage. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -180,7 +180,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Test discipline",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "Enforced by CHECKS rather than by a pytest test: 'every public symbol MUST have direct test coverage' is asserted by check-per-file-coverage and check-tests-mirror-pairing, and the scenario-tier rule this very registry implements is asserted by check-heading-coverage. The section governs the SUITE, so a test inside the suite cannot be its own witness. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -188,7 +188,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Versioning",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No pytest test today, and the gap is TRACKED rather than dismissed: this section IS the ratified Major/Minor/Patch classification plus the pre-major provision, and nothing binds it to the bump release automation computes -- the defect that nearly shipped 0.21.5 for a Major-classified change. Owned by livespec-runtime-mqsxsu.1; whatever closes it is the right mapping for this heading. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -196,7 +196,7 @@
     "spec_file": "spec.md",
     "heading": "## Lifecycle and evolution",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "Enforced by CHECKS rather than by a pytest test: it describes the livespec propose/critique/revise lifecycle, whose invariants are asserted by the doctor static registry via check-doctor-static (doctor-out-of-band-edits, doctor-version-contiguity, doctor-revision-to-proposed-change-pairing). No library behavior to exercise. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -204,7 +204,7 @@
     "spec_file": "spec.md",
     "heading": "## Public surface",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion OF ITS OWN: this section delegates, naming contracts.md \u00a7'Module-level public surface' as the authoritative inventory. The testable content lives under that heading, which carries its own registry entry; duplicating a mapping here would make two entries move together silently. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -212,7 +212,7 @@
     "spec_file": "spec.md",
     "heading": "## Purpose",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion: orientation prose stating what this library is and is not. Its one assertable claim -- that the package ships no slash commands, SKILL.md files or hooks -- is a repo-SHAPE fact, not runtime behavior, and is already declared in `.livespec.jsonc` `harnesses`, where both the claude and codex entries are recorded `exempt` with the reason 'livespec-runtime is a library; it ships no command/skill surface'. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -220,7 +220,7 @@
     "spec_file": "spec.md",
     "heading": "## Scope boundary",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion: meta-prose delimiting which decisions this spec owns versus which are fixed upstream in livespec-core. It constrains the SPEC's contents, not the library's behavior. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -228,7 +228,7 @@
     "spec_file": "spec.md",
     "heading": "## Terminology",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion: a glossary. It adopts livespec-core's terms verbatim and adds library-local refinements; definitions carry no input/output an implementation could satisfy or violate. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
