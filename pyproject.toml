@@ -391,8 +391,11 @@ ban-relative-imports = "all"
 # are over-strict for this documented pattern.
 "livespec_runtime/cross_repo/**.py" = ["S603", "S607", "S404"]
 # retry.py's broad `except Exception` is the spec-sanctioned I/O/retry-seam
-# catch (SPECIFICATION/constraints.md §"Provider constraints": domain errors are
-# ValueError subclasses "so the retry layer's broad catch still works"). io_trees
+# catch (SPECIFICATION/constraints.md §"Provider constraints": provider domain
+# errors subclass `Exception` directly, which this seam's broad catch already
+# covers). Citation refreshed for v015, which repealed the superseded
+# "ValueError subclasses ... so the retry layer's broad catch still works"
+# wording this comment previously quoted. io_trees
 # exempts it from no_except_outside_io (position); this ignores the paired ruff
 # BLE001 (breadth) for the same one sanctioned catch — scoped to retry.py so a
 # future broad catch elsewhere in cross_repo still surfaces.
