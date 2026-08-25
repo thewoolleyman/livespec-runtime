@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.22.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.4...v0.22.0) (2026-08-25)
+
+
+### Bug Fixes
+
+* **attention:** refuse invalid attention-item ids at construction ([f329b17](https://github.com/thewoolleyman/livespec-runtime/commit/f329b17aa8d08a0cde1eccf5f47c99259e18ac6c))
+
+
+### Chores
+
+* **release:** cut 0.22.0 for the construction-validation breaking change ([4dba3c0](https://github.com/thewoolleyman/livespec-runtime/commit/4dba3c0142c012d53e734c62884f54dedb575f86))
+
 ## [0.21.4](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.3...v0.21.4) (2026-08-25)
 
 
