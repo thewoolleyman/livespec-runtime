@@ -4,15 +4,15 @@
     "spec_file": "constraints.md",
     "heading": "## Dependency constraints",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion at runtime: it governs how dependencies are PINNED (pyproject.toml plus uv.lock) and requires a propose-change cycle plus a minor bump to add one. The lock file is the artifact and a resolving install is the evidence; the propose-change requirement is process, enforced at review. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Forbidden patterns",
-    "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "test": "tests.consumer.test_cross_repo_resolution.test_pull_request_dependency_retry_exhaustion_is_unknown",
+    "reason": "Mapped to the test witnessing the first and load-bearing forbidden pattern: no silent fallback may hide a transport error, so retry exhaustion MUST land at RefStatus.UNKNOWN rather than at a fabricated answer. Note this is the very clause livespec-runtime-mqsxsu.3 shows the ratified retry contract instructs consumers to VIOLATE. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -20,7 +20,7 @@
     "spec_file": "constraints.md",
     "heading": "## Inherited from livespec",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion: by construction it adds no rule of its own, adopting livespec-core's non-functional-requirements in full and pointing at this library's own file for the contributor-facing catalogue. Anything testable belongs to the upstream repo that owns the rule. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -28,15 +28,15 @@
     "spec_file": "constraints.md",
     "heading": "## Process boundaries",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion: every clause is an architectural NEGATIVE -- no threads, no asyncio, no subprocess pool, no filesystem mutation. A test can witness that the library did not do something on one path, which is not evidence it never does; the guarantee is upheld by review and by the absence of those imports, not by an assertion. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Provider constraints",
-    "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "test": "tests.consumer.test_cross_repo_resolution.test_non_canonical_github_url_raises_for_branch_provider",
+    "reason": "Mapped to the test witnessing the clause that providers MUST raise rather than swallow: a non-canonical github_url reaches the consumer as the provider's own domain exception. The future-provider bullets constrain modules that do not exist yet. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -44,15 +44,15 @@
     "spec_file": "constraints.md",
     "heading": "## Public-surface constraints",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "Enforced by CHECKS rather than by a pytest test: frozen/slotted/kw-only dataclasses and keyword-only functions are asserted by check-keyword-only-args and check-no-inheritance, and the inventory itself by check-all-declared. The one clause here that IS test-shaped, the kind-to-prefix lockstep, is exercised by tests/consumer/test_attention_lockstep.py and mapped from its own scenario heading. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Resolution-substrate constraints",
-    "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "test": "tests.consumer.test_cross_repo_resolution.test_sibling_work_item_without_lookup_is_unknown",
+    "reason": "Mapped to the test witnessing the load-bearing clause: the walk MUST tolerate partial visibility, so an absent sibling_status_lookup yields UNKNOWN rather than an error or a guess. The no-cache/purity clause is an architectural negative with no positive observation to make. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -60,7 +60,7 @@
     "spec_file": "contracts.md",
     "heading": "## Consumption shape",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion at runtime: it fixes how consumers DECLARE the dependency (a uv git source, as a dev dependency or a runtime one). The declaration is exercised by installation itself -- CI resolving and importing the package is the evidence -- and nothing in the library observes it. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -75,24 +75,24 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## Resolution semantics",
-    "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "test": "tests.consumer.test_cross_repo_resolution.test_pull_request_dependency_resolution_paths",
+    "reason": "Mapped to the consumer-tier resolution walk, which drives resolve_ref through the ratified per-variant return table. The sibling variants are exercised by the neighbouring tests in the same module, each already mapped from its own scenario heading. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## Retry policy",
-    "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "test": "tests.livespec_runtime.cross_repo.test_retry.test_backoff_sequence_documents_only_two_sleeps",
+    "reason": "Mapped to the test that witnesses the whole ratified policy at once: three attempts consuming exactly TWO backoff sleeps, which is what pins the reserved-but-unused 4.0s constant as unused. Unit tier is permitted here -- the integration-tier rule binds scenarios.md only. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## System dependencies",
-    "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "test": "tests.consumer.test_cross_repo_resolution.test_pull_request_dependency_retry_exhaustion_is_unknown",
+    "reason": "Mapped to the test that exercises the consumer-visible consequence this section ratifies: the runtime does NOT shell-detect `gh`, so its absence or failure surfaces as an exception that the retry layer collapses to RefStatus.UNKNOWN. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -100,7 +100,7 @@
     "spec_file": "contracts.md",
     "heading": "## Versioning",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion OF ITS OWN: this section delegates, stating that the semver bump rules and the pin-and-bump mechanism live in non-functional-requirements.md \u00a7\"Versioning\". The untested rule and its tracked gap are recorded on that heading, which points at livespec-runtime-mqsxsu.1. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
@@ -108,7 +108,7 @@
     "spec_file": "contracts.md",
     "heading": "## `.livespec.jsonc` `compat` block (consumer-facing)",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "reason": "No independently testable assertion by THIS library: it constrains what a CONSUMER must declare in its own .livespec.jsonc. This repo cannot verify a rule whose subject lives in another repository -- the same reason v014 rejected the producer-emission-boundary alternative for attention-id validation. Enforcement belongs to whatever reads the consumer's config. Adjudicated under livespec-runtime-mqsxsu.2.",
     "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
