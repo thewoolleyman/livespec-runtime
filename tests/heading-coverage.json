@@ -4,232 +4,232 @@
     "spec_file": "constraints.md",
     "heading": "## Dependency constraints",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Forbidden patterns",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Inherited from livespec",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Process boundaries",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Provider constraints",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Public-surface constraints",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Resolution-substrate constraints",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## Consumption shape",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## Module-level public surface",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## Resolution semantics",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## Retry policy",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## System dependencies",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## Versioning",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## `.livespec.jsonc` `compat` block (consumer-facing)",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Boundary",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Build and packaging",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Inherited from livespec",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Prose conventions",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Release flow",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Repo layout",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Spec evolution",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Task-runner discipline",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Test discipline",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Versioning",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "spec.md",
     "heading": "## Lifecycle and evolution",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "spec.md",
     "heading": "## Public surface",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "spec.md",
     "heading": "## Purpose",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "spec.md",
     "heading": "## Scope boundary",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "spec.md",
     "heading": "## Terminology",
     "test": "TODO",
-    "reason": "Seeded by epic li-univck Phase 3.3 (work-item li-runwir) when the canonical-aggregate self-host wired check-heading-coverage. Replace TODO with the real test ID via a governed propose-change/revise loop's resulting_files[] mechanism. Owning work-item livespec-runtime-nhs tracks replacing this pre-existing unowned TODO; stamped 2026-08-25 when the v012 landing armed the check-no-todo-registry release tier.",
-    "work_item": "livespec-runtime-nhs"
+    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
+    "work_item": "livespec-runtime-mqsxsu.2"
   },
   {
     "spec_root": "SPECIFICATION",
