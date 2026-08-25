@@ -68,8 +68,8 @@
     "spec_file": "contracts.md",
     "heading": "## Module-level public surface",
     "test": "TODO",
-    "reason": "Owned but NOT yet adjudicated. This heading still carries the li-univck Phase 3.3 seeding default rather than a per-heading disposition. `test: \"TODO\"` with a non-empty reason is a compliant terminal state for a non-scenarios.md heading, so this entry is not a gate failure; it is unfinished bookkeeping. livespec-runtime-mqsxsu.2 decides, per heading, whether it names a real test or records the specific reason it carries no independently testable assertion. Re-pointed from livespec-runtime-nhs, whose scope was ownership and which is closed as satisfied; entries must not name a closed work-item.",
-    "work_item": "livespec-runtime-mqsxsu.2"
+    "reason": "Untested and TRACKED, not dismissed. This heading IS the ratified public-surface inventory, and constraints.md \u00a7\"Public-surface constraints\" declares it \"the entire v1 stable API\". The test that would witness it -- every name exported via `__all__` under livespec_runtime/ appears here -- is exactly what livespec-runtime-mqsxsu.4 exists to make true, and is FALSE today by 69 names. Writing that test now would fail; recording this entry as prose would bury a P1. Whatever closes livespec-runtime-mqsxsu.4 is the right mapping for this heading. Held until v016 (86d5b0f) landed, because both clauses that revision corrected fall inside this heading's span and adjudicating sooner would have mapped coverage onto text about to be rewritten. Adjudicated under livespec-runtime-mqsxsu.2.",
+    "work_item": "livespec-runtime-mqsxsu.4"
   },
   {
     "spec_root": "SPECIFICATION",
