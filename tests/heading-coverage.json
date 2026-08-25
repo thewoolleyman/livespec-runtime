@@ -342,8 +342,8 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: composition surfaces an invalid candidate rather than shortening the list",
-    "test": "TODO",
-    "reason": "Ratified v012 as a DELIBERATE spec-to-implementation gap: constraints.md records compose_needs_attention NON-CONFORMANT (it silently drops candidates failing id validation, and direct construction is unvalidated). This is the producer-side negative control; it cannot pass until the gap-closing pass retires the silent drop. Mapped test MUST sit at the integration tier or above (a consumer-shaped test importing livespec_runtime and driving a real workflow), per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\").",
+    "test": "tests.consumer.test_attention_composition_refusal.test_composition_refuses_a_workflow_carrying_an_invalid_candidate",
+    "reason": "Closed by livespec-runtime-emu: compose_needs_attention no longer silently drops a candidate whose id fails validation. Validation is enforced at construction (AttentionItem.__post_init__ raises InvalidAttentionItemIdError), so composition refuses the call and the valid candidate is never returned alone. Mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\").",
     "work_item": "livespec-runtime-emu"
   }
 ]

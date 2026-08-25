@@ -1,5 +1,8 @@
 """Tests for `livespec_runtime.needs_attention`."""
 
+import pytest
+
+from livespec_runtime.attention_item import InvalidAttentionItemIdError
 from livespec_runtime.needs_attention import (
     HygieneScanFinding,
     ImplNextOutput,
@@ -100,24 +103,51 @@ def test_compose_needs_attention_is_stateless_point_in_time() -> None:
     assert not hasattr(first[0], "history")
 
 
-def test_compose_needs_attention_drops_invalid_natural_keys() -> None:
-    attention = compose_needs_attention(
-        repo="runtime",
-        impl_next=ImplNextOutput(
-            work_item="0",
-            summary="Index-like ids are not stable natural keys.",
-            command="drive 0",
-        ),
-        plan_threads=(
-            PlanThreadOutput(
-                topic="durable-topic",
-                path="plan/thread.md",
-                summary="Keep the durable plan topic.",
-                command="open plan/thread.md",
-            ),
-        ),
-    )
+def test_compose_needs_attention_refuses_an_invalid_natural_key() -> None:
+    """An invalid id MUST surface, never shorten the list.
 
-    assert [item.id for item in attention] == ["plan:durable-topic"]
-    assert [item.source_ref.path for item in attention] == ["plan/thread.md"]
-    assert [item.handoff.command for item in attention] == ["open plan/thread.md"]
+    Replaces the test that pinned the silent drop. v014 ratifies that
+    composition refuses the call, because a shorter list is
+    indistinguishable from an absence of attention and so manufactures a
+    false all-clear.
+    """
+    with pytest.raises(InvalidAttentionItemIdError) as excinfo:
+        _ = compose_needs_attention(
+            repo="runtime",
+            impl_next=ImplNextOutput(
+                work_item="0",
+                summary="Index-like ids are not stable natural keys.",
+                command="drive 0",
+            ),
+            plan_threads=(
+                PlanThreadOutput(
+                    topic="durable-topic",
+                    path="plan/thread.md",
+                    summary="Keep the durable plan topic.",
+                    command="open plan/thread.md",
+                ),
+            ),
+        )
+
+    assert "impl:0" in str(excinfo.value)
+
+
+def test_compose_needs_attention_negative_control_one_invalid_one_valid() -> None:
+    """One invalid plus one valid MUST NOT yield a one-element list."""
+    with pytest.raises(InvalidAttentionItemIdError):
+        _ = compose_needs_attention(
+            repo="runtime",
+            impl_next=ImplNextOutput(
+                work_item="0",
+                summary="Invalid candidate.",
+                command="drive 0",
+            ),
+            plan_threads=(
+                PlanThreadOutput(
+                    topic="valid-topic",
+                    path="plan/thread.md",
+                    summary="Valid candidate.",
+                    command="open plan/thread.md",
+                ),
+            ),
+        )
