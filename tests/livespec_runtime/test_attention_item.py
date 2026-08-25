@@ -8,6 +8,7 @@ from livespec_runtime import attention_item
 from livespec_runtime.attention_item import (
     AttentionItem,
     Handoff,
+    InvalidAttentionItemIdError,
     SourceRef,
     validate_attention_item_id,
 )
@@ -105,3 +106,32 @@ def test_validate_attention_item_id_rejects_malformed_internal_keys() -> None:
     assert validate_attention_item_id(id="internal:my-repo") is False
     assert validate_attention_item_id(id="internal:overseer-restart:7") is False
     assert validate_attention_item_id(id="internal::my-repo") is False
+
+
+def test_attention_item_refuses_construction_with_an_invalid_id() -> None:
+    """v014: no AttentionItem value may exist with an invalid id."""
+    with pytest.raises(InvalidAttentionItemIdError) as excinfo:
+        _ = AttentionItem(
+            id="impl:0",
+            kind="impl",
+            urgency="high",
+            summary="Positional ids are not stable natural keys.",
+            source_ref=SourceRef(repo="runtime", work_item="0"),
+            handoff=Handoff(kind="drive", command="drive 0"),
+        )
+
+    assert "impl:0" in str(excinfo.value)
+
+
+def test_invalid_attention_item_id_error_subclasses_exception_directly() -> None:
+    """v015: public error types subclass `Exception` directly, never a builtin subclass.
+
+    The v014 text mandated a `ValueError` base on the rationale that
+    consumers already guarding construction with a `ValueError` handler
+    would keep working. That rationale was spurious -- construction never
+    raised before this change, so no such handler could exist -- and the
+    base was unsatisfiable against the enforced `check-no-inheritance`
+    allowlist. v015 repealed it.
+    """
+    assert InvalidAttentionItemIdError.__bases__ == (Exception,)
+    assert not issubclass(InvalidAttentionItemIdError, ValueError)
