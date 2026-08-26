@@ -70,6 +70,15 @@
     // reviewer model (effective.py's effective_ratification_review returns
     // requires_input=True when ratification_reviewer_model is None) — set
     // to "fable", matching livespec core's own convention.
+    // SUPERSEDED 2026-08-26 by PR #632: the active designation is "opus",
+    // changed fleet-wide after exhausted Fable capacity hard-blocked spec
+    // ratification in four repos (this one, livespec core, livespec-overseer,
+    // livespec-console-beads-fabro). The line above is kept verbatim as the
+    // original intent; it no longer describes the value below. Note this is a
+    // REPLACEMENT, not a fallback: exactly one model is designated, so the
+    // single point of failure moved from fable to opus rather than being
+    // removed. The ordered-reviewer-list fallback was considered and
+    // CANCELLED by maintainer ruling, so no fallback is pending.
     "ratification_review": "auto-spawn",
     "ratification_reviewer_model": "opus",
     "spec_pr_merge": "auto-on-green"
