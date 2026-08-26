@@ -71,7 +71,7 @@
     // requires_input=True when ratification_reviewer_model is None) — set
     // to "fable", matching livespec core's own convention.
     "ratification_review": "auto-spawn",
-    "ratification_reviewer_model": "fable",
+    "ratification_reviewer_model": "opus",
     "spec_pr_merge": "auto-on-green"
   },
   // Credential-injection wrapper (fleet default) prefixed to the beads CLIs so a bare invocation self-heals its tenant secret.
