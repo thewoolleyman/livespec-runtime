@@ -451,13 +451,16 @@ check-pre-commit:
     .github/scripts/check-pre-commit.sh
 
 # When zero `.py` files are staged, `check-pre-commit` delegates here.
-# Pre-push delegates here via `check-pre-push` for zero-py changesets.
+# (Pre-push NO LONGER delegates here: the zero-`.py` doc-only subset was
+# retired at plan pr-gate-master-parity R3 — pre-push runs the full aggregate.)
 check-pre-commit-doc-only:
     .github/scripts/check-pre-commit-doc-only.sh
 
-# Skip the Python-code check subset when the pushed commits contain
-# zero `.py` changes. Falls back to `origin/master` when no upstream
-# branch is configured locally.
+# Run the full `just check` aggregate for every developer push (PR gate ≡
+# master gate — the zero-`.py` doc-only subset was retired at plan
+# pr-gate-master-parity R3). Still short-circuits on a green token when the
+# working tree is byte-identical to the last green aggregate, and runs the
+# release-bump classification gate first.
 check-pre-push:
     .github/scripts/check-pre-push.sh
 
