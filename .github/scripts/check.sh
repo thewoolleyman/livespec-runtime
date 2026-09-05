@@ -72,6 +72,7 @@ targets=(
     check-tool-backed-check-completeness
     check-vendor-manifest
     check-wrapper-shape
+    check-no-workflow-edits
     check-lint
     check-format
     check-types
