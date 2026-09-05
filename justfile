@@ -28,10 +28,20 @@
 default:
     @just --list
 
-# Factory-sandbox guard: implementation branches must not carry workflow
-# changes. Maintainer-side workflow landings are handled outside Fabro.
+# Workflow-edit guard: implementation branches must not carry
+# `.github/workflows/` changes without HUMAN authorization. Delegates to the
+# worktree pack's single canonical body (livespec-dev-tooling-fy02) —
+# `dev-tooling/check-no-workflow-edits.sh`, gitignored-and-installed by
+# `just install-worktree-pack` and byte-verified by
+# `check-primary-checkout-commit-refuse-hook-installed`. The body is a
+# local/janitor authorship control at the agent boundary: it is a member of
+# the `check` aggregate (so pre-push stops a session agent), it is a no-op
+# under GITHUB_ACTIONS, and it is deliberately NOT a canonical slug nor a CI
+# matrix member. The only override is the tracked
+# `.livespec-workflow-edit-exemption` declaration whose work item a human has
+# labelled `approval:workflow-edit`; no environment variable bypasses it.
 check-no-workflow-edits:
-    .github/scripts/no-workflow-edits.sh
+    bash dev-tooling/check-no-workflow-edits.sh
 
 # ---------------------------------------------------------------
 # First-time setup.
@@ -83,8 +93,9 @@ install-commit-refuse-hooks:
     uv run python -m livespec_dev_tooling.install_commit_refuse_hooks
 
 # Install (or idempotently re-install) the canonical worktree-discipline pack —
-# FOUR files: `worktree-lib.sh` + `branch-protection.sh` (executable) and
-# `worktree.just` + `branch-protection.just` (imported above, not executable) —
+# FIVE files: `worktree-lib.sh` + `branch-protection.sh` +
+# `check-no-workflow-edits.sh` (executable) and `worktree.just` +
+# `branch-protection.just` (imported above, not executable) —
 # into the current checkout's `dev-tooling/` directory. The livespec-dev-tooling
 # installer module is the single canonical-body carrier. The pack files are
 # GITIGNORED-AND-MATERIALIZED, never tracked: nothing is committed, and each
