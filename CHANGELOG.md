@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.22.1...v0.22.2) (2026-09-06)
+
+
+### Bug Fixes
+
+* **credentials:** terminate the credential re-exec loop via an argv marker ([9727703](https://github.com/thewoolleyman/livespec-runtime/commit/9727703c9d9ca51495415f8cb3974d37da028285))
+
 ## [0.22.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.22.0...v0.22.1) (2026-09-06)
 
 
