@@ -11,6 +11,11 @@
           {
             "type": "command",
             "command": "mise exec -- just ensure-plugins"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/backlog_drive_directive.py\"",
+            "timeout": 10
           }
         ]
       }

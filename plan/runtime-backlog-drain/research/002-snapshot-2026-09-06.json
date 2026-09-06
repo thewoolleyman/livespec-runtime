@@ -1,0 +1,152 @@
+{
+ "captured_at": "2026-09-06T06:27:00Z",
+ "tenant": "livespec-runtime",
+ "rule": "id list only; status is read from the ledger, never from this file",
+ "count": 18,
+ "items": [
+  {
+   "id": "livespec-runtime-2xs",
+   "issue_type": "task",
+   "priority": 1,
+   "status": "backlog",
+   "created_at": "2026-08-03T00:13:13Z",
+   "title": "This repo is missing .github/workflows/auto-enable-merge.yml, so its release PR has been parked since 2026-07-24 and NO release-please PR has ever merged here"
+  },
+  {
+   "id": "livespec-runtime-acf",
+   "issue_type": "bug",
+   "priority": 1,
+   "status": "backlog",
+   "created_at": "2026-08-10T03:40:19Z",
+   "title": "Credential re-exec loop guard is inert: the sentinel is env-borne and every measured wrapper drops it"
+  },
+  {
+   "id": "livespec-runtime-mqsxsu.4",
+   "issue_type": "task",
+   "priority": 1,
+   "status": "open",
+   "created_at": "2026-08-25T23:25:25Z",
+   "title": "Reconcile the ratified public-surface inventory with the 70 exported-but-undocumented names"
+  },
+  {
+   "id": "livespec-runtime-cq8",
+   "issue_type": "task",
+   "priority": 1,
+   "status": "ready",
+   "created_at": "2026-08-04T19:59:55Z",
+   "title": "Adopt the public-API Result railway so the pure_trees un-gating can re-land"
+  },
+  {
+   "id": "livespec-runtime-5ud",
+   "issue_type": "bug",
+   "priority": 2,
+   "status": "backlog",
+   "created_at": "2026-07-25T06:50:42Z",
+   "title": "CI detect-py-changes gate skips all real checks for a pyproject-only PR \u2014 config changes merge with vacuous-green CI"
+  },
+  {
+   "id": "livespec-runtime-ciq",
+   "issue_type": "task",
+   "priority": 2,
+   "status": "backlog",
+   "created_at": "2026-08-26T15:16:35Z",
+   "title": "(BUG) The stale-worktree detector is silenced by ANY untracked file, so machine-generated dirt hides exactly the worktrees that accumulate"
+  },
+  {
+   "id": "livespec-runtime-mkn",
+   "issue_type": "task",
+   "priority": 2,
+   "status": "backlog",
+   "created_at": "2026-08-21T06:14:30Z",
+   "title": "tests/heading-coverage.json carries 29 unowned TODO entries; CI never arms the TODO-ownership release tier, but the doc-only pre-commit path does, so any local registry edit is refused"
+  },
+  {
+   "id": "livespec-runtime-mqsxsu",
+   "issue_type": "epic",
+   "priority": 2,
+   "status": "backlog",
+   "created_at": "2026-08-25T11:17:36Z",
+   "title": "homelab-loop-hardening-runtime: ratify the shared attention surface (baseline-first), then the minimal generic extension"
+  },
+  {
+   "id": "livespec-runtime-0h8",
+   "issue_type": "bug",
+   "priority": 2,
+   "status": "blocked",
+   "created_at": "2026-07-21T17:43:07Z",
+   "title": "contracts.md states CLOSED/UNKNOWN do not block, which PR #296 made false for sibling_work_item \u2014 needs a propose-change/revise pass; no gate catches it"
+  },
+  {
+   "id": "livespec-runtime-5s4ax2",
+   "issue_type": "task",
+   "priority": 2,
+   "status": "blocked",
+   "created_at": "2026-07-10T02:32:57Z",
+   "title": "branch_exists_on_remote 404 detection uses stderr substring, not exit code / structured field"
+  },
+  {
+   "id": "livespec-runtime-vbofkr",
+   "issue_type": "task",
+   "priority": 2,
+   "status": "blocked",
+   "created_at": "2026-07-10T02:33:01Z",
+   "title": "New public symbols (github_auth / work_items) lack scenarios.md entries"
+  },
+  {
+   "id": "livespec-runtime-woe5gi",
+   "issue_type": "task",
+   "priority": 2,
+   "status": "blocked",
+   "created_at": "2026-07-10T02:32:53Z",
+   "title": "CI must invoke `just check` aggregate, not the per-target matrix"
+  },
+  {
+   "id": "livespec-runtime-xct",
+   "issue_type": "task",
+   "priority": 2,
+   "status": "open",
+   "created_at": "2026-08-26T10:40:28Z",
+   "title": "Port the worktree-create guidance into AGENTS.md: raw `git worktree add` yields a worktree that cannot commit or push"
+  },
+  {
+   "id": "livespec-runtime-8zu",
+   "issue_type": "bug",
+   "priority": 2,
+   "status": "ready",
+   "created_at": "2026-08-21T14:28:50Z",
+   "title": "github_budget_client_support.mapping_option: an unchecked cast returns a wrongly-typed option value, so the Mapping[str, str] annotation is asserted rather than true"
+  },
+  {
+   "id": "livespec-runtime-wpt",
+   "issue_type": "task",
+   "priority": 2,
+   "status": "ready",
+   "created_at": "2026-08-07T21:12:21Z",
+   "title": "Retrofit: route this repo's own direct GitHub calls through the budgeted client"
+  },
+  {
+   "id": "livespec-runtime-6m4",
+   "issue_type": "bug",
+   "priority": 3,
+   "status": "backlog",
+   "created_at": "2026-07-20T22:39:08Z",
+   "title": "head_is_merged uses branch-head ancestry, which is always false under rebase-merge \u2014 hygiene under-reports reapable worktrees"
+  },
+  {
+   "id": "livespec-runtime-f5zhs5",
+   "issue_type": "bug",
+   "priority": 3,
+   "status": "backlog",
+   "created_at": "2026-07-02T03:49:52Z",
+   "title": "doctor-static source scan should honor gitignore (or exclude known tool-scratch dirs like mutants/)"
+  },
+  {
+   "id": "livespec-runtime-jis",
+   "issue_type": "bug",
+   "priority": 3,
+   "status": "ready",
+   "created_at": "2026-08-21T18:50:10Z",
+   "title": "Release commits bump pyproject.toml but not uv.lock, so every fresh checkout gets a spurious lockfile diff (overseer does this correctly 25 of 25)"
+  }
+ ]
+}
