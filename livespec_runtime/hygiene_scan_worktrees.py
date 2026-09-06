@@ -79,6 +79,17 @@ def detect_stale_worktrees(
     existed (an uncaught `FileNotFoundError` from `subprocess.run`). This
     boundary is therefore behaviour-preserving, not a swallow — nothing
     is discarded and no failure is converted into an empty list.
+
+    ⚠️ THE CANDIDATE SET NOW INCLUDES WORKTREES A PLAIN REMOVE REFUSES.
+    A worktree whose only dirt is UNTRACKED is a candidate (that is the
+    population that accumulates, and hiding it was the bug), but
+    `GitWorktree` carries no dirt, so a reaper indexing this list cannot
+    tell which entries need `git worktree remove --force`. An unforced
+    remove fails loudly on those rather than doing anything destructive.
+    Teaching the reapers to force is a coordinated multi-repo change, the
+    same class as widening the return type; `stale_worktree_findings`
+    already names the dirt and emits the forced command for the operator
+    path.
     """
     context = unsafe_perform_io(
         build_context(
