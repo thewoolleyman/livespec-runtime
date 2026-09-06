@@ -16,12 +16,12 @@ from livespec_runtime.hygiene_scan_types import CommandUnavailable, ScanContext
 from livespec_runtime.hygiene_scan_worktree_merge import head_is_merged
 from livespec_runtime.needs_attention import HygieneScanFinding
 
-__all__: list[str] = [
-    "GH_PR_FIELDS",
-    "primary_health_findings",
-    "stale_branch_findings",
-    "stale_pr_findings",
-]
+# DECLARED INTERNAL by `SPECIFICATION/contracts.md` section "Module-level
+# public surface": a size-decomposition split-out of
+# `livespec_runtime.hygiene_scan`, the family's SINGLE ratified import path.
+# Its names stay module-level and importable for the family's own use; they
+# are no longer DECLARED surface.
+__all__: list[str] = []
 
 GH_PR_FIELDS = "number,headRefName,updatedAt,title,url"
 

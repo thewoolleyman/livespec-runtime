@@ -33,10 +33,13 @@ from livespec_runtime.hygiene_scan_worktree_merge import (
 )
 from livespec_runtime.needs_attention import HygieneScanFinding
 
-__all__: list[str] = [
-    "detect_stale_worktrees",
-    "stale_worktree_findings",
-]
+# DECLARED INTERNAL by `SPECIFICATION/contracts.md` section "Module-level
+# public surface": a size-decomposition split-out of
+# `livespec_runtime.hygiene_scan`, the family's SINGLE ratified import path.
+# `detect_stale_worktrees` and `stale_worktree_findings` are narrowed here,
+# NOT deleted — both are ratified on `hygiene_scan.py`, which imports and
+# re-exports them. What narrows is the second, undocumented import path.
+__all__: list[str] = []
 
 
 def stale_worktree_findings(

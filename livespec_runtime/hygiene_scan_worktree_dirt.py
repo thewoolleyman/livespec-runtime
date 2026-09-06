@@ -29,12 +29,12 @@ from livespec_runtime.hygiene_scan_types import (
     GitWorktree,
 )
 
-__all__: list[str] = [
-    "WorktreeDirt",
-    "removal_caveat",
-    "worktree_dirt",
-    "worktree_subject",
-]
+# DECLARED INTERNAL by `SPECIFICATION/contracts.md` section "Module-level
+# public surface": a size-decomposition split-out of
+# `livespec_runtime.hygiene_scan`, the family's SINGLE ratified import path.
+# Its names stay module-level and importable for the family's own use; they
+# are no longer DECLARED surface.
+__all__: list[str] = []
 
 # Enough entries to recognize WHAT the dirt is (a vendored checkout, a
 # virtualenv) without pasting a whole untracked tree into an attention
