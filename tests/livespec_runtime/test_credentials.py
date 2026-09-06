@@ -7,7 +7,16 @@ sentinel -> `Fail`; missing + no wrapper -> `Fail` — plus the frozen
 discriminated-union variants and Hypothesis property coverage on the
 present-always-proceeds and missing-always-reexecs invariants.
 
-Design reference: livespec/plan/credential-wrapper/research/01-design.md §1.
+Also verifies the argv-borne re-exec marker that makes the loop guard
+independent of wrapper cooperation: a credential wrapper rebuilds the
+environment (every measured wrapper, including the reference fleet one,
+drops `LIVESPEC_CREDENTIAL_REEXEC`) but execs the argv it was handed, so
+the marker terminates the re-exec recursion where the env sentinel could
+not. The termination case is asserted with the env sentinel ABSENT, which
+is the state the defect actually produced.
+
+Design reference: livespec/plan/credential-wrapper/research/01-design.md §1;
+plan/archive/credential-reexec-loop-guard/ (handoff + research/findings.md).
 """
 
 import pytest
@@ -86,6 +95,54 @@ def test_missing_with_sentinel_returns_fail() -> None:
     assert "BEADS_DOLT_PASSWORD" in decision.message
     assert "even after re-exec" in decision.message
     assert "with-livespec-env.sh" in decision.message
+
+
+def test_credential_reexec_argv_marker_is_exported() -> None:
+    assert hasattr(credentials, "CREDENTIAL_REEXEC_ARGV_MARKER")
+    assert credentials.CREDENTIAL_REEXEC_ARGV_MARKER == "--livespec-credential-reexec"
+    assert "CREDENTIAL_REEXEC_ARGV_MARKER" in credentials.__all__
+
+
+def test_argv_marker_without_sentinel_returns_fail_not_reexec() -> None:
+    """Termination when the wrapper scrubbed the env sentinel (the defect)."""
+    scrubbed_environ = {"PATH": "/usr/bin"}
+    assert CREDENTIAL_REEXEC_SENTINEL not in scrubbed_environ
+
+    decision = decide_credentials(
+        required=["BEADS_DOLT_PASSWORD"],
+        credential_wrapper=["/usr/local/bin/with-livespec-env.sh", "--"],
+        environ=scrubbed_environ,
+        executable="/usr/bin/python3",
+        argv=["/plugin/bin/next.py", "--json", "--livespec-credential-reexec"],
+    )
+    assert isinstance(decision, Fail)
+    assert decision.kind == "fail"
+    assert "BEADS_DOLT_PASSWORD" in decision.message
+    assert "even after re-exec" in decision.message
+    assert "with-livespec-env.sh" in decision.message
+
+
+def test_argv_marker_wins_over_absent_wrapper_and_absent_sentinel() -> None:
+    decision = decide_credentials(
+        required=["BEADS_DOLT_PASSWORD"],
+        credential_wrapper=[],
+        environ={},
+        executable="/usr/bin/python3",
+        argv=["--livespec-credential-reexec", "/plugin/bin/next.py"],
+    )
+    assert isinstance(decision, Fail)
+    assert "BEADS_DOLT_PASSWORD" in decision.message
+
+
+def test_argv_marker_with_secrets_present_still_proceeds() -> None:
+    decision = decide_credentials(
+        required=["BEADS_DOLT_PASSWORD"],
+        credential_wrapper=["/usr/local/bin/with-livespec-env.sh", "--"],
+        environ={"BEADS_DOLT_PASSWORD": "secret"},
+        executable="/usr/bin/python3",
+        argv=["/plugin/bin/next.py", "--livespec-credential-reexec"],
+    )
+    assert isinstance(decision, Proceed)
 
 
 def test_missing_without_wrapper_returns_fail() -> None:
@@ -185,3 +242,32 @@ def test_missing_without_sentinel_reexecs_with_prefixed_argv(
     )
     assert isinstance(decision, Reexec)
     assert decision.argv == (*credential_wrapper, executable, *argv)
+
+
+@settings(deadline=None)
+@given(
+    missing_name=st.text(min_size=1),
+    credential_wrapper=st.lists(st.text(min_size=1), max_size=4),
+    executable=st.text(min_size=1),
+    before=st.lists(st.text(), max_size=3),
+    after=st.lists(st.text(), max_size=3),
+    sentinel_value=st.sampled_from([None, "", "0", "1"]),
+)
+def test_argv_marker_never_reexecs(
+    missing_name: str,
+    credential_wrapper: list[str],
+    executable: str,
+    before: list[str],
+    after: list[str],
+    sentinel_value: str | None,
+) -> None:
+    """The depth bound is one hop, whatever the wrapper did to the environment."""
+    environ = {} if sentinel_value is None else {CREDENTIAL_REEXEC_SENTINEL: sentinel_value}
+    decision = decide_credentials(
+        required=[missing_name],
+        credential_wrapper=credential_wrapper,
+        environ=environ,
+        executable=executable,
+        argv=[*before, "--livespec-credential-reexec", *after],
+    )
+    assert not isinstance(decision, Reexec)
