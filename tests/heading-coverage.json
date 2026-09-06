@@ -67,8 +67,8 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "contracts.md",
     "heading": "## Module-level public surface",
-    "test": "TODO",
-    "reason": "Untested and TRACKED, not dismissed. This heading IS the ratified public-surface inventory, and constraints.md \u00a7\"Public-surface constraints\" declares it \"the entire v1 stable API\". The test that would witness it -- every name exported via `__all__` under livespec_runtime/ appears here -- is exactly what livespec-runtime-mqsxsu.4 exists to make true, and is FALSE today by 69 names. Writing that test now would fail; recording this entry as prose would bury a P1. Whatever closes livespec-runtime-mqsxsu.4 is the right mapping for this heading. Held until v016 (86d5b0f) landed, because both clauses that revision corrected fall inside this heading's span and adjudicating sooner would have mapped coverage onto text about to be rewritten. Adjudicated under livespec-runtime-mqsxsu.2.",
+    "test": "tests.livespec_runtime.test_public_surface_inventory.test_every_exported_name_is_ratified_or_its_module_is_registered_as_debt",
+    "reason": "Mapped to the test that closes livespec-runtime-mqsxsu.4, which this entry was held open for: this heading IS the ratified public-surface inventory, and constraints.md \"Public-surface constraints\" declares it \"the entire v1 stable API\". The mapped test reads every module-top `__all__` under livespec_runtime/ and asserts each exporting module is either ratified by a section here (with every name it exports appearing in the section, whole-word) or registered as acknowledged debt in tests/public-surface-debt.json per spec.md \"Public surface\"; sibling tests keep the register shrink-only and refuse a section for a module that no longer ships. Adjudicated under livespec-runtime-mqsxsu.2, resolved under livespec-runtime-mqsxsu.4.",
     "work_item": "livespec-runtime-mqsxsu.4"
   },
   {
