@@ -41,6 +41,7 @@ check-per-file-coverage
 check-plan-anchor-declared
 check-plan-epic-parity
 check-plan-no-tombstone
+check-plan-record-conformance
 check-plugin-resolution
 check-primary-checkout-commit-refuse-hook-installed
 check-private-calls
@@ -58,6 +59,7 @@ check-tests-mirror-pairing
 check-tests-no-subprocess-spawn
 check-tool-backed-check-completeness
 check-vendor-manifest
+check-work-item-interpolation-delimiters
 check-wrapper-shape
 check-no-workflow-edits
 check-lint
