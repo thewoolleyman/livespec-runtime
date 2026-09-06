@@ -16,12 +16,6 @@
   ],
   "unratified_modules": [
     {
-      "module": "livespec_runtime.github_budget",
-      "family": "github_budget",
-      "disposition": "acknowledged-debt",
-      "reason": "Named in spec.md section \"Public surface\" as the one family still recorded as acknowledged debt: its facade exports the deliberately non-frozen GithubBudgetedClient, which constraints.md section \"Public-surface constraints\" forbids as a public dataclass, so ratification waits on a proposal that amends that constraint or disposes of the client differently (recorded at the v020 revise, 2026-09-06)."
-    },
-    {
       "module": "livespec_runtime.github_budget_client",
       "family": "github_budget",
       "disposition": "acknowledged-debt",
