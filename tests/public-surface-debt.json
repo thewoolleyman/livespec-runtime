@@ -1,6 +1,6 @@
 {
   "note": "The shipped-but-unratified public surface, enumerated. Consumed by tests/livespec_runtime/test_public_surface_inventory.py, which fails when a module exports names, carries no ratified section in SPECIFICATION/contracts.md, and is absent from unratified_modules below. Rows may only be DELETED (when the module is ratified, declared internal, or stops exporting); a row that no longer describes the tree is a stale-row failure, so this register can only shrink.",
-  "authority": "SPECIFICATION/spec.md, section \"Public surface\": \"Some shipped modules remain outside the ratified inventory ... Their absence is ACKNOWLEDGED DEBT, not a claim that they are implementation detail. ... Each MUST be ratified or explicitly declared internal in a subsequent proposal.\" The per-family disposition and the prepared propose-change payload are in plan/runtime-backlog-drain/research/005-mqsxsu4-public-surface-reconciliation.md.",
+  "authority": "SPECIFICATION/spec.md, section \"Public surface\": \"Every shipped module that declares a public surface is inside the ratified inventory or is explicitly declared internal there. ... A module that ships a public surface and appears in neither place is a defect rather than tolerated debt, and tests/livespec_runtime/test_public_surface_inventory.py fails on it; the `# @generated` third-party port that test's register excludes is outside this rule by construction.\" The per-family disposition that drained unratified_modules to empty is in plan/runtime-backlog-drain/research/005-mqsxsu4-public-surface-reconciliation.md.",
   "generated_ports": [
     {
       "path": "livespec_runtime/work_items/_fractional_indexing.py",
@@ -14,30 +14,5 @@
       "reason": "Verbatim third-party port carried source-only, marked `# @generated` by 0ad3f8c so is_generated() drops it uniformly from every structural check's first-party universe. Its `__all__` is livespec-added conformance metadata over upstream bytes, not a declaration of this library's surface; the ratified surface for the algorithm is the keyword-only wrapper in livespec_runtime/work_items/rank.py. Editing the file to drop `BASE_62_DIGITS` / `FIError` would deviate the port from upstream to restate what the universe rule already says."
     }
   ],
-  "unratified_modules": [
-    {
-      "module": "livespec_runtime.github_budget_client",
-      "family": "github_budget",
-      "disposition": "acknowledged-debt",
-      "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.github_budget_client_support",
-      "family": "github_budget",
-      "disposition": "acknowledged-debt",
-      "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.github_budget_measurement",
-      "family": "github_budget",
-      "disposition": "acknowledged-debt",
-      "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.github_budget_types",
-      "family": "github_budget",
-      "disposition": "acknowledged-debt",
-      "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal."
-    }
-  ]
+  "unratified_modules": []
 }
