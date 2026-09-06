@@ -36,9 +36,7 @@ from livespec_runtime.github_budget_types import (
     GithubRateLimitSnapshot,
 )
 
-__all__: list[str] = [
-    "GithubBudgetedClient",
-]
+__all__: list[str] = []
 
 _HTTP_FORBIDDEN = 403
 _HTTP_NOT_MODIFIED = 304

@@ -211,6 +211,75 @@ def test_budgeted_client_is_frozen_over_one_module_private_state_holder() -> Non
         client.max_attempts = 5
 
 
+def test_the_entry_point_declares_the_twenty_one_names_contracts_ratifies() -> None:
+    """`__all__` declares exactly the v021 inventory for this module.
+
+    `SPECIFICATION/contracts.md` section "Module-level public surface" →
+    `### livespec_runtime.github_budget` documents twenty-one names. Two of
+    them — `GithubBudgetResult` and `GithubBudgetTransport` — were reachable
+    only by importing a split-out directly: `GithubBudgetResult` is the return
+    type of `GithubBudgetedClient.request` and `GithubBudgetTransport` is the
+    type of its `transport` field, so a consumer holding the single ratified
+    import path could not name what it was handling or passing.
+    """
+    from livespec_runtime import github_budget
+
+    assert set(github_budget.__all__) == {
+        "GhExecutor",
+        "GhInvocation",
+        "GithubBudgetDeferred",
+        "GithubBudgetFailure",
+        "GithubBudgetRequest",
+        "GithubBudgetResponse",
+        "GithubBudgetResult",
+        "GithubBudgetSignalFailed",
+        "GithubBudgetSuccess",
+        "GithubBudgetTransport",
+        "GithubBudgetUnmeasurable",
+        "GithubBudgetedClient",
+        "GithubRateLimitClassification",
+        "GithubRateLimitSnapshot",
+        "append_rate_limit_snapshot",
+        "classify_github_failure",
+        "extract_conditional_headers",
+        "extract_rate_limit_headers",
+        "gh_invocation",
+        "gh_transport",
+        "parse_rate_limit_snapshot",
+    }
+
+
+def test_the_four_split_outs_declare_no_surface_of_their_own() -> None:
+    """The size-decomposition companions are DECLARED INTERNAL by v021.
+
+    The same contracts section names all four as split-outs that "MUST NOT be
+    imported directly": the family has a SINGLE ratified import path. Narrowing
+    each `__all__` to `[]` states that in code. Nothing is renamed and no name
+    moves — `__all__` governs the DECLARED surface and `import *`, so
+    `github_budget.py` keeps importing the names it re-exports under its own
+    ratified `__all__`. What narrows is the second, undocumented import path.
+    """
+    from livespec_runtime import (
+        github_budget_client,
+        github_budget_client_support,
+        github_budget_measurement,
+        github_budget_types,
+    )
+
+    still_declaring = {
+        module.__name__: module.__all__
+        for module in (
+            github_budget_client,
+            github_budget_client_support,
+            github_budget_measurement,
+            github_budget_types,
+        )
+        if module.__all__
+    }
+
+    assert still_declaring == {}
+
+
 def test_repeated_read_of_unchanged_data_spends_no_primary_budget() -> None:
     client_type = _budgeted_client_type()
     from livespec_runtime.github_budget import GithubBudgetRequest, GithubBudgetResponse
