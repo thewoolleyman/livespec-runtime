@@ -46,6 +46,28 @@ _MUTATING_METHODS = frozenset({"DELETE", "PATCH", "POST", "PUT"})
 
 
 @dataclass(slots=True, kw_only=True)
+class _ClientState:
+    """The client's mutable bookkeeping, held behind ONE private field.
+
+    `constraints.md`, in its "Public-surface constraints" section,
+    requires every public dataclass to be frozen — without
+    qualification — so the conditional-read cache, the mutation-pacing
+    clock and the mutation lock cannot be rebindable fields on
+    `GithubBudgetedClient` itself. They live here instead: the client
+    owns one instance and mutates THROUGH it, which leaves no public
+    field rebindable while the runtime behaviour is unchanged.
+
+    Module-private by construction: absent from this module's `__all__`
+    and from the `github_budget` facade, so freezing the client costs
+    the ratified surface nothing.
+    """
+
+    cache: dict[str, GithubCachedRead] = field(default_factory=dict)
+    last_mutation_at: float | None = None
+    mutation_lock: Lock = field(default_factory=Lock)
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class GithubBudgetedClient:
     """Budget-aware wrapper around an injected GitHub transport."""
 
@@ -53,9 +75,12 @@ class GithubBudgetedClient:
     now: Callable[[], float] = monotonic
     sleep: Callable[[float], None] = sleep_seconds
     max_attempts: int = 3
-    _cache: dict[str, GithubCachedRead] = field(default_factory=dict, init=False, repr=False)
-    _last_mutation_at: float | None = field(default=None, init=False, repr=False)
-    _mutation_lock: Lock = field(default_factory=Lock, init=False, repr=False)
+    _state: _ClientState = field(
+        default_factory=_ClientState,
+        init=False,
+        repr=False,
+        compare=False,
+    )
 
     def request(
         self,
@@ -77,7 +102,7 @@ class GithubBudgetedClient:
         if floor_failure is not None:
             return IOFailure(floor_failure)
         if method_name in _MUTATING_METHODS:
-            with self._mutation_lock:
+            with self._state.mutation_lock:
                 return self._request_with_backoff(
                     method=method_name,
                     resource=resource,
@@ -153,7 +178,7 @@ class GithubBudgetedClient:
         if method in _MUTATING_METHODS:
             self._pace_mutation()
         request_headers = dict(headers or {})
-        cached = self._cache.get(resource) if method == "GET" else None
+        cached = self._state.cache.get(resource) if method == "GET" else None
         if cached is not None and self.now() < cached.next_poll_at:
             return cached_response(cached=cached, headers=cached.response.headers)
         if cached is not None:
@@ -173,17 +198,18 @@ class GithubBudgetedClient:
         return response
 
     def _pace_mutation(self) -> None:
-        if self._last_mutation_at is not None:
-            wait = 1.0 - (self.now() - self._last_mutation_at)
+        last_mutation_at = self._state.last_mutation_at
+        if last_mutation_at is not None:
+            wait = 1.0 - (self.now() - last_mutation_at)
             self.sleep(max(0.0, wait))
-        self._last_mutation_at = self.now()
+        self._state.last_mutation_at = self.now()
 
     def _store_read(self, *, resource: str, response: GithubBudgetResponse) -> None:
         etag = header_value(headers=response.headers, name="etag")
         if etag is None:
             return
         read_poll_interval = poll_interval(headers=response.headers)
-        self._cache[resource] = GithubCachedRead(
+        self._state.cache[resource] = GithubCachedRead(
             response=response,
             etag=etag,
             next_poll_at=self.now() + read_poll_interval,

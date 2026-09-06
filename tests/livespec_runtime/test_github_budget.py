@@ -1,5 +1,6 @@
 """Tests for GitHub request-budget measurement."""
 
+import dataclasses
 import json
 import subprocess
 from pathlib import Path
@@ -166,6 +167,48 @@ def test_rate_limited_403_returns_unmeasurable_failure_not_empty_success(
     assert failure.outcome == "UNMEASURABLE"
     assert bool(failure)
     assert failure != []
+
+
+def test_budgeted_client_is_frozen_over_one_module_private_state_holder() -> None:
+    """The client is frozen; its mutable bookkeeping lives behind ONE private holder.
+
+    `constraints.md` section "Public-surface constraints" requires every
+    public dataclass to be frozen, slotted and kw-only, with no
+    qualification. The client's conditional-read cache, mutation-pacing
+    clock and mutation lock therefore cannot be rebindable fields on the
+    client itself: they live on a module-private state holder that the
+    client owns through one non-init field and mutates THROUGH.
+    """
+    from livespec_runtime import github_budget, github_budget_client
+
+    client_type = _budgeted_client_type()
+    assert dataclasses.is_dataclass(client_type)
+
+    entries = dataclasses.fields(client_type)
+    names = [entry.name for entry in entries]
+    assert "_cache" not in names
+    assert "_last_mutation_at" not in names
+    assert "_mutation_lock" not in names
+
+    holders = [entry for entry in entries if not entry.init]
+    assert len(holders) == 1
+    holder = holders[0]
+    assert holder.repr is False
+    assert holder.compare is False
+
+    factory = holder.default_factory
+    assert factory is not dataclasses.MISSING
+    assert factory() is not factory(), "each client MUST own its own state holder"
+
+    holder_name = type(factory()).__name__
+    assert holder_name.startswith("_")
+    assert holder_name not in github_budget_client.__all__
+    assert holder_name not in github_budget.__all__
+    assert not hasattr(github_budget, holder_name)
+
+    client = client_type(transport=Mock())
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        client.max_attempts = 5
 
 
 def test_repeated_read_of_unchanged_data_spends_no_primary_budget() -> None:
