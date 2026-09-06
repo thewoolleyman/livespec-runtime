@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, cast
 from unittest.mock import Mock
 
+import pytest
 from returns.io import IOFailure
 from returns.unsafe import unsafe_perform_io
 
@@ -447,3 +448,50 @@ def test_repeated_secondary_backoff_grows_exponentially_then_fails() -> None:
     assert isinstance(failure, GithubBudgetUnmeasurable)
     assert failure.classification == "secondary_limit"
     assert clock.value == 180.0
+
+
+def test_mapping_option_rejects_a_set_but_mis_shaped_value() -> None:
+    from livespec_runtime.github_budget_client_support import (
+        MisshapedGithubBudgetOptionError,
+        mapping_option,
+    )
+
+    mis_shaped: list[object] = [
+        ["x-ratelimit-remaining", "8"],
+        "x-ratelimit-remaining: 8",
+        8,
+        {"x-ratelimit-remaining": 8},
+        {8: "x-ratelimit-remaining"},
+    ]
+
+    for value in mis_shaped:
+        with pytest.raises(MisshapedGithubBudgetOptionError) as caught:
+            mapping_option(options={"snapshot_headers": value}, name="snapshot_headers")
+        assert caught.value.name == "snapshot_headers"
+        assert caught.value.value == value
+
+
+def test_mapping_option_is_none_when_unset_and_the_mapping_itself_when_well_formed() -> None:
+    from livespec_runtime.github_budget_client_support import mapping_option
+
+    well_formed = {"x-ratelimit-remaining": "8"}
+
+    assert mapping_option(options={}, name="snapshot_headers") is None
+    assert mapping_option(options={"snapshot_headers": well_formed}, name="snapshot_headers") is (
+        well_formed
+    )
+
+
+def test_int_option_rejects_a_set_but_non_int_value() -> None:
+    from livespec_runtime.github_budget_client_support import (
+        MisshapedGithubBudgetOptionError,
+        int_option,
+    )
+
+    with pytest.raises(MisshapedGithubBudgetOptionError) as caught:
+        int_option(options={"remaining_floor": "10"}, name="remaining_floor")
+
+    assert caught.value.name == "remaining_floor"
+    assert caught.value.value == "10"
+    assert int_option(options={}, name="remaining_floor") == 0
+    assert int_option(options={"remaining_floor": 10}, name="remaining_floor") == 10
