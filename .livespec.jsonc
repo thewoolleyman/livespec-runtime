@@ -173,6 +173,30 @@
       // (maintainer-directed 2026-08-20) because the hp factory was
       // refusing dispatches with `capacity-deferred` at 5.
       "wip_cap": 10,
+      // Sandbox toolchain + conformance premises (livespec-runtime-m1q, plan
+      // runtime-backlog-drain batch 1, 2026-09-06). Since orchestrator
+      // 39526e5c every one of these five prepare steps is a PROJECTION of
+      // this repository's own declaration, and an undeclared premise is the
+      // ratified explicit NO-OP. With nothing declared here the tier-0
+      // canary dispatch (fabro 01M1TQDWS8PCQJ90HMZJ66EHHM) died in setup:
+      // `mise trust` never ran, so the mise-managed `uv sync --all-groups`
+      // refused the untrusted .mise.toml. Worse, a run that got past setup
+      // would have installed no commit-refuse hook and read green without
+      // the Red-Green-Replay gates. Values mirror livespec-dev-tooling's
+      // block, which is the schema author's own and the fleet's proven
+      // shape. `internal_livespec_dev_tooling` renders
+      // `uv run python -m livespec_dev_tooling.<module>`; this repo's dev
+      // group installs that package, and the `uv sync --all-groups` prepare
+      // step runs immediately before the conformance trio.
+      "prepare_toolchain": {
+        "mise": ["sh", "-c", "mise trust && env -u GITHUB_TOKEN -u GH_TOKEN -u GITHUB_API_TOKEN mise install --quiet"],
+        "lefthook": ["uv", "run", "lefthook", "install"]
+      },
+      "conformance": {
+        "hook_install": { "mode": "internal_livespec_dev_tooling" },
+        "verify_commit_refuse_hook": { "mode": "internal_livespec_dev_tooling" },
+        "verify_plugin_resolution": { "mode": "internal_livespec_dev_tooling" }
+      },
       "auto_approve_ready": true,
       "acceptance_mode": "ai-only",
       "factories": {
