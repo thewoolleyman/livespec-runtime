@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.3](https://github.com/thewoolleyman/livespec-runtime/compare/v0.22.2...v0.22.3) (2026-09-06)
+
+
+### Bug Fixes
+
+* **hygiene:** see the worktrees that machine-generated dirt was hiding ([be1ee1a](https://github.com/thewoolleyman/livespec-runtime/commit/be1ee1a1026514a9b1247244cbb439580ded68a0))
+
 ## [0.22.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.22.1...v0.22.2) (2026-09-06)
 
 
