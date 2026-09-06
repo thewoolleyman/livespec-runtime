@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.22.0...v0.22.1) (2026-09-06)
+
+
+### Bug Fixes
+
+* **github-budget:** validate set-but-mis-shaped request options instead of casting them ([1c63c01](https://github.com/thewoolleyman/livespec-runtime/commit/1c63c0198f15d618087661eca39cb62471a12108))
+
 ## [0.22.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.21.4...v0.22.0) (2026-08-25)
 
 
