@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.23.0...v0.24.0) (2026-09-06)
+
+
+### Features
+
+* **github_budget:** route this repo's own GitHub reads through the budgeted client ([d5063b0](https://github.com/thewoolleyman/livespec-runtime/commit/d5063b0b68fde75b000d57ddf53203e32802b3da))
+
 ## [0.23.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.22.3...v0.23.0) (2026-09-06)
 
 
