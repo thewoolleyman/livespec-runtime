@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.26.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.25.1...v0.26.0) (2026-09-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **github_budget:** `livespec_runtime.github_budget_client`, `github_budget_client_support`, `github_budget_measurement`, and `github_budget_types` no longer declare any name in `__all__`; all 37 previously-declared names remain importable but are no longer declared surface. The ratified import path is `livespec_runtime.github_budget`, which now also declares `GithubBudgetResult` and `GithubBudgetTransport`. Major released as a minor bump under the pre-major provision.
+
+### Features
+
+* **github_budget:** declare the family's single ratified import path ([a039f38](https://github.com/thewoolleyman/livespec-runtime/commit/a039f38fe4538282d5674e8595589d54b7e6ba2e))
+
 ## [0.25.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.25.0...v0.25.1) (2026-09-06)
 
 
