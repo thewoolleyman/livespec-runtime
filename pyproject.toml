@@ -200,7 +200,12 @@ commands_trees = []
 # `check-supervisor-discipline`. It is deliberately NOT in `io_trees`: the same
 # clause forecloses exempting a hook tree wholesale ("There is NO 'thin repo'
 # exemption").
-supervisor_entry_files = [".claude/hooks/livespec_footgun_guard.py"]
+# The SessionStart directive hook (plan runtime-backlog-drain, charter §7) is
+# the same shape: hook-protocol stdout is its contract, so it sits here too.
+supervisor_entry_files = [
+    ".claude/hooks/livespec_footgun_guard.py",
+    ".claude/hooks/backlog_drive_directive.py",
+]
 # NOT APPLICABLE — runtime is a flat consumer with no separate dataclasses/schema
 # or pure parse/validate subtree, and it installs no neutral shared hook body.
 # The concept does not exist here; there is nothing for these gates to scan.
