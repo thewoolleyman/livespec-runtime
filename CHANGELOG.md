@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.25.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.24.0...v0.25.0) (2026-09-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **hygiene_scan:** `livespec_runtime.hygiene_scan_cli`, `hygiene_scan_context`, `hygiene_scan_findings`, `hygiene_scan_types`, `hygiene_scan_worktree_dirt`, `hygiene_scan_worktree_merge`, and `hygiene_scan_worktrees` no longer declare any name in `__all__`; all 29 previously-declared names remain importable but are no longer declared surface. The ratified import path is `livespec_runtime.hygiene_scan`, which now also declares `CommandRunner` and `ScanContext`. Major released as a minor bump under the pre-major provision.
+
+### Features
+
+* **hygiene_scan:** declare the family's single ratified import path ([e461b30](https://github.com/thewoolleyman/livespec-runtime/commit/e461b30a4bee5d5c41bdb5bcb1ac61ab65cec68c))
+
 ## [0.24.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.23.0...v0.24.0) (2026-09-06)
 
 
