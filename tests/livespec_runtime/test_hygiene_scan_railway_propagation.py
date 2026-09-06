@@ -27,8 +27,8 @@ from livespec_runtime.hygiene_scan_types import (
     GitWorktree,
     ScanContext,
 )
+from livespec_runtime.hygiene_scan_worktree_merge import branch_was_rebase_merged
 from livespec_runtime.hygiene_scan_worktrees import (
-    branch_was_rebase_merged,
     landed_worktree_finding,
     stale_worktree_finding,
     stale_worktree_findings,
