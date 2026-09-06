@@ -10,7 +10,6 @@ from returns.unsafe import unsafe_perform_io
 from livespec_runtime.hygiene_scan_context import (
     DEFAULT_STALE_DAYS,
     build_context,
-    git,
     quote_path,
     run_command,
     worktrees,
@@ -21,9 +20,16 @@ from livespec_runtime.hygiene_scan_types import (
     GitWorktree,
     ScanContext,
 )
+from livespec_runtime.hygiene_scan_worktree_dirt import (
+    WorktreeDirt,
+    removal_caveat,
+    worktree_dirt,
+    worktree_subject,
+)
 from livespec_runtime.hygiene_scan_worktree_merge import (
     branch_was_rebase_merged,
     head_is_merged,
+    head_is_patch_equivalent,
 )
 from livespec_runtime.needs_attention import HygieneScanFinding
 
@@ -105,12 +111,16 @@ def stale_worktree_finding(
         return IOSuccess(None)
     if worktree.prunable_reason is not None:
         return IOSuccess(prunable_worktree_finding(context=context, worktree=worktree, label=label))
-    clean = worktree_is_clean(worktree=worktree, runner=context.runner)
-    if isinstance(clean, IOFailure):
-        return clean
-    if not unsafe_perform_io(clean.unwrap()):
+    probed = worktree_dirt(worktree=worktree, runner=context.runner)
+    if isinstance(probed, IOFailure):
+        return probed
+    dirt = unsafe_perform_io(probed.unwrap())
+    # Two dispositions, one skip: git gave no reading, so nothing can be
+    # concluded; or the worktree holds AUTHORED work, which is never
+    # proposed for removal. Untracked dirt is neither, and falls through.
+    if dirt is None or dirt.tracked_changes != ():
         return IOSuccess(None)
-    return landed_worktree_finding(context=context, worktree=worktree, label=label)
+    return landed_worktree_finding(context=context, worktree=worktree, label=label, dirt=dirt)
 
 
 def prunable_worktree_finding(
@@ -127,62 +137,105 @@ def prunable_worktree_finding(
 
 
 def landed_worktree_finding(
-    *, context: ScanContext, worktree: GitWorktree, label: str
+    *, context: ScanContext, worktree: GitWorktree, label: str, dirt: WorktreeDirt
 ) -> IOResult[HygieneScanFinding | None, CommandUnavailable]:
-    """The finding for a CLEAN worktree whose work has already landed, if any.
+    """The finding for a worktree whose work has already landed, if any.
 
-    Two ways work lands in a rebase-merging fleet: the HEAD is an ancestor
-    of the base ref, or the branch was pushed and its origin head is now
-    gone. Split out of `stale_worktree_finding` so neither carries the
-    other's branches.
+    The dirt does not decide WHETHER to report — `stale_worktree_finding`
+    already held back the authored work. It decides how the report reads,
+    because untracked content changes the removal command an operator
+    has to run.
     """
-    remove_command = (
-        f"git -C {quote_path(path=context.primary_path)} "
-        f"worktree remove {quote_path(path=worktree.path)}"
+    reason = landed_reason(context=context, worktree=worktree)
+    if isinstance(reason, IOFailure):
+        return reason
+    landed = unsafe_perform_io(reason.unwrap())
+    if landed is None:
+        return IOSuccess(None)
+    return IOSuccess(
+        HygieneScanFinding(
+            type="stale-worktree",
+            resource=label,
+            path=label,
+            summary=(
+                f"Remove {worktree_subject(dirt=dirt)} {label}; {landed}."
+                f"{removal_caveat(dirt=dirt)}"
+            ),
+            command=removal_command(context=context, worktree=worktree, dirt=dirt),
+        )
     )
+
+
+def landed_reason(
+    *, context: ScanContext, worktree: GitWorktree
+) -> IOResult[str | None, CommandUnavailable]:
+    """Why `worktree`'s work has already landed, or None if it has not.
+
+    The evidence comes from two levels and they are asked in that order:
+    what the HEAD's own commits say, and — only if they say nothing —
+    what became of the branch on origin. Each rung carries its own prose
+    because an operator acts on the reason, not on the verdict.
+    """
+    from_head = head_landed_reason(context=context, worktree=worktree)
+    if isinstance(from_head, IOFailure):
+        return from_head
+    reason = unsafe_perform_io(from_head.unwrap())
+    if reason is not None:
+        return IOSuccess(reason)
+    return branch_landed_reason(context=context, worktree=worktree)
+
+
+def head_landed_reason(
+    *, context: ScanContext, worktree: GitWorktree
+) -> IOResult[str | None, CommandUnavailable]:
+    """Why the HEAD's commits are already in the base ref, or None.
+
+    Two readings of one question, because a rebase or squash merge
+    rewrites SHAs: literal ancestry first, then patch equivalence, which
+    is the reading that survives the rewrite.
+    """
     merged = head_is_merged(context=context, head=worktree.head)
     if isinstance(merged, IOFailure):
         return merged
     if unsafe_perform_io(merged.unwrap()):
-        return IOSuccess(
-            HygieneScanFinding(
-                type="stale-worktree",
-                resource=label,
-                path=label,
-                summary=(
-                    f"Remove clean worktree {label}; its HEAD is merged into {context.base_ref}."
-                ),
-                command=remove_command,
-            )
+        return IOSuccess(f"its HEAD is merged into {context.base_ref}")
+    equivalent = head_is_patch_equivalent(context=context, head=worktree.head)
+    if isinstance(equivalent, IOFailure):
+        return equivalent
+    if unsafe_perform_io(equivalent.unwrap()):
+        landed = (
+            f"every commit on its HEAD is already in {context.base_ref} by patch equivalence "
+            f"(git cherry), so a rebase or squash merge landed it"
         )
+        return IOSuccess(landed)
+    return IOSuccess(None)
+
+
+def branch_landed_reason(
+    *, context: ScanContext, worktree: GitWorktree
+) -> IOResult[str | None, CommandUnavailable]:
+    """Why the branch shows its work landed, or None if it does not."""
     rebase_merged = branch_was_rebase_merged(context=context, worktree=worktree)
     if isinstance(rebase_merged, IOFailure):
         return rebase_merged
     if unsafe_perform_io(rebase_merged.unwrap()):
-        return IOSuccess(
-            HygieneScanFinding(
-                type="stale-worktree",
-                resource=label,
-                path=label,
-                summary=(
-                    f"Remove clean worktree {label}; its branch {worktree.branch} was pushed and "
-                    f"its origin branch is gone (rebase-merged, so its HEAD is not an ancestor of "
-                    f"{context.base_ref})."
-                ),
-                command=remove_command,
-            )
+        landed = (
+            f"its branch {worktree.branch} was pushed and its origin branch is gone "
+            f"(rebase-merged, so its HEAD is not an ancestor of {context.base_ref})"
         )
+        return IOSuccess(landed)
     return IOSuccess(None)
+
+
+def removal_command(*, context: ScanContext, worktree: GitWorktree, dirt: WorktreeDirt) -> str:
+    """The removal command, forced when a plain one would be refused."""
+    forced = "" if dirt.untracked_entries == () else " --force"
+    return (
+        f"git -C {quote_path(path=context.primary_path)} "
+        f"worktree remove{forced} {quote_path(path=worktree.path)}"
+    )
 
 
 def is_default_branch_worktree(*, context: ScanContext, worktree: GitWorktree) -> bool:
     """Return True if `worktree` is checked out on the repo's default branch."""
     return worktree.branch is not None and worktree.branch == context.default_branch
-
-
-def worktree_is_clean(
-    *, worktree: GitWorktree, runner: CommandRunner
-) -> IOResult[bool, CommandUnavailable]:
-    return git(repo_path=worktree.path, argv=["status", "--porcelain"], runner=runner).map(
-        lambda result: result.returncode == 0 and result.stdout == ""
-    )

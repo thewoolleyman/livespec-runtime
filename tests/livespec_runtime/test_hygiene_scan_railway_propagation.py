@@ -27,6 +27,7 @@ from livespec_runtime.hygiene_scan_types import (
     GitWorktree,
     ScanContext,
 )
+from livespec_runtime.hygiene_scan_worktree_dirt import WorktreeDirt
 from livespec_runtime.hygiene_scan_worktree_merge import branch_was_rebase_merged
 from livespec_runtime.hygiene_scan_worktrees import (
     landed_worktree_finding,
@@ -260,9 +261,36 @@ def test_landed_worktree_finding_propagates_an_unanswerable_merge_base() -> None
         context=_context(runner=runner),
         worktree=GitWorktree(path=_OTHER, head="othersha", branch="other"),
         label="/repo-other",
+        dirt=WorktreeDirt(),
     )
 
     assert "merge-base" in _unavailable(outcome).argv
+
+
+def test_landed_worktree_finding_propagates_an_unreadable_patch_equivalence() -> None:
+    runner = _Runner(
+        unspawnable=("git", "-C", "/repo", "cherry", "origin/master", "othersha"),
+        responses={
+            (
+                "git",
+                "-C",
+                "/repo",
+                "merge-base",
+                "--is-ancestor",
+                "othersha",
+                "origin/master",
+            ): CommandResult(returncode=1)
+        },
+    )
+
+    outcome = landed_worktree_finding(
+        context=_context(runner=runner),
+        worktree=GitWorktree(path=_OTHER, head="othersha", branch="other"),
+        label="/repo-other",
+        dirt=WorktreeDirt(),
+    )
+
+    assert _unavailable(outcome).argv == "git -C /repo cherry origin/master othersha"
 
 
 def test_landed_worktree_finding_propagates_an_unreadable_rebase_merge_signal() -> None:
@@ -285,6 +313,7 @@ def test_landed_worktree_finding_propagates_an_unreadable_rebase_merge_signal() 
         context=_context(runner=runner),
         worktree=GitWorktree(path=_OTHER, head="othersha", branch="other"),
         label="/repo-other",
+        dirt=WorktreeDirt(),
     )
 
     assert _unavailable(outcome).argv == "git -C /repo config --get branch.other.merge"
