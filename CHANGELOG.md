@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.25.0...v0.25.1) (2026-09-06)
+
+
+### Bug Fixes
+
+* **github_budget:** freeze GithubBudgetedClient over a private state holder ([aca26b3](https://github.com/thewoolleyman/livespec-runtime/commit/aca26b34f244f0616f46db81006cd3302300de6f))
+
 ## [0.25.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.24.0...v0.25.0) (2026-09-06)
 
 
