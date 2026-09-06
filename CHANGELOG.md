@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.23.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.22.3...v0.23.0) (2026-09-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **github_auth:** `livespec_runtime.github_auth.mint` no longer declares `http_get_json`, `http_post_json`, or `resolve_installation_id` in `__all__`. They remain importable; they are no longer declared surface.
+
+### Features
+
+* **github_auth:** narrow mint's __all__ to the ratified seam surface ([bab3f6f](https://github.com/thewoolleyman/livespec-runtime/commit/bab3f6f46afb155b02c90d82989199c8a0d4e271))
+
 ## [0.22.3](https://github.com/thewoolleyman/livespec-runtime/compare/v0.22.2...v0.22.3) (2026-09-06)
 
 
