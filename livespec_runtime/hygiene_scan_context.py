@@ -41,17 +41,12 @@ from livespec_runtime.hygiene_scan_types import (
     ScanContext,
 )
 
-__all__: list[str] = [
-    "DEFAULT_STALE_DAYS",
-    "GH_READ_BUDGET_FLOOR",
-    "budgeted_gh_read",
-    "build_context",
-    "git",
-    "parse_worktrees",
-    "quote_path",
-    "run_command",
-    "worktrees",
-]
+# DECLARED INTERNAL by `SPECIFICATION/contracts.md` section "Module-level
+# public surface": a size-decomposition split-out of
+# `livespec_runtime.hygiene_scan`, the family's SINGLE ratified import path.
+# Its names stay module-level and importable for the family's own use; they
+# are no longer DECLARED surface.
+__all__: list[str] = []
 
 DEFAULT_STALE_DAYS = 30
 

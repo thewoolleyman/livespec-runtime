@@ -5,6 +5,16 @@ from pathlib import Path
 
 from returns.io import IOResult, IOSuccess
 
+from livespec_runtime import (
+    hygiene_scan,
+    hygiene_scan_cli,
+    hygiene_scan_context,
+    hygiene_scan_findings,
+    hygiene_scan_types,
+    hygiene_scan_worktree_dirt,
+    hygiene_scan_worktree_merge,
+    hygiene_scan_worktrees,
+)
 from livespec_runtime.hygiene_scan import CommandResult, CommandUnavailable, scan_hygiene
 
 __all__: list[str] = []
@@ -154,6 +164,58 @@ def test_scan_hygiene_degrades_when_github_is_unavailable() -> None:
         )
         == []
     )
+
+
+def test_the_entry_point_declares_the_ten_names_contracts_ratifies() -> None:
+    """`__all__` declares exactly the v020 inventory for this module.
+
+    `SPECIFICATION/contracts.md` section "Module-level public surface" →
+    `### livespec_runtime.hygiene_scan` documents ten names. Two of them —
+    `CommandRunner` and `ScanContext` — were reachable only by importing a
+    split-out directly: `CommandRunner` is the type of the `runner=` parameter
+    on BOTH `scan_hygiene` and `detect_stale_worktrees`, and `ScanContext` is
+    the argument type of `stale_worktree_findings`, so a consumer holding the
+    single ratified import path could not name what it was passing.
+    """
+    assert set(hygiene_scan.__all__) == {
+        "CommandResult",
+        "CommandRunner",
+        "CommandUnavailable",
+        "GitWorktree",
+        "ScanContext",
+        "detect_stale_worktrees",
+        "main",
+        "run",
+        "scan_hygiene",
+        "stale_worktree_findings",
+    }
+
+
+def test_the_seven_split_outs_declare_no_surface_of_their_own() -> None:
+    """The size-decomposition companions are DECLARED INTERNAL by v020.
+
+    The same contracts section names all seven as split-outs that "MUST NOT be
+    imported directly": the family has a SINGLE ratified import path. Narrowing
+    each `__all__` to `[]` states that in code. Nothing is renamed and no name
+    moves — `__all__` governs the DECLARED surface and `import *`, so
+    `hygiene_scan.py` keeps importing `main` / `run` from `hygiene_scan_cli`
+    and the console script keeps pointing at the same callables.
+    """
+    still_declaring = {
+        module.__name__: module.__all__
+        for module in (
+            hygiene_scan_cli,
+            hygiene_scan_context,
+            hygiene_scan_findings,
+            hygiene_scan_types,
+            hygiene_scan_worktree_dirt,
+            hygiene_scan_worktree_merge,
+            hygiene_scan_worktrees,
+        )
+        if module.__all__
+    }
+
+    assert still_declaring == {}
 
 
 class _FakeRunner:

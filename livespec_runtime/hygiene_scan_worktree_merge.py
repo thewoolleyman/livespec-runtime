@@ -20,11 +20,12 @@ from livespec_runtime.hygiene_scan_types import (
     ScanContext,
 )
 
-__all__: list[str] = [
-    "branch_was_rebase_merged",
-    "head_is_merged",
-    "head_is_patch_equivalent",
-]
+# DECLARED INTERNAL by `SPECIFICATION/contracts.md` section "Module-level
+# public surface": a size-decomposition split-out of
+# `livespec_runtime.hygiene_scan`, the family's SINGLE ratified import path.
+# Its names stay module-level and importable for the family's own use; they
+# are no longer DECLARED surface.
+__all__: list[str] = []
 
 # Named rather than written as bare `True`/`False` literals at the lift
 # sites: `IOSuccess(...)` takes its value positionally, and a positional

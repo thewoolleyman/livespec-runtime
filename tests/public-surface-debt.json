@@ -44,48 +44,6 @@
       "family": "github_budget",
       "disposition": "acknowledged-debt",
       "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.hygiene_scan_cli",
-      "family": "hygiene_scan",
-      "disposition": "acknowledged-debt",
-      "reason": "Companion of livespec_runtime.hygiene_scan per spec.md section \"Public surface\". Exports only the `main` / `run` launcher pair, whose public-or-internal disposition is decided with the family."
-    },
-    {
-      "module": "livespec_runtime.hygiene_scan_context",
-      "family": "hygiene_scan",
-      "disposition": "acknowledged-debt",
-      "reason": "Companion of livespec_runtime.hygiene_scan per spec.md section \"Public surface\". Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.hygiene_scan_findings",
-      "family": "hygiene_scan",
-      "disposition": "acknowledged-debt",
-      "reason": "Companion of livespec_runtime.hygiene_scan per spec.md section \"Public surface\". Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.hygiene_scan_types",
-      "family": "hygiene_scan",
-      "disposition": "acknowledged-debt",
-      "reason": "Companion of livespec_runtime.hygiene_scan per spec.md section \"Public surface\". Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.hygiene_scan_worktree_dirt",
-      "family": "hygiene_scan",
-      "disposition": "acknowledged-debt",
-      "reason": "Companion of livespec_runtime.hygiene_scan per spec.md section \"Public surface\". Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.hygiene_scan_worktree_merge",
-      "family": "hygiene_scan",
-      "disposition": "acknowledged-debt",
-      "reason": "Companion of livespec_runtime.hygiene_scan per spec.md section \"Public surface\". Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.hygiene_scan_worktrees",
-      "family": "hygiene_scan",
-      "disposition": "acknowledged-debt",
-      "reason": "Companion of livespec_runtime.hygiene_scan per spec.md section \"Public surface\". Rides as recorded debt until a proposal ratifies it or declares it internal."
     }
   ]
 }
