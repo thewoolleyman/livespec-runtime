@@ -16,22 +16,10 @@
   ],
   "unratified_modules": [
     {
-      "module": "livespec_runtime.credentials",
-      "family": "credentials",
-      "disposition": "acknowledged-debt",
-      "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.cross_repo.providers.github_process",
-      "family": "cross_repo.providers",
-      "disposition": "gap-not-yet-recorded-as-debt",
-      "reason": "NOT covered by spec.md section \"Public surface\", whose debt paragraph names only hygiene_scan and its companions, credentials, the github_budget family, and spec_governance. This module is a size-decomposition split-out of the ratified cross_repo.providers.github section: it re-exports that section's `GithubFailure` / `GithubQueryFailed` and adds `completed_gh`. The prepared propose-change payload asks the maintainer to either widen the debt paragraph to name it or document `completed_gh` under the provider's section."
-    },
-    {
       "module": "livespec_runtime.github_budget",
       "family": "github_budget",
       "disposition": "acknowledged-debt",
-      "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal."
+      "reason": "Named in spec.md section \"Public surface\" as the one family still recorded as acknowledged debt: its facade exports the deliberately non-frozen GithubBudgetedClient, which constraints.md section \"Public-surface constraints\" forbids as a public dataclass, so ratification waits on a proposal that amends that constraint or disposes of the client differently (recorded at the v020 revise, 2026-09-06)."
     },
     {
       "module": "livespec_runtime.github_budget_client",
@@ -56,12 +44,6 @@
       "family": "github_budget",
       "disposition": "acknowledged-debt",
       "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.hygiene_scan",
-      "family": "hygiene_scan",
-      "disposition": "acknowledged-debt",
-      "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal. Its `main` / `run` entry points are the CLI-launcher half of the same question and are decided with the family, not ahead of it."
     },
     {
       "module": "livespec_runtime.hygiene_scan_cli",
@@ -104,12 +86,6 @@
       "family": "hygiene_scan",
       "disposition": "acknowledged-debt",
       "reason": "Companion of livespec_runtime.hygiene_scan per spec.md section \"Public surface\". Rides as recorded debt until a proposal ratifies it or declares it internal."
-    },
-    {
-      "module": "livespec_runtime.spec_governance",
-      "family": "spec_governance",
-      "disposition": "acknowledged-debt",
-      "reason": "Named in spec.md section \"Public surface\" as shipped-but-unratified. Rides as recorded debt until a proposal ratifies it or declares it internal."
     }
   ]
 }
