@@ -23,6 +23,7 @@ import pytest
 from returns.io import IOFailure, IOResult, IOSuccess
 from returns.unsafe import unsafe_perform_io
 
+from livespec_runtime.github_auth import mint
 from livespec_runtime.github_auth.config import GithubAppConfig
 from livespec_runtime.github_auth.errors import GithubAppAuthError
 from livespec_runtime.github_auth.mint import (
@@ -312,3 +313,24 @@ def test_a_failing_token_post_propagates_out_of_the_mint() -> None:
     )
 
     assert detail == "post seam refused"
+
+
+def test_mint_exports_only_the_ratified_seam_surface() -> None:
+    """`__all__` declares exactly what `contracts.md` ratifies for this module.
+
+    `SPECIFICATION/contracts.md` section "Module-level public surface"
+    documents this module as the mint entry point plus the injectable seam
+    bundle (`MintSeams` / `SignRs256` / `HttpJson` / `DEFAULT_MINT_SEAMS`).
+    The two production HTTP seams and the installation-resolution step are
+    reached THROUGH those ratified names — `DEFAULT_MINT_SEAMS` carries the
+    urllib pair, and resolution is a documented step of
+    `mint_installation_token` — so exporting them separately declared a
+    stable API the inventory never ratified.
+    """
+    assert set(mint.__all__) == {
+        "DEFAULT_MINT_SEAMS",
+        "HttpJson",
+        "MintSeams",
+        "SignRs256",
+        "mint_installation_token",
+    }
