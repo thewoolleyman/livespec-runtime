@@ -117,7 +117,14 @@ exist precisely because prose enforcement was measured to fail.
   through worktree → PR → merge is allowed only for an item labelled
   `factory-exempt:infra-in-person` or `factory-exempt:factory-path-defect`.
 
-**If you open a new plan here**, its own charter carries its scope freeze, its
+**Round 2 is live: `plan/runtime-backlog-drain-2/`** (ledger epic in its
+`associated_work_item_id`) owns everything open at its 2026-09-07 freeze,
+including the three carriers above. Resume it with
+`/livespec-orchestrator-beads-fabro:plan runtime-backlog-drain-2`; its doctrine is
+`livespec-overseer/.claude/skills/drain-backlog/SKILL.md`, and the SessionStart hook
+now points at it.
+
+**If you open a further plan here**, its own charter carries its scope freeze, its
 admission rule and its loop discipline — those were properties of
 `runtime-backlog-drain`, not of this repository, and they retired with it. One
 of its findings is worth keeping though: a drive-session turn that ends with no

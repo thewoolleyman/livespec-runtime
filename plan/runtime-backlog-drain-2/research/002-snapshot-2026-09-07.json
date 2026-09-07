@@ -1,0 +1,206 @@
+{
+ "taken_at": "2026-09-07T11:24:51Z",
+ "repo": "/data/projects/livespec-runtime",
+ "frozen_ids": [
+  "livespec-runtime-vll",
+  "livespec-runtime-qov",
+  "livespec-runtime-ld2",
+  "livespec-runtime-cgsjjm",
+  "livespec-runtime-pi3",
+  "livespec-runtime-2rg",
+  "livespec-runtime-cgw",
+  "livespec-runtime-bda",
+  "livespec-runtime-3r5",
+  "livespec-runtime-6tt"
+ ],
+ "open_count": 10,
+ "items": [
+  {
+   "id": "livespec-runtime-vll",
+   "status": "backlog",
+   "type": "task",
+   "priority": 2,
+   "title": "Consume leg 1 (charter \u00a77): wire the item-provenance ratchet as a red gate once livespec-dev-tooling ships it",
+   "tier": 1,
+   "tier_reason": "title names the factory path (hooks, gates, dispatcher, sandbox, CI/pin drift)",
+   "created_at": "2026-09-07T02:49:01Z",
+   "labels": [
+    "intake:triaged"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": false,
+   "order": 1,
+   "admitted_after_snapshot": false
+  },
+  {
+   "id": "livespec-runtime-qov",
+   "status": "backlog",
+   "type": "task",
+   "priority": 2,
+   "title": "Consume leg 2 (charter \u00a77): consume factory-bypass-audit as a red gate with the two-member exemption enum as allow policy",
+   "tier": 1,
+   "tier_reason": "title names the factory path (hooks, gates, dispatcher, sandbox, CI/pin drift)",
+   "created_at": "2026-09-07T02:49:03Z",
+   "labels": [
+    "intake:triaged"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": false,
+   "order": 2,
+   "admitted_after_snapshot": false
+  },
+  {
+   "id": "livespec-runtime-ld2",
+   "status": "backlog",
+   "type": "chore",
+   "priority": 3,
+   "title": "Run the consent-gated capture-impl-gaps pass over the stale range v001..v021 (65 uncaptured gap ids at v019) and record the coverage point",
+   "tier": 2,
+   "tier_reason": "check passes vacuously or on a half-pair, or convicts a true positive",
+   "created_at": "2026-09-07T09:56:13Z",
+   "labels": [
+    "intake:triaged",
+    "origin:freeform"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": false,
+   "order": 3,
+   "admitted_after_snapshot": false
+  },
+  {
+   "id": "livespec-runtime-cgsjjm",
+   "status": "backlog",
+   "type": "task",
+   "priority": 2,
+   "title": "Declare compose_needs_attention and scan_hygiene in pyproject cross_repo_public_api once dev-tooling's central fleet measurement confirms the residue (v020 commitment declare-attention-cross-repo-public-api-residue)",
+   "tier": 4,
+   "tier_reason": "long tail by priority then age",
+   "created_at": "2026-09-06T14:14:53Z",
+   "labels": [
+    "origin:freeform"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": true,
+   "order": 4,
+   "admitted_after_snapshot": false
+  },
+  {
+   "id": "livespec-runtime-pi3",
+   "status": "backlog",
+   "type": "task",
+   "priority": 2,
+   "title": "Aging-aware ready_sort_key: equal-rank ready-age tiebreak past the aging bound",
+   "tier": 4,
+   "tier_reason": "long tail by priority then age",
+   "created_at": "2026-09-07T09:49:55Z",
+   "labels": [
+    "cross-repo"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": true,
+   "order": 5,
+   "admitted_after_snapshot": false
+  },
+  {
+   "id": "livespec-runtime-2rg",
+   "status": "backlog",
+   "type": "task",
+   "priority": 3,
+   "title": "Bring the four un-sentinelled consumer-facing self-version literals (README x3, providers/__init__.py) under the ratified x-release-please-version mechanism",
+   "tier": 4,
+   "tier_reason": "long tail by priority then age",
+   "created_at": "2026-09-07T04:20:00Z",
+   "labels": [
+    "intake:triaged"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": false,
+   "order": 6,
+   "admitted_after_snapshot": false
+  },
+  {
+   "id": "livespec-runtime-cgw",
+   "status": "backlog",
+   "type": "chore",
+   "priority": 3,
+   "title": "cross_repo docstrings: drop the seven revision-pinned 'contracts.md v072' citations x1docp was filed to drop, and fix github.py:115-117's superseded 404 clause quote and wrong path",
+   "tier": 4,
+   "tier_reason": "long tail by priority then age",
+   "created_at": "2026-09-07T09:56:01Z",
+   "labels": [
+    "intake:triaged",
+    "origin:freeform"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": false,
+   "order": 7,
+   "admitted_after_snapshot": false
+  },
+  {
+   "id": "livespec-runtime-bda",
+   "status": "backlog",
+   "type": "task",
+   "priority": 3,
+   "title": "Scenarios for the github_auth and work_items public names: 36 of 37 absent from scenarios.md after v020 and v021 both passed (scenario half of gap-vjxowbbp, propose-change payload)",
+   "tier": 4,
+   "tier_reason": "long tail by priority then age",
+   "created_at": "2026-09-07T09:56:16Z",
+   "labels": [
+    "gap-id:gap-vjxowbbp",
+    "intake:triaged",
+    "origin:gap-tied"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": false,
+   "order": 8,
+   "admitted_after_snapshot": false
+  },
+  {
+   "id": "livespec-runtime-3r5",
+   "status": "backlog",
+   "type": "chore",
+   "priority": 4,
+   "title": "spec: re-flow the pasted 123-column 404 clause line at contracts.md:105 (propose-change payload, cosmetic)",
+   "tier": 4,
+   "tier_reason": "long tail by priority then age",
+   "created_at": "2026-09-07T09:56:05Z",
+   "labels": [
+    "intake:triaged",
+    "origin:freeform"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": false,
+   "order": 9,
+   "admitted_after_snapshot": false
+  },
+  {
+   "id": "livespec-runtime-6tt",
+   "status": "backlog",
+   "type": "task",
+   "priority": 4,
+   "title": "test_public_surface_inventory: add the reverse name-level leg so a documented-but-unexported (phantom) inventory name fails",
+   "tier": 4,
+   "tier_reason": "long tail by priority then age",
+   "created_at": "2026-09-07T09:56:08Z",
+   "labels": [
+    "intake:triaged",
+    "origin:freeform"
+   ],
+   "valve": false,
+   "refer_candidate": false,
+   "has_acceptance": false,
+   "order": 10,
+   "admitted_after_snapshot": false
+  }
+ ],
+ "plans": []
+}

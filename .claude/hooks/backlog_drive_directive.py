@@ -21,7 +21,7 @@ from pathlib import Path
 
 __all__: list[str] = ["main"]
 
-SLUG = "runtime-backlog-drain"
+SLUG = "runtime-backlog-drain-2"
 
 
 def _project_root() -> Path:
