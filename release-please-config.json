@@ -51,6 +51,10 @@
         {
           "type": "generic",
           "path": "SPECIFICATION/contracts.md"
+        },
+        {
+          "type": "generic",
+          "path": "README.md"
         }
       ],
       "bump-minor-pre-major": true
