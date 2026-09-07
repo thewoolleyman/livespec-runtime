@@ -17,35 +17,38 @@ spec_commitments:
 ### Target specification files
 
 - SPECIFICATION/scenarios.md
+- SPECIFICATION/spec.md
 
 ### Summary
 
-Add 32 Gherkin scenarios to scenarios.md covering the consumer-observable behaviour of the ratified github_auth and work_items public surfaces, record the conscious exemptions for the remaining data carriers, constants, seams and type aliases, and co-edit tests/heading-coverage.json with acknowledged-TODO rows. Closes the scenario half of gap-vjxowbbp: 36 of the two families' 37 documented public names appeared nowhere in scenarios.md.
+Add 32 Gherkin scenarios to scenarios.md covering the consumer-observable behaviour of the ratified github_auth and work_items public surfaces, record the conscious exemptions for the remaining data carriers, constants, seams and type aliases in spec.md §"Public surface", and co-edit tests/heading-coverage.json with acknowledged-TODO rows. Closes the scenario half of gap-vjxowbbp: 42 of the two families' 43 documented public names appeared nowhere in scenarios.md.
 
 ### Motivation
 
-gap-vjxowbbp ("New public symbols (github_auth / work_items) lack scenarios.md entries") was carried by livespec-runtime-vbofkr, absorbed into livespec-runtime-mqsxsu.4, and its scenario half was consciously deferred in plan runtime-backlog-drain research/005 §5b on the reasoning that scenarios ride the propose-change that ratifies a family. That venue has since occurred twice, v020 and v021, and scenarios.md was untouched both times; git log on it stops at v019. vbofkr, mqsxsu.4 and x87 are closed, so nothing carried the gap id until livespec-runtime-bda was filed on 2026-09-07 as its carrier, and this proposal is that item's payload. Measured with the same whole-word method the public-surface inventory test uses: 37 documented public names, 36 absent from scenarios.md, against a file that DOES name cross_repo symbols verbatim (resolve_ref 9 hits, RefStatus 10), so the hole is real and not stylistic. scenarios.md's own header says a new public symbol SHOULD land with at least one scenario. The integration-tier constraint on coverage rows is acknowledged rather than dodged: consumer-tier tests for these families do not exist yet, and writing them is declared as this proposal's impl follow-up.
+gap-vjxowbbp ("New public symbols (github_auth / work_items) lack scenarios.md entries") was carried by livespec-runtime-vbofkr, absorbed into livespec-runtime-mqsxsu.4, and its scenario half was consciously deferred in plan runtime-backlog-drain research/005 §5b on the reasoning that scenarios ride the propose-change that ratifies a family. That venue has since occurred twice, v020 and v021, and scenarios.md was untouched both times; git log on it stops at v019. vbofkr, mqsxsu.4 and x87 are closed, so nothing carried the gap id until livespec-runtime-bda was filed on 2026-09-07 as its carrier, and this proposal is that item's payload. Measured with the same whole-word method the public-surface inventory test uses — `__all__` per module across both families, the `# @generated` `_fractional_indexing` port excluded as that test's own register excludes it: 43 documented public names, 42 absent from scenarios.md (the single hit is `main`, which is a prose over-credit of exactly the kind that test's HONEST LIMIT paragraph warns about), against a file that DOES name cross_repo symbols verbatim (resolve_ref 9 hits, RefStatus 10), so the hole is real and not stylistic. scenarios.md's own header says a new public symbol SHOULD land with at least one scenario. The integration-tier constraint on coverage rows is acknowledged rather than dodged: consumer-tier tests for these families do not exist yet, and writing them is declared as this proposal's impl follow-up.
 
 ### Proposed Changes
 
 `SPECIFICATION/scenarios.md` MUST gain the following 32 scenarios, appended after the existing ones, verbatim. Each states consumer-observable behaviour already ratified in `contracts.md` §"Module-level public surface" for the `github_auth` and `work_items` families; no clause changes.
+
+SEQUENCING. Two of the scenarios below describe behaviour whose ratified prose was corrected after this proposal was first authored, and this proposal MUST be revised only after both corrections are on master, or it will contradict `contracts.md` instead of restating it. The seven `github_auth` railway assertions depend on v023 (`github-auth-railway-signatures`, ratified 2026-09-07), which is already landed. The `ready_sort_key` scenario depends on `ready-sort-key-aging-signature`, filed alongside this proposal: `livespec_runtime/work_items/lifecycle.py` gained the aging-aware factory in commit `b678542` without a matching `contracts.md` edit, so the ratified bullet still declares the retired `ready_sort_key(item: WorkItem)` shape. Because `revise` processes pending proposals in creation-time order and this proposal is the older of the two, the correction MUST be ratified with `--only-topic ready-sort-key-aging-signature` first.
 
 ## Scenario: load the App config from the tenant's credential-wrapper environment
 
 Given an environment mapping with GITHUB_APP_ID "12345" and GITHUB_PRIVATE_KEY set to a PEM
 And no GITHUB_APP_INSTALLATION_ID and no GITHUB_API_URL
 When load_github_app_config is invoked with that environ
-Then the return value is a GithubAppConfig with app_id "12345" and that private_key_pem
-And api_url is DEFAULT_API_URL, "https://api.github.com"
-And installation_id is None
+Then the result is a Success carrying a GithubAppConfig with app_id "12345" and that private_key_pem
+And that config's api_url is DEFAULT_API_URL, "https://api.github.com"
+And its installation_id is None
 
 ## Scenario: App config resolution fails closed naming every missing variable
 
 Given an environment mapping where GITHUB_APP_ID is the empty string and GITHUB_PRIVATE_KEY is absent
 When load_github_app_config is invoked with that environ
-Then GithubAppAuthError is raised
-And its detail names BOTH GITHUB_APP_ID and GITHUB_PRIVATE_KEY as missing
-And its detail points the operator at the consuming tenant's credential_wrapper
+Then the result is a Failure carrying GithubAppAuthError
+And the error's detail names BOTH GITHUB_APP_ID and GITHUB_PRIVATE_KEY as missing
+And the error's detail points the operator at the consuming tenant's credential_wrapper
 And no fleet credential is consulted as a fallback
 
 ## Scenario: the optional installation pin and API-root override are carried into the config
@@ -67,34 +70,35 @@ Given app_id "12345" and issued_at 1_700_000_000
 When jwt_signing_input is invoked with them
 Then the result is two b64url segments joined by "."
 And the decoded header declares alg "RS256"
-And the decoded claims carry iss "12345" and an exp whose distance from iat is under GitHub's 600-second App-JWT cap
+And the decoded claims carry iss "12345", an iat backdated 60 seconds for clock skew, and an exp 540 seconds past the injected issued_at — under GitHub's 10-minute App-JWT cap
 
 ## Scenario: normalize_pem re-wraps a flattened key and passes a well-formed PEM through unchanged
 
-Given a private key flattened to one line by a secrets manager, with its newlines collapsed or written as literal backslash-n
+Given a private key flattened to one line by a secrets manager, with its newlines collapsed to whitespace
 When normalize_pem is invoked with it
 Then the result has the BEGIN and END armor lines and 64-column body lines of a real PEM
-And when normalize_pem is invoked with an already well-formed PEM the result is byte-identical to the input
+And when the flattening instead wrote the newlines as literal backslash-n, those are restored to real newlines and the key's existing line structure is preserved rather than re-wrapped
+And when normalize_pem is invoked with an already well-formed PEM ending in exactly one newline the result is byte-identical to the input
 
 ## Scenario: RS256 signing with openssl round-trips against openssl verify
 
 Given a well-formed RSA private key PEM and a signing input
 When sign_rs256_with_openssl is invoked with them
-Then the returned bytes are a signature that openssl verifies against the key's public half over that signing input
+Then the result is an IOSuccess carrying bytes that openssl verify accepts against the key's public half over that signing input
 
 ## Scenario: an unloadable private key is an expected misconfiguration surfaced as GithubAppAuthError
 
 Given a private_key_pem that openssl cannot load
 When sign_rs256_with_openssl is invoked with it
-Then GithubAppAuthError is raised with an actionable detail naming the key as unloadable
-And no other exception type escapes
+Then the result is an IOFailure carrying GithubAppAuthError whose detail names GITHUB_PRIVATE_KEY and the tenant's credential_wrapper
+And no exception escapes at all
 
 ## Scenario: minting with a pinned installation performs no discovery
 
 Given a GithubAppConfig whose installation_id is "777"
 And MintSeams whose http_post answers POST /app/installations/777/access_tokens with a token
 When mint_installation_token is invoked with that config and an issued_at
-Then the returned value is that token
+Then the result is an IOSuccess carrying that token
 And the seams' http_get was never called
 
 ## Scenario: minting discovers the sole installation when none is pinned
@@ -103,15 +107,15 @@ Given a GithubAppConfig whose installation_id is None
 And MintSeams whose http_get answers GET /app/installations with exactly one installation, id 777
 When mint_installation_token is invoked with that config
 Then the seams' http_post targets /app/installations/777/access_tokens
-And the returned value is the minted token
+And the result is an IOSuccess carrying the minted token
 
 ## Scenario: minting with several installations and no pin fails closed directing the operator to pin one
 
 Given a GithubAppConfig whose installation_id is None
 And MintSeams whose http_get answers GET /app/installations with two installations
 When mint_installation_token is invoked with that config
-Then GithubAppAuthError is raised
-And its detail directs the operator to set GITHUB_APP_INSTALLATION_ID
+Then the result is an IOFailure carrying GithubAppAuthError
+And the error's detail directs the operator to set GITHUB_APP_INSTALLATION_ID
 And no access token is requested
 
 ## Scenario: the provider mints on first use and caches in process memory only
@@ -132,7 +136,7 @@ And TOKEN_REFRESH_SECONDS is 3300
 
 ## Scenario: the credential helper answers an https get with x-access-token and a freshly minted token
 
-Given argv ["get"], an environ carrying the App secrets, and stdin describing protocol=https host=github.com
+Given argv ["get"], an environ carrying the App secrets, stdin describing protocol=https host=github.com, and MintSeams injected through main's seams parameter so no real openssl sign or network mint is attempted
 When credential_helper.main is invoked over injected streams
 Then stdout carries username=x-access-token and password=<the minted installation token>
 And the exit code is 0
@@ -163,7 +167,7 @@ And the exit code is non-zero
 
 Given a WorkItem constructed with only the fifteen required fields, including a real non-sentinel rank
 When its optional-on-read fields are read
-Then acceptance_criteria, notes, supersedes, admission_policy, acceptance_policy, blocked_reason, factory_safety and review_requirement are None
+Then spec_commitment_hint, acceptance_criteria, notes, supersedes, admission_policy, acceptance_policy, blocked_reason, factory_safety and review_requirement are None
 And awaits_scope_override is False
 
 ## Scenario: record identity is a stable sha256 over the canonical serialization
@@ -172,7 +176,7 @@ Given two WorkItem records equal in every field
 When work_item_record_identity is computed for each
 Then both values are identical and of the form sha256:<64 hex digits>
 And changing any content field changes the value
-And changing only the supersedes pointer does not change the value
+And a record that supersedes another has a different identity from the record it amends, because the supersedes pointer is itself part of the canonical serialization
 
 ## Scenario: supersession reduction keeps only heads and surfaces concurrent divergence
 
@@ -186,7 +190,7 @@ And the second id maps to both C and D, ordered by the deterministic (captured_a
 
 Given the divergent heads C and D for one id
 When materialize_work_items is invoked
-Then that id maps to the tie-break winner, the head with the greatest captured_at
+Then that id maps to the winner of the full (captured_at, identity) tie-break — the greatest captured_at, and on equal captured_at the greatest per-record identity
 And when every id has exactly one record the result maps each id to that record unchanged
 
 ## Scenario: random_id_suffix yields a six-character base32 suffix that varies across calls
@@ -198,7 +202,7 @@ And the values are not all identical
 ## Scenario: a store facade satisfies WorkItemStore structurally and round-trips append then read
 
 Given an in-memory facade class with read_work_items() and append_work_item(*, item) and no inheritance from WorkItemStore
-When it is checked against the WorkItemStore protocol
+When it is checked against the WorkItemStore protocol by static assignability — never isinstance, because WorkItemStore is not @runtime_checkable and isinstance against it raises TypeError
 Then it satisfies the protocol
 And after append_work_item with a record, read_work_items yields that record
 And read_work_items is empty before any append
@@ -227,7 +231,8 @@ Then each result is Lane(name=<that status>, reason=None)
 
 ## Scenario: an unresolved sibling_work_item dependency fails closed while a missing local id does not block
 
-Given a ready WorkItem whose depends_on names a sibling_work_item in another repo
+Given a CrossRepoManifest whose targets declare the sibling repo, without which resolution short-circuits to RefStatus.UNKNOWN before the lookup is consulted at all
+And a ready WorkItem whose depends_on names a sibling_work_item in that repo
 And a sibling_status_lookup that returns RefStatus.UNKNOWN for it
 When is_item_ready is invoked
 Then the result is False
@@ -240,12 +245,16 @@ Given any WorkItem, index, manifest and optional sibling_status_lookup
 When is_item_ready and lane_of are both invoked with the same arguments
 Then is_item_ready is True exactly when lane_of(...).name == "ready"
 
-## Scenario: ready_sort_key orders by rank then id
+## Scenario: ready_sort_key orders by rank, then an aging tier within that rank, then id
 
-Given ready WorkItems with ranks "a0", "a1" and "a1" and ids "z", "b" and "a"
-When they are sorted by ready_sort_key
+Given a key built by calling the ready_sort_key factory with a now and no ready_since_lookup
+And ready WorkItems with ranks "a0", "a1" and "a1" and ids "z", "b" and "a"
+When they are sorted by that key
 Then the order is rank "a0" first, then the two "a1" items ordered by id "a" before "b"
-And no other field participates in the ordering
+And when a ready_since_lookup is injected instead, an item ready LONGER than ready_aging_threshold_hours — 24 hours by default — sorts ahead of its equal-rank newer siblings, longest wait first
+And rank remains the primary key, so an aged item is never promoted across a rank tier
+And an item whose ready instant is unknowable, because no lookup was injected or the lookup returned None, takes no age advantage and keeps the id tie-break
+And a naive now or a naive looked-up instant is read as UTC rather than failing on mixed awareness
 
 ## Scenario: key_between yields a rank key strictly between its neighbors, with None as an open end
 
@@ -269,24 +278,30 @@ Then BOTTOM_SENTINEL sorts after the real key
 And BOTTOM_SENTINEL uses a character outside the base-62 alphabet so no generated key can ever equal or follow it
 And a store adapter substitutes it only for a legacy line lacking rank; the WorkItem.rank domain field never carries it
 
-The file's introductory paragraph MUST be followed by this exemption record, verbatim (a paragraph, not a heading, so the scenario-heading coverage rule is unaffected):
+`SPECIFICATION/spec.md` §"Public surface" MUST gain the following exemption record, appended as the final paragraphs of that section, verbatim. It lands in `spec.md` rather than in `scenarios.md` because a normative prose register is not a Gherkin scenario, and `scenarios.md` holds only scenario blocks; `spec.md` §"Public surface" is already this repository's venue for consciously-excluded public surface, being the section that names `tests/public-surface-debt.json` as its authority.
 
 Consciously exempted from scenario coverage, with the reason recorded here so the decision is
-ratified rather than implied (every name below is exercised as a Given or a Then inside the scenarios
-above, and none carries behaviour of its own):
+ratified rather than implied (every name below is exercised as a Given or a Then inside the
+`scenarios.md` scenarios for these two families, and none carries behaviour of its own):
 
 - `github_auth`: `GithubAppConfig` and `DEFAULT_API_URL` (data carrier and constant, exercised by the
   config scenarios); `GithubAppAuthError` (the single domain error, exercised by every fail-closed
   scenario); `MintSeams`, `SignRs256`, `HttpJson` and `DEFAULT_MINT_SEAMS` (the injected seam bundle
   and its protocol shapes, exercised by every mint scenario); `TOKEN_REFRESH_SECONDS` (a constant,
   asserted inside the refresh-horizon scenario); `credential_helper.run` (process wiring of the real
-  streams, covered by the console-script contract in `contracts.md`, not unit-observable).
+  streams — it carries no behaviour of its own beyond passing `sys.argv`, `os.environ` and the real
+  streams to `main`, whose behaviour every credential-helper scenario already covers, and the process
+  entry point itself is covered by the console-script contract in `contracts.md`).
 - `work_items`: `WorkItemStatus`, `AdmissionPolicy`, `AcceptancePolicy`, `StoredBlockedReason`,
-  `WorkItemType`, `Origin`, `Resolution`, `LaneName`, `BlockedReason` (closed `Literal` value sets with
-  no behaviour beyond typing); `DependsOnRaw` (a type alias); `AuditRecord` and `Lane` (frozen data
-  carriers, exercised by the identity and lane scenarios); `_fractional_indexing` (the verbatim CC0
-  port of `rocicorp/fractional-indexing`, underscore-private, documented for attribution and covered
-  by its own ported tests in `tests/livespec_runtime/work_items/test__fractional_indexing.py`).
+  `WorkItemType`, `Origin`, `Resolution`, `LaneName`, `BlockedReason`, `FactorySafety` and
+  `ReviewRequirement` (closed `Literal` value sets with no behaviour beyond typing; the last two are
+  carried as the `WorkItem.factory_safety` and `WorkItem.review_requirement` fields the
+  legacy-defaults scenario reads back as `None`); `DependsOnRaw` (a type alias); `AuditRecord` and
+  `Lane` (frozen data carriers, exercised by the identity and lane scenarios); `_fractional_indexing`
+  (the verbatim CC0 port of `rocicorp/fractional-indexing`, underscore-private, outside the 43
+  documented names by the same `# @generated` exclusion the public-surface inventory test applies,
+  documented for attribution and covered by its own ported tests in
+  `tests/livespec_runtime/work_items/test__fractional_indexing.py`).
 
 CO-EDIT, applied in the same ratification changeset (the file is outside the spec target and is therefore carried by the spec commitment below rather than by `resulting_files`): `tests/heading-coverage.json` MUST gain one row per new scenario. Because no consumer-tier test exists yet for these two families, every row is a `TODO` entry whose `reason` explicitly acknowledges the integration-tier requirement, which non-functional-requirements.md §"Test discipline" permits during transition; each reason also names the unit-tier test that exercises the behaviour today. The rows, verbatim:
 
@@ -491,9 +506,9 @@ CO-EDIT, applied in the same ratification changeset (the file is outside the spe
  {
   "spec_root": "SPECIFICATION",
   "spec_file": "scenarios.md",
-  "heading": "## Scenario: ready_sort_key orders by rank then id",
+  "heading": "## Scenario: ready_sort_key orders by rank, then an aging tier within that rank, then id",
   "test": "TODO",
-  "reason": "Consumer-tier test not yet written; this row acknowledges non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\"): the mapped test MUST sit at the integration tier (tests.consumer.* or pytest.mark.integration). Owed by the spec commitment consumer-tier-scenario-tests-github-auth-work-items. Unit-tier coverage exists today at tests.livespec_runtime.work_items.test_lifecycle.test_ready_sort_key_orders_by_rank_then_id."
+  "reason": "Consumer-tier test not yet written; this row acknowledges non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\"): the mapped test MUST sit at the integration tier (tests.consumer.* or pytest.mark.integration). Owed by the spec commitment consumer-tier-scenario-tests-github-auth-work-items. Unit-tier coverage exists today at tests.livespec_runtime.work_items.test_lifecycle.test_ready_sort_key_orders_aged_equal_rank_items_ahead_of_newer_ones."
  },
  {
   "spec_root": "SPECIFICATION",
@@ -519,4 +534,4 @@ CO-EDIT, applied in the same ratification changeset (the file is outside the spe
 ]
 ```
 
-Every one of the 37 public names in the two families is thereby either the subject of a scenario or named in the exemption record; the acceptance criterion of gap-vjxowbbp ("at least one scenario entry, or consciously exempted with the reason recorded") is satisfied and the enumerator MUST no longer return that gap id.
+Every one of the 43 public names in the two families is thereby either the subject of a scenario in `scenarios.md` or named in the exemption record in `spec.md` §"Public surface"; the acceptance criterion of gap-vjxowbbp ("at least one scenario entry, or consciously exempted with the reason recorded") is satisfied and the enumerator MUST no longer return that gap id.
