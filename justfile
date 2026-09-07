@@ -556,3 +556,6 @@ check-plan-record-conformance:
 
 check-work-item-interpolation-delimiters:
     uv run python -m livespec_dev_tooling.checks.work_item_interpolation_delimiters
+
+check-work-item-status-vocabulary:
+    uv run python -m livespec_dev_tooling.checks.work_item_status_vocabulary
