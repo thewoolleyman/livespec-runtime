@@ -20,6 +20,10 @@ These tests read them together, in both directions:
   makes its row stale and fails until the row is deleted;
 - every `###` section in the inventory still resolves to a shipped module, so a
   deleted or renamed module cannot leave a phantom entry behind;
+- every NAME a ratified section documents in a bullet's leading position is
+  exported by that module, or by a module the section names, so a phantom NAME
+  — documented, never shipped, or shipped once and since removed — cannot sit
+  in the inventory unnoticed either;
 - the verbatim third-party ports that sit outside the first-party structural
   universe are declared WITH the names they take out of scope, so that
   exclusion is visible in the register rather than silent in the walker.
@@ -39,6 +43,21 @@ spell, which is what keeps launcher entry points from riding in on a prose
 word. Within a ratified section the residual over-credit is accepted; the
 alternative, matching each name only inside its own module's subsection, would
 report every re-export of an already-documented name as an omission.
+
+REVERSE MEASUREMENT — the name-level reverse leg reads only the BULLET-LEADING
+backticked identifiers of a section, never every backticked token in it.
+Running the forward direction's tolerant match backwards would manufacture
+findings out of prose words, signature fragments, and referenced type names
+(`Literal`, `TypeAlias`, `Exception`), none of which the section is claiming
+this module exports. A bullet whose leading token names a shipped MODULE — the
+support-module and ported-module bullets — documents a module rather than a
+name and is skipped; `###`-level module claims are already asserted by
+`test_every_ratified_module_section_resolves_to_a_shipped_module`. The
+residual latitude is the re-export allowance: a name may be satisfied by the
+`__all__` of ANY shipped module the section backticks by dotted path, which is
+how a facade section (`hygiene_scan`, `github_budget`) credits the support
+modules it re-exports from, and it does not distinguish those from a module the
+section merely mentions.
 """
 
 import ast
@@ -54,6 +73,10 @@ _CONTRACTS = _REPO_ROOT / "SPECIFICATION" / "contracts.md"
 _REGISTER = _REPO_ROOT / "tests" / "public-surface-debt.json"
 _INVENTORY_HEADING = "## Module-level public surface"
 _GENERATED_MARKER = "# @generated"
+_SECTION_SPLIT = re.compile(r"^### `([A-Za-z0-9_.]+)`\n", re.MULTILINE)
+_BULLET_HEAD = re.compile(r"^- ((?:`[^`]+`(?:,\s+)?)+)", re.MULTILINE)
+_LEADING_IDENTIFIER = re.compile(r"`([A-Za-z_][A-Za-z0-9_.]*)")
+_DOTTED_TOKEN = re.compile(r"`([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)+)`")
 
 
 def _inventory_section() -> str:
@@ -156,6 +179,94 @@ def _stale_register_rows(
     return stale
 
 
+def _sections(*, section: str) -> dict[str, str]:
+    """Each ratified `###` module section of the inventory, mapped to its own body."""
+    parts = _SECTION_SPLIT.split(section)
+    return dict(zip(parts[1::2], parts[2::2], strict=True))
+
+
+def _shipped_modules() -> frozenset[str]:
+    """Every module the runtime package ships, dotted from the repo root."""
+    return frozenset(_module_name(path=path) for path in _RUNTIME_ROOT.rglob("*.py"))
+
+
+def _bullet_leading_names(*, body: str) -> tuple[str, ...]:
+    """The identifiers a section CLAIMS, read from each bullet's leading backticked run.
+
+    Only the run at the head of the bullet counts, so ``- `a`, `b` — uses
+    `Literal``` claims `a` and `b` and not `Literal`. Signatures are truncated
+    at the first non-identifier character, which is what turns the inventory's
+    ``lane_of(*, item, ...)`` into the bare `lane_of` a module can export.
+    """
+    return tuple(
+        name for head in _BULLET_HEAD.findall(body) for name in _LEADING_IDENTIFIER.findall(head)
+    )
+
+
+def _resolve_module(*, token: str, section_module: str, shipped: frozenset[str]) -> str | None:
+    """The shipped module a backticked token names, or None when it names no module.
+
+    The inventory writes module references three ways — fully dotted, relative
+    to the runtime package, and bare relative to the section's own package (the
+    `_fractional_indexing` port) — so all three are tried.
+    """
+    package = section_module.rpartition(".")[0]
+    for candidate in (token, f"livespec_runtime.{token}", f"{package}.{token}"):
+        if candidate in shipped:
+            return candidate
+    return None
+
+
+def _sibling_exports(
+    *,
+    body: str,
+    section_module: str,
+    exporting: dict[str, tuple[str, ...]],
+    shipped: frozenset[str],
+) -> frozenset[str]:
+    """What the modules a section backticks by dotted path export, for the re-export leg."""
+    resolved = (
+        _resolve_module(token=token, section_module=section_module, shipped=shipped)
+        for token in _DOTTED_TOKEN.findall(body)
+    )
+    return frozenset(
+        name for module in resolved if module is not None for name in exporting.get(module, ())
+    )
+
+
+def _phantom_documented_names(
+    *,
+    sections: dict[str, str],
+    exporting: dict[str, tuple[str, ...]],
+    shipped: frozenset[str],
+) -> list[str]:
+    """Names a ratified section documents that no module it names actually exports.
+
+    This is the reverse of `_unaccounted_exports`: that one walks `__all__` and
+    asks the inventory, this one walks the inventory and asks `__all__`.
+    """
+    phantom: list[str] = []
+    for module, body in sections.items():
+        exported = frozenset(exporting.get(module, ())) | _sibling_exports(
+            body=body, section_module=module, exporting=exporting, shipped=shipped
+        )
+        for name in _bullet_leading_names(body=body):
+            if _resolve_module(token=name, section_module=module, shipped=shipped) is not None:
+                continue
+            if name not in exported:
+                phantom.append(f"{module}.{name}")
+    return sorted(set(phantom))
+
+
+def _phantom_in_inventory(*, section: str) -> list[str]:
+    """The reverse leg measured against the shipped tree."""
+    return _phantom_documented_names(
+        sections=_sections(section=section),
+        exporting=_exporting_modules(),
+        shipped=_shipped_modules(),
+    )
+
+
 def test_every_exported_name_is_ratified_or_its_module_is_registered_as_debt() -> None:
     section = _inventory_section()
     unaccounted = _unaccounted_exports(
@@ -233,6 +344,65 @@ def test_every_ratified_module_section_resolves_to_a_shipped_module() -> None:
         "Removing or renaming a module is a major-version change; the inventory "
         "section must move with it."
     )
+
+
+def test_every_documented_name_is_exported_by_a_module_its_section_names() -> None:
+    """The reverse of the forward leg: the inventory may not document a phantom name."""
+    phantom = _phantom_in_inventory(section=_inventory_section())
+
+    assert phantom == [], (
+        f"contracts.md documents names that no module exports: {phantom}. Each is "
+        "reported as `<ratified section>.<name>`. A name that was never shipped, or "
+        "that has since been dropped from an `__all__`, must leave the inventory with "
+        "it; removing a shipped name is a major-version change per spec.md "
+        '§"Public surface".'
+    )
+
+
+def test_a_phantom_bullet_injected_into_a_ratified_section_is_reported() -> None:
+    """Fail-capability, against the REAL inventory text — the check is not vacuous.
+
+    The positive control above passes only because the tree carries no phantom
+    today, which is indistinguishable from a check that can never go red. This
+    injects one bullet into a real ratified section and demands the finding.
+    Measuring the DIFFERENCE against the un-injected text keeps this a proof of
+    fail-capability alone: a real phantom appearing in the tree is the positive
+    control's failure to report, not this one's.
+    """
+    section = _inventory_section()
+    heading = "### `livespec_runtime.cross_repo.retry`\n"
+    injected = section.replace(
+        heading, f"{heading}\n- `never_shipped_by_anything` — a name the tree never had.\n", 1
+    )
+
+    caused = set(_phantom_in_inventory(section=injected)) - set(
+        _phantom_in_inventory(section=section)
+    )
+
+    assert caused == {"livespec_runtime.cross_repo.retry.never_shipped_by_anything"}
+
+
+def test_the_reverse_leg_credits_re_exports_and_skips_module_bullets() -> None:
+    """The two latitudes the measurement grants, against a synthetic inventory.
+
+    A facade section documents names its support modules export, and a bullet
+    that leads with a module name documents a module rather than a name; both
+    are silent on the real tree, so only a synthetic section walks them.
+    """
+    phantom = _phantom_documented_names(
+        sections={
+            "pkg.facade": (
+                "- `Reexported`, `Missing` — one lives in `pkg.support`, one nowhere.\n"
+                "- `pkg.support` — the support module, named not exported.\n"
+                "- prose bullets and `Literal` mentions are not claims.\n"
+            ),
+            "pkg.support": "- `Reexported` — defined here.",
+        },
+        exporting={"pkg.support": ("Reexported",)},
+        shipped=frozenset({"pkg.facade", "pkg.support"}),
+    )
+
+    assert phantom == ["pkg.facade.Missing"]
 
 
 def test_generated_ports_declare_the_names_they_take_out_of_scope() -> None:
