@@ -278,16 +278,21 @@ Then BOTTOM_SENTINEL sorts after the real key
 And BOTTOM_SENTINEL uses a character outside the base-62 alphabet so no generated key can ever equal or follow it
 And a store adapter substitutes it only for a legacy line lacking rank; the WorkItem.rank domain field never carries it
 
-`SPECIFICATION/spec.md` §"Public surface" MUST gain the following exemption record, appended as the final paragraphs of that section, verbatim. It lands in `spec.md` rather than in `scenarios.md` because a normative prose register is not a Gherkin scenario, and `scenarios.md` holds only scenario blocks; `spec.md` §"Public surface" is already this repository's venue for consciously-excluded public surface, being the section that names `tests/public-surface-debt.json` as its authority.
+`SPECIFICATION/spec.md` §"Public surface" MUST gain the following exemption record, appended as the final paragraphs of that section, verbatim. It lands in `spec.md` rather than in `scenarios.md` because a normative prose register is not a Gherkin scenario, and `scenarios.md` holds only scenario blocks; `spec.md` §"Public surface" is this repository's section on the disposition of every public name — ratified in `contracts.md`, explicitly declared internal there, or registered as debt — and is the section `tests/livespec_runtime/test_public_surface_inventory.py` and `tests/public-surface-debt.json` cite as their authority.
 
 Consciously exempted from scenario coverage, with the reason recorded here so the decision is
-ratified rather than implied (every name below is exercised as a Given or a Then inside the
-`scenarios.md` scenarios for these two families, and none carries behaviour of its own):
+ratified rather than implied. None of these names carries behaviour of its own. Some are named
+directly in the `scenarios.md` scenarios for these two families, as a Given or a Then; the rest —
+the closed `Literal` value sets, the type alias, and the production seam bundle — are exempt
+because there is no behaviour for a scenario to state, not because a scenario states it. Each
+bullet below records which case applies:
 
 - `github_auth`: `GithubAppConfig` and `DEFAULT_API_URL` (data carrier and constant, exercised by the
   config scenarios); `GithubAppAuthError` (the single domain error, exercised by every fail-closed
-  scenario); `MintSeams`, `SignRs256`, `HttpJson` and `DEFAULT_MINT_SEAMS` (the injected seam bundle
-  and its protocol shapes, exercised by every mint scenario); `TOKEN_REFRESH_SECONDS` (a constant,
+  scenario); `MintSeams`, `SignRs256` and `HttpJson` (the injected seam bundle and its protocol
+  shapes, exercised by every mint scenario); `DEFAULT_MINT_SEAMS` (the production bundle those
+  scenarios deliberately displace by injecting fakes — a constant binding the openssl signer and
+  the two urllib HTTP seams, carrying no behaviour of its own); `TOKEN_REFRESH_SECONDS` (a constant,
   asserted inside the refresh-horizon scenario); `credential_helper.run` (process wiring of the real
   streams — it carries no behaviour of its own beyond passing `sys.argv`, `os.environ` and the real
   streams to `main`, whose behaviour every credential-helper scenario already covers, and the process
