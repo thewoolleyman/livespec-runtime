@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.26.0...v0.27.0) (2026-09-07)
+
+
+### Features
+
+* **work_items:** aging-aware ready_sort_key equal-rank tiebreak ([b678542](https://github.com/thewoolleyman/livespec-runtime/commit/b6785425d3c8ff54d9a08ed6c7c230bd43044c51))
+
 ## [0.26.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.25.1...v0.26.0) (2026-09-06)
 
 
