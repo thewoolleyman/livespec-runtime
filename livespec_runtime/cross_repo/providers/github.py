@@ -1,6 +1,6 @@
 """GitHub `gh` CLI provider for cross-repo state queries.
 
-Per livespec/SPECIFICATION/contracts.md v072: every GitHub query the
+Per livespec/SPECIFICATION/contracts.md: every GitHub query the
 resolve-ref walker issues funnels through this module. `gh` MUST be
 installed and authenticated
 (`gh auth status` returning success) in any environment where the
@@ -108,13 +108,17 @@ def branch_exists_on_remote(*, github_url: str, name: str) -> IOResult[bool, Git
     `gh` emits to stderr on a 4xx response — the trailing
     `(HTTP 404)` marker on any stderr line is the discriminator,
     NOT a bare `'404'` substring (which can collide with unrelated
-    content such as a URL fragment in an error body). Any other
-    CalledProcessError propagates so the retry-wrap layer can decide
-    whether to back off and retry.
+    content such as a URL fragment in an error body).
 
-    Per livespec/SPECIFICATION/history/v003/contracts.md: the 404 SHOULD
-    be detected via `gh`'s
-    structured response, not a substring match on stderr.
+    Per SPECIFICATION/contracts.md, the ratified `branch_exists_on_remote`
+    clause: the 404 SHOULD be detected from that structured `(HTTP 404)`
+    stderr marker line or an explicit HTTP status header (for example
+    via `gh api --include`), and surfaced to callers as a typed field —
+    `GithubQueryFailed.http_404` here — rather than left for callers to
+    match stderr text themselves. `gh`'s exit code is 1 for every API
+    failure and MUST NOT be relied on to discriminate a 404. Any other
+    transport failure lands on the failure track as `GithubFailure`; it
+    is NOT raised.
 
     This is one of the two POLL-SHAPED reads here: the walker asks the
     same question about the same branch again and again, and the answer
