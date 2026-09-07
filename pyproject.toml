@@ -202,9 +202,28 @@ commands_trees = []
 # exemption").
 # The SessionStart directive hook (plan runtime-backlog-drain, charter §7) is
 # the same shape: hook-protocol stdout is its contract, so it sits here too.
+#
+# `livespec_runtime/hygiene_scan_cli.py` is the THIRD entry, added by
+# livespec-runtime-cq8. It is the `livespec-hygiene-scan` console script's file:
+# `run()` wires the real process streams and `main(*, argv, environ, stdout,
+# stderr, ...) -> int` is the tested core whose `int` IS the process exit code
+# (0 / 2 on a usage error). That is the OUTERMOST supervisor by this fleet's own
+# convention, and this repo's flat layout declares no `commands_trees`, so the
+# spec's `main() -> int` exemption — which is granted to a LOCATION — cannot
+# reach it any other way. Member 4 of the livespec v177 exemption set exists for
+# exactly this shape: a per-file declaration for a flat-layout consumer whose
+# process entry points sit beside its ordinary modules.
+#
+# ⚠️ THIS DECLARATION DOES NOT REACH `run()`, and that is a property of the
+# check rather than of this file. `public_api_result_typed._is_exempt_supervisor`
+# scopes member 4 to the NAMES `main` and `build_parser`; a `run() -> int`
+# process-entry sibling is convicted however it is declared. Recorded as a
+# finding on livespec-dev-tooling-idlx rather than worked around here — see the
+# disposition record in `plan/runtime-backlog-drain/research/`.
 supervisor_entry_files = [
     ".claude/hooks/livespec_footgun_guard.py",
     ".claude/hooks/backlog_drive_directive.py",
+    "livespec_runtime/hygiene_scan_cli.py",
 ]
 # NOT APPLICABLE — runtime is a flat consumer with no separate dataclasses/schema
 # or pure parse/validate subtree, and it installs no neutral shared hook body.
@@ -296,6 +315,7 @@ cross_repo_public_api = [
 total_absence_returns = [
     { file = "livespec_runtime/github_budget_client_support.py", function = "header_value", reason = "A case-insensitive lookup of one header in a Mapping the caller ALREADY HOLDS. Total, no I/O, nothing fallible: None means 'no header of that name is present', an answer about the mapping's contents rather than a failure to obtain them. The HTTP exchange that could fail happened in the caller, which is why this helper takes headers rather than fetching them." },
     { file = "livespec_runtime/github_budget_client_support.py", function = "mapping_option", reason = "Reads one option out of an ALREADY-PARSED options mapping. Total, no I/O, nothing fallible: None means 'that option is not set'. ⚠️ The former RESIDUAL is CLOSED (livespec-runtime-8zu) and was never about the None: the `cast` used to be unchecked, so an option that IS set but is not a Mapping[str, str] flowed on wrongly-typed. It now RAISES MisshapedGithubBudgetOptionError — the same direction documented_defaults took below — so the mis-shape is NOT folded into this None and the absence keeps exactly one meaning." },
+    { file = "livespec_runtime/github_budget_measurement.py", function = "snapshot_from_headers", reason = "Reads the budget snapshot out of a response's headers the caller ALREADY HOLDS — the same `header_value` shape one file over, and for the same reason: the HTTP exchange that could fail happened in the caller. Total, no I/O, nothing fallible. ⚠️ THE None IS LOAD-BEARING AND ITS ONE MEANING IS 'THIS RESPONSE REPORTED NO BUDGET', which the function's own docstring separates from a MEASURED zero: `remaining: 0` says the budget is spent, absence says nobody measured. Folding the two would make every unmeasurable read — a `gh` subcommand run without its header stream, a command that never spawned — look like primary exhaustion, and the client would then refuse deferrable work and back off until a reset it never read. Every route to None is that one absence: the headers mapping does not carry the full `x-ratelimit-*` set. The one fallible step, the `int()` parse in `parse_rate_limit_snapshot`, is reached only AFTER that superset test passes and RAISES rather than returning None." },
 
     # documented_defaults became declarable by CONVERSION, not by argument: c795205
     # lifted its malformed-block failure out into an exception, leaving a None with
