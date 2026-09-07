@@ -1,7 +1,7 @@
 ---
 topic: ready-sort-key-aging-signature
 author: claude-opus-5
-created_at: 2026-09-07T15:52:00Z
+created_at: 2026-09-07T13:33:00Z
 spec_commitments:
   impl_followups:
     - id_hint: ready-sort-key-aging-signature-carrier-close
