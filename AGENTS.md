@@ -87,23 +87,11 @@ that mechanism. Read the archived charter,
 `plan/archive/runtime-backlog-drain/research/001-charter-runtime-backlog-drain.md`,
 before reviving any of its reasoning.
 
-**What the plan left behind, by name** — the archive rule requires these be
-stated exactly, and they are the only carriers it transferred work to:
-
-- `livespec-runtime-vll` — consume leg 1, the item-provenance ratchet. Waiting
-  on a `livespec-dev-tooling` check module that does NOT exist and is NOT
-  tracked there (measured 2026-09-07 over 637 records); the ask is routed as a
-  comment on `livespec-dev-tooling-kcoslm`.
-- `livespec-runtime-qov` — consume leg 2, the `factory-bypass-audit` consumed
-  as a red gate with the two-member exemption enum as its `--allow-label`
-  policy. Actionable now; parked only because the drain finished first.
-- `livespec-runtime-cgsjjm` — non-snapshot, sequenced behind
-  `livespec-dev-tooling`'s central fleet measurement, and holding the ratified
-  v021 `contracts.md` clause on `scan_hygiene` / `detect_stale_worktrees`.
-
-Whoever takes either consume leg owes FAIL-CAPABILITY proof before trusting the
-gate green: a check that passes vacuously is worse than no check, and both legs
-exist precisely because prose enforcement was measured to fail.
+**What round 1 left behind is now itself discharged.** Its three named carriers
+were inherited by round 2 and closed there on 2026-09-07: `cgsjjm` was
+re-scoped and shipped, and `vll` and `qov` were closed as NOT ACTIONABLE HERE
+with their ask transferred by name (see round 2's carriers below). Round 1's
+charter remains the fuller statement of the consume-leg reasoning.
 
 **Two rules survive the plan and bind this repository generally:**
 
@@ -117,19 +105,46 @@ exist precisely because prose enforcement was measured to fail.
   through worktree → PR → merge is allowed only for an item labelled
   `factory-exempt:infra-in-person` or `factory-exempt:factory-path-defect`.
 
-**Round 2 is live: `plan/runtime-backlog-drain-2/`** (ledger epic in its
-`associated_work_item_id`) owns everything open at its 2026-09-07 freeze,
-including the three carriers above. Resume it with
-`/livespec-orchestrator-beads-fabro:plan runtime-backlog-drain-2`; its doctrine is
-`livespec-overseer/.claude/skills/drain-backlog/SKILL.md`, and the SessionStart hook
-now points at it.
+**Round 2 DRAINED this repository's backlog and is archived at
+`plan/archive/runtime-backlog-drain-2/`** (ledger epic
+`livespec-runtime-53j3cs`). All ten items in its 2026-09-07 freeze are closed.
+It also ratified two spec revisions — v024, correcting `contracts.md`'s
+`ready_sort_key` bullet to the aging-aware factory the tree already shipped, and
+v025, landing 32 `github_auth` / `work_items` scenarios plus the public-surface
+exemption record. Its `SessionStart` hook retires itself once the plan directory
+is gone, so it now prints nothing.
+
+**What round 2 transferred out, by name** — the archive rule requires these be
+stated exactly, and they are the only carriers:
+
+- `livespec-runtime-a27` — owes the consumer-tier tests for all 32 v025
+  scenarios, and OWNS every `"test": "TODO"` row those scenarios added to
+  `tests/heading-coverage.json`. The pre-commit gate refuses a TODO row with no
+  owning `work_item`, so this item is what keeps those rows legal rather than
+  silent debt.
+- `livespec-runtime-s5k` — the detection-coverage anchor, named by
+  `dispatcher.detection_coverage_anchor`. An ANCHOR, not a unit of work: it is
+  never done and MUST NOT be closed. Only `record_detection_run` writes to it.
+- `livespec-dev-tooling-kcoslm` (other tenant) — carries the producer ask for
+  BOTH consume legs. When livespec-dev-tooling ships an IMPORTABLE check module
+  for the item-provenance ratchet or a factory-bypass audit, file FRESH consume
+  items rather than reopening `vll` / `qov`: the consume shape depends on what
+  the producer actually ships. Both legs owe FAIL-CAPABILITY proof before the
+  gate is trusted green — a check that passes vacuously is worse than no check,
+  and both exist precisely because prose enforcement was measured to fail.
 
 **If you open a further plan here**, its own charter carries its scope freeze, its
-admission rule and its loop discipline — those were properties of
-`runtime-backlog-drain`, not of this repository, and they retired with it. One
-of its findings is worth keeping though: a drive-session turn that ends with no
-scheduled wakeup and no running monitor has stalled, whatever else it
-accomplished.
+admission rule and its loop discipline — those were properties of the drain
+plans, not of this repository, and they retired with them. Two findings are
+worth keeping. A drive-session turn that ends with no scheduled wakeup and no
+running monitor has stalled, whatever else it accomplished. And round 2's
+measured result: every defect it found was caught by a MECHANICAL check and none
+by careful reading — a clause enumerator surfaced a spec drift via a vanished
+test node id, a timestamp comparison caught a future-dated `created_at` that
+would have refused its own reviews, the pre-push gate caught orphaned coverage
+rows, the pre-commit gate caught an unowned TODO, and the archive gate caught a
+coverage record earned over the wrong tree. Reading produced confident, wrong
+prose repeatedly, including from the drive session itself. Build the check.
 
 ## Decision authority — when to ask, proceed, or self-resolve
 
