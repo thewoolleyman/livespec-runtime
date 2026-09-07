@@ -9,7 +9,8 @@ Exercises the single lane authority:
   straight through;
 - `is_item_ready` agrees with `lane_of(...).name == "ready"` by
   construction;
-- `ready_sort_key` orders by `rank` then `id`;
+- `ready_sort_key` orders by `rank`, then by the ready-aging tiebreak,
+  then by `id`;
 - the dependency-blocking predicate's fail-closed + status-mapping
   branches (open / done / missing / sibling-unknown / unparseable),
   all resolved OFFLINE (local + sibling deps only — no `gh`). Note the
@@ -20,6 +21,8 @@ Exercises the single lane authority:
 Schema reference: this repo's own `SPECIFICATION/contracts.md`
 §`### livespec_runtime.work_items.lifecycle`.
 """
+
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -320,22 +323,126 @@ def test_is_item_ready_false_for_non_ready_status() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Scenario: ready_sort_key orders by rank then id.
+# Scenario: ready_sort_key orders by rank, then the ready-aging tiebreak,
+# then id.
+#
+# `ready_sort_key` is a FACTORY (`next` and the Dispatcher both call it to
+# compose ONE ordering). Its only age input is the injected
+# `ready_since_lookup`, which resolves the DURABLE `ready_since` instant —
+# there is no machine-local dispatch journal at this layer and no way to
+# smuggle one in, which is what the no-lookup case below pins.
 # ---------------------------------------------------------------------------
 
+NOW = datetime(2026, 9, 7, 0, 0, tzinfo=timezone.utc)
 
-def test_ready_sort_key_is_rank_then_id() -> None:
-    item = _item(id="li-z", rank="a5")
-    assert ready_sort_key(item) == ("a5", "li-z")
+# li-c has waited longest, li-b is past the 24h bound too, li-a is fresh.
+# The ids are chosen so lexicographic order is the EXACT REVERSE of the
+# aging order — an assertion that passes only if aging really decided.
+_READY_SINCE = {
+    "li-c": NOW - timedelta(hours=100),
+    "li-b": NOW - timedelta(hours=30),
+    "li-a": NOW - timedelta(hours=1),
+}
 
 
-def test_ready_sort_key_orders_by_rank_then_id() -> None:
+def _ready_since_lookup(work_item_id: str) -> datetime | None:
+    return _READY_SINCE.get(work_item_id)
+
+
+def test_ready_sort_key_without_lookup_orders_by_rank_then_id() -> None:
+    # No durable ready instant is resolvable, so every item is un-aged and
+    # the ordering degrades exactly to the previous `(rank, id)` key.
     a = _item(id="li-b", rank="a1")
     b = _item(id="li-a", rank="a2")
     c = _item(id="li-c", rank="a1")
-    ordered = sorted([b, a, c], key=ready_sort_key)
+    ordered = sorted([b, a, c], key=ready_sort_key(now=NOW))
     # rank "a1" sorts before "a2"; within "a1", id "li-b" before "li-c".
     assert [w.id for w in ordered] == ["li-b", "li-c", "li-a"]
+
+
+def test_ready_sort_key_is_rank_then_unaged_tier_then_id_without_lookup() -> None:
+    item = _item(id="li-z", rank="a5")
+    assert ready_sort_key(now=NOW)(item) == ("a5", 1, 0.0, "li-z")
+
+
+def test_ready_sort_key_orders_aged_equal_rank_items_ahead_of_newer_ones() -> None:
+    # All three share rank "a1", so only the tiebreak can reorder them.
+    items = [_item(id=item_id, rank="a1", status="ready") for item_id in ("li-a", "li-b", "li-c")]
+    ordered = sorted(items, key=ready_sort_key(now=NOW, ready_since_lookup=_ready_since_lookup))
+    # li-c (100h) and li-b (30h) are past the 24h bound and lead, longest
+    # wait first; li-a (1h) is not yet aged and falls behind both, even
+    # though its id sorts first.
+    assert [w.id for w in ordered] == ["li-c", "li-b", "li-a"]
+
+
+def test_ready_sort_key_keeps_id_tiebreak_for_equal_rank_items_within_the_bound() -> None:
+    # Both are ready, neither is past the 24h bound: id decides, and the
+    # older-but-not-yet-aged item gets no head start.
+    fresh = {"li-z": NOW - timedelta(hours=23), "li-a": NOW - timedelta(hours=1)}
+    items = [_item(id=item_id, rank="a1", status="ready") for item_id in ("li-z", "li-a")]
+    ordered = sorted(
+        items,
+        key=ready_sort_key(now=NOW, ready_since_lookup=fresh.get),
+    )
+    assert [w.id for w in ordered] == ["li-a", "li-z"]
+
+
+def test_ready_sort_key_gives_an_unknowable_ready_instant_no_age_advantage() -> None:
+    # "li-a" has no resolvable ready instant. Against a same-rank item that
+    # is equally un-aged it keeps the plain id tiebreak, and against an aged
+    # same-rank item it does NOT lead — the unknowable instant buys nothing.
+    known = {"li-z": NOW - timedelta(hours=100)}
+    unknowable = _item(id="li-a", rank="a1", status="ready")
+    aged = _item(id="li-z", rank="a1", status="ready")
+    other_unknowable = _item(id="li-b", rank="a1", status="ready")
+    key = ready_sort_key(now=NOW, ready_since_lookup=known.get)
+    assert [w.id for w in sorted([other_unknowable, unknowable], key=key)] == ["li-a", "li-b"]
+    assert [w.id for w in sorted([unknowable, aged], key=key)] == ["li-z", "li-a"]
+
+
+def test_ready_sort_key_never_promotes_an_aged_item_across_rank_tiers() -> None:
+    # li-c has waited 100h but ranks below li-a, which is fresh. `rank` is
+    # the primary key, so the aged item must NOT overtake it.
+    higher_rank_fresh = _item(id="li-a", rank="a1", status="ready")
+    lower_rank_aged = _item(id="li-c", rank="a2", status="ready")
+    ordered = sorted(
+        [lower_rank_aged, higher_rank_fresh],
+        key=ready_sort_key(now=NOW, ready_since_lookup=_ready_since_lookup),
+    )
+    assert [w.id for w in ordered] == ["li-a", "li-c"]
+
+
+def test_ready_sort_key_honors_a_non_default_aging_bound() -> None:
+    # The bound is the orchestrator's `dispatcher.ready_aging_threshold_hours`
+    # value passed through: at 1h, li-a's 1h wait is not PAST the bound while
+    # li-b's 30h wait is, so li-b leads despite the later id.
+    items = [_item(id=item_id, rank="a1", status="ready") for item_id in ("li-a", "li-b")]
+    ordered = sorted(
+        items,
+        key=ready_sort_key(
+            now=NOW,
+            ready_since_lookup=_ready_since_lookup,
+            ready_aging_threshold_hours=1.0,
+        ),
+    )
+    assert [w.id for w in ordered] == ["li-b", "li-a"]
+
+
+def test_ready_sort_key_reads_naive_ready_instants_as_utc() -> None:
+    # A store handing back naive timestamps must order identically to one
+    # handing back aware ones, rather than failing on mixed-awareness
+    # arithmetic. Both the clock and the instants are naive here.
+    naive_now = datetime(2026, 9, 7, 0, 0)
+    naive = {
+        "li-z": naive_now - timedelta(hours=100),
+        "li-a": naive_now - timedelta(hours=1),
+    }
+    items = [_item(id=item_id, rank="a1", status="ready") for item_id in ("li-a", "li-z")]
+    ordered = sorted(
+        items,
+        key=ready_sort_key(now=naive_now, ready_since_lookup=naive.get),
+    )
+    assert [w.id for w in ordered] == ["li-z", "li-a"]
 
 
 # ---------------------------------------------------------------------------

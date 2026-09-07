@@ -22,7 +22,9 @@ source module under `livespec_runtime/work_items/`:
   as a drift guard (the wrapper does not re-export `validate_order_key`).
 - `test_lifecycle.py` — the single lane authority: the `lane_of` overlay
   truth-table, the `is_item_ready` ⇔ `lane_of(...).name == "ready"`
-  agreement, and `ready_sort_key`'s `(rank, id)` ordering. All
+  agreement, and `ready_sort_key`'s aging-aware `rank` → ready-age →
+  `id` ordering (the aged, not-yet-aged and unknowable-instant cases,
+  plus the never-across-rank-tiers invariant). All
   dependency resolution is exercised OFFLINE (local + manifest-absent
   deps only — no `gh`).
 
