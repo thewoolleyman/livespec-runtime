@@ -75,36 +75,54 @@ backup permission denial for the tenant user, treat it as correct by design.
 Tenant users are not granted backup rights; host-managed backup jobs own real
 backups. Do not file work-items or attempt fixes for that warning alone.
 
-## Backlog drive — this repo has no foreman seat
+## Backlog drive — the drain is done; no foreman seat here, ever
 
-The open backlog of this repository is owned by the plan
-`runtime-backlog-drain` (`plan/runtime-backlog-drain/`, ledger epic in
-`associated_work_item_id`). Read its charter,
-`plan/runtime-backlog-drain/research/001-charter-runtime-backlog-drain.md`,
-before touching any work item here. A `SessionStart` hook
-(`.claude/hooks/backlog_drive_directive.py`) prints the same directive into
-every new session while the plan is unarchived. The rules that matter most:
+The plan `runtime-backlog-drain` DRAINED this repository's backlog and is
+ARCHIVED at `plan/archive/runtime-backlog-drain/` (ledger epic
+`livespec-runtime-c7toen`, closed 2026-09-07). All 18 items in its frozen
+snapshot are closed. Its `SessionStart` hook
+(`.claude/hooks/backlog_drive_directive.py`) retires itself once the plan
+directory is gone, so it now prints nothing; the file is kept as the record of
+that mechanism. Read the archived charter,
+`plan/archive/runtime-backlog-drain/research/001-charter-runtime-backlog-drain.md`,
+before reviving any of its reasoning.
+
+**What the plan left behind, by name** — the archive rule requires these be
+stated exactly, and they are the only carriers it transferred work to:
+
+- `livespec-runtime-vll` — consume leg 1, the item-provenance ratchet. Waiting
+  on a `livespec-dev-tooling` check module that does NOT exist and is NOT
+  tracked there (measured 2026-09-07 over 637 records); the ask is routed as a
+  comment on `livespec-dev-tooling-kcoslm`.
+- `livespec-runtime-qov` — consume leg 2, the `factory-bypass-audit` consumed
+  as a red gate with the two-member exemption enum as its `--allow-label`
+  policy. Actionable now; parked only because the drain finished first.
+- `livespec-runtime-cgsjjm` — non-snapshot, sequenced behind
+  `livespec-dev-tooling`'s central fleet measurement, and holding the ratified
+  v021 `contracts.md` clause on `scan_hygiene` / `detect_stale_worktrees`.
+
+Whoever takes either consume leg owes FAIL-CAPABILITY proof before trusting the
+gate green: a check that passes vacuously is worse than no check, and both legs
+exist precisely because prose enforcement was measured to fail.
+
+**Two rules survive the plan and bind this repository generally:**
 
 - **Do not invoke `/livespec-overseer:foreman` for this repository**, and do
   not start a tmux worker session for a work item. The console repo's
   `retire-overseer-and-redesign-control-plane-around-console` plan retired tmux
-  as a transport (its decisions D1, D4, D5); this repo applies that now, as
+  as a transport (its decisions D1, D4, D5); this repo applies that, as
   `livespec-dev-tooling` does under its `dev-tooling-backlog-drain` plan.
 - **Everything executes through the factory.** The only execution verbs for a
   work item are `drive --action impl:<id>` and the dispatcher loop. Hand work
   through worktree → PR → merge is allowed only for an item labelled
   `factory-exempt:infra-in-person` or `factory-exempt:factory-path-defect`.
-- **The scope is frozen.** The plan's snapshot lists every item it owns. A new
-  item may be filed only as a child of a snapshot epic, as a
-  `discovered-from:<snapshot-id>` dependency, or as a consolidation closing two
-  or more snapshot items. Anything else goes to a `PARKING LOT` comment on the
-  plan epic, not to the ledger.
-- **The drive session is the loop.** Resume with
-  `/livespec-orchestrator-beads-fabro:plan runtime-backlog-drain`, take the
-  epic's typed `next_action`, read master CI, run `needs-attention`, act on
-  what is ripe, and arm the `/loop` skill or a Monitor before the first turn
-  ends. A drive-session turn that ends with no scheduled wakeup and no running
-  monitor has stalled, whatever else it accomplished.
+
+**If you open a new plan here**, its own charter carries its scope freeze, its
+admission rule and its loop discipline — those were properties of
+`runtime-backlog-drain`, not of this repository, and they retired with it. One
+of its findings is worth keeping though: a drive-session turn that ends with no
+scheduled wakeup and no running monitor has stalled, whatever else it
+accomplished.
 
 ## Decision authority — when to ask, proceed, or self-resolve
 
