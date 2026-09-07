@@ -281,11 +281,12 @@ And a store adapter substitutes it only for a legacy line lacking rank; the Work
 `SPECIFICATION/spec.md` §"Public surface" MUST gain the following exemption record, appended as the final paragraphs of that section, verbatim. It lands in `spec.md` rather than in `scenarios.md` because a normative prose register is not a Gherkin scenario, and `scenarios.md` holds only scenario blocks; `spec.md` §"Public surface" is this repository's section on the disposition of every public name — ratified in `contracts.md`, explicitly declared internal there, or registered as debt — and is the section `tests/livespec_runtime/test_public_surface_inventory.py` and `tests/public-surface-debt.json` cite as their authority.
 
 Consciously exempted from scenario coverage, with the reason recorded here so the decision is
-ratified rather than implied. None of these names carries behaviour of its own. Some are named
-directly in the `scenarios.md` scenarios for these two families, as a Given or a Then; the rest —
-the closed `Literal` value sets, the type alias, and the production seam bundle — are exempt
-because there is no behaviour for a scenario to state, not because a scenario states it. Each
-bullet below records which case applies:
+ratified rather than implied. None of these names carries behaviour of its own. Six are named
+directly in the `scenarios.md` scenarios for these two families, as a Given or a Then. The other
+seventeen — eleven closed `Literal` value sets, one type alias, two `Protocol` seam shapes, one
+frozen data carrier, the production seam bundle, and the process entry point — are exempt because
+there is no behaviour for a scenario to state, not because a scenario states it. Each bullet below
+records which case applies and why:
 
 - `github_auth`: `GithubAppConfig` and `DEFAULT_API_URL` (data carrier and constant, exercised by the
   config scenarios); `GithubAppAuthError` (the single domain error, exercised by every fail-closed
