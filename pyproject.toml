@@ -273,7 +273,17 @@ covered_trees = []
 # `livespec` after spec-governance defaults moved into this runtime package.
 # Each entry below names the consuming member and file individually; the related
 # guard reading is recorded on work-item `livespec-runtime-0u8`.
+#
+# The v020 commitment to resolve the residue Proposal 6e named was discharged by
+# a fresh central sweep on 2026-09-07 (`LIVESPEC_RUN_FLEET_CONFORMANCE=1`, fleet
+# masters via GitHub). It names exactly ONE omitted consumed function for this
+# repo — `attention_item.validate_attention_item_id`, declared first below — and
+# the commitment was CONDITIONAL on that confirmation, so the two other names
+# Proposal 6e speculated about are deliberately NOT declared here. The sweep's
+# silence on two plain imports that do exist is routed to dev-tooling as a
+# measurement finding (`livespec-dev-tooling-kcoslm`), not worked around here.
 cross_repo_public_api = [
+    { file = "livespec_runtime/attention_item.py", function = "validate_attention_item_id", reason = "product import: livespec-orchestrator-beads-fabro's commands/_needs_attention_conformance.py, plus three of its test modules: test_needs_attention_conformance.py, test_needs_attention_currency_staleness.py and test_needs_attention_release_adoption.py" },
     { file = "livespec_runtime/credentials.py", function = "decide_credentials", reason = "product import: livespec-orchestrator-beads-fabro's .claude-plugin/scripts/bin/_bootstrap.py" },
     { file = "livespec_runtime/credentials.py", function = "wrapper_launch_failure", reason = "product import: livespec-orchestrator-beads-fabro's .claude-plugin/scripts/bin/_bootstrap.py" },
     { file = "livespec_runtime/cross_repo/types.py", function = "parse_cross_repo_manifest", reason = "product import by THREE members: livespec-orchestrator-beads-fabro's commands/_cross_repo.py, livespec-orchestrator-git-jsonl's io/_cross_repo.py, and livespec's parse/cross_repo.py" },
