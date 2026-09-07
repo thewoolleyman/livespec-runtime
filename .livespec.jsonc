@@ -167,6 +167,26 @@
     // that surface round-trips the file through json.dumps and silently strips
     // every comment here while reporting green — tracked as bd-ib-lmi5.
     "dispatcher": {
+      // Work-item hosting this tenant's detection-coverage records. Without a
+      // committed anchor, record_detection_run returns AnchorNotConfigured and
+      // writes NOTHING, so the hygiene gather reports "gap-capture coverage is
+      // stale, last completed coverage point: none on record" forever no matter
+      // how many capture passes actually run. Provisioned 2026-09-07 working
+      // livespec-runtime-ld2, whose acceptance (needs-attention stops emitting
+      // hygiene:gap-capture-staleness) was UNSATISFIABLE without it — a
+      // prerequisite that item's description never named. Measured that day: no
+      // repo in this fleet had provisioned one. livespec-orchestrator-beads-fabro
+      // carries the key as the empty string, which its own comment calls "the
+      // committed spelling of not yet provisioned"; livespec-dev-tooling,
+      // livespec and livespec-overseer do not carry the key at all. This
+      // repository is the first.
+      //
+      // The anchor is an ANCHOR, not a unit of work: it is never done and MUST
+      // NOT be closed. Only record_detection_run writes to it. A hand-authored
+      // comment shaped like a coverage record would make the hygiene gather
+      // report a coverage point no run ever earned — worse than the staleness it
+      // would silence.
+      "detection_coverage_anchor": "livespec-runtime-s5k",
       // Throughput tuning parameter, not a spec commitment: contracts.md
       // names 5 only as the DEFAULT, so a committed non-negative integer
       // exercises the key rather than amending the spec. Raised to 10
