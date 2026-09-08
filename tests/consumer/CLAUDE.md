@@ -23,3 +23,14 @@ Conventions:
   maps every `## Scenario:` heading (many-to-one) to a test here, which
   `check-heading-coverage` enforces under the dev-tooling v0.9.0
   scenario-tier rule.
+
+The four `test_github_app_*` / `test_work_item_*` modules carry the 32
+`github_auth` and `work_items` scenarios ratified as v025 (work-item
+`livespec-runtime-a27`), one test per scenario. Their side-effecting seams
+are INJECTED rather than patched: `MintSeams` is passed through
+`mint_installation_token` / `credential_helper.main`, and the token
+provider's clock is passed through its constructor — both parameters
+default to the production surface (`DEFAULT_MINT_SEAMS`, `time.time`), so
+omitting the injection would attempt a real openssl sign and a real network
+mint. The one genuine process spawn in this tier is `openssl`, offline, for
+the RS256 sign/verify round-trip that scenario names.
