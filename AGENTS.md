@@ -146,6 +146,28 @@ rows, the pre-commit gate caught an unowned TODO, and the archive gate caught a
 coverage record earned over the wrong tree. Reading produced confident, wrong
 prose repeatedly, including from the drive session itself. Build the check.
 
+## Stop the line for breakages
+
+**Stop the line for breakages.** When shared factory or fleet tooling is BROKEN
+— a bad model or adapter config, a stale-but-fixable plugin build a session
+dispatches through, a mint or credential outage, a gate wedged by a defect —
+HALT, fix the root cause or notify its owner and WAIT for the fix, and resume
+only on the NORMAL path once the fix rolls out through the ordinary channel
+(release → `ensure-plugins` → reload → normal dispatch). Never pin a build,
+re-route, or otherwise route around a breakage to keep your own work moving: a
+broken-window workaround normalizes the outage, hides it from a real fix, and
+validates only your private path, not the one every other session and fleet
+member uses. A transient (a rate-limit window that resets, an intermittent
+ENOSPC) is waited out and retried on the normal path; a permanent tool
+limitation is designed within — neither is a bypass. This is the local face of
+the closed factory-exempt enum above: `factory-exempt:factory-path-defect`
+admits an item whose deliverable IS the fix to the broken factory path — worked
+by hand precisely because a factory run cannot repair the factory — never a
+hand-run to route ordinary work around a breakage, which the drain charter
+forbids as the leak it exists to close. Fleet source: the livespec
+`agent-disciplines.md` discipline §"A factory or tooling BREAKAGE stops the
+line" (maintainer ruling 2026-09-10).
+
 ## Decision authority — when to ask, proceed, or self-resolve
 
 Fleet-standard guidance, ported from
