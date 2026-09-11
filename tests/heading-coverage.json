@@ -5,7 +5,7 @@
     "heading": "## Dependency constraints",
     "test": "TODO",
     "reason": "No independently testable assertion at runtime: it governs how dependencies are PINNED (pyproject.toml plus uv.lock) and requires a propose-change cycle plus a minor bump to add one. The lock file is the artifact and a resolving install is the evidence; the propose-change requirement is process, enforced at review. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -20,7 +20,7 @@
     "heading": "## Inherited from livespec",
     "test": "TODO",
     "reason": "No independently testable assertion: by construction it adds no rule of its own, adopting livespec-core's non-functional-requirements in full and pointing at this library's own file for the contributor-facing catalogue. Anything testable belongs to the upstream repo that owns the rule. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -28,7 +28,7 @@
     "heading": "## Process boundaries",
     "test": "TODO",
     "reason": "No independently testable assertion: every clause is an architectural NEGATIVE -- no threads, no asyncio, no subprocess pool, no filesystem mutation. A test can witness that the library did not do something on one path, which is not evidence it never does; the guarantee is upheld by review and by the absence of those imports, not by an assertion. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -41,9 +41,9 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Public-surface constraints",
-    "test": "TODO",
-    "reason": "Enforced by CHECKS rather than by a pytest test: frozen/slotted/kw-only dataclasses and keyword-only functions are asserted by check-keyword-only-args and check-no-inheritance, and the inventory itself by check-all-declared. The one clause here that IS test-shaped, the kind-to-prefix lockstep, is exercised by tests/consumer/test_attention_lockstep.py and mapped from its own scenario heading. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "test": "tests.livespec_runtime.test_phase1_mechanical_checks.test_non_file_lloc_newly_covered_mechanical_checks_are_burned_down",
+    "reason": "The frozen/slotted/kw-only dataclass rule, the keyword-only-arguments rule, and the direct-Exception-subclass rule are asserted by check-keyword-only-args and check-no-inheritance, and the v1 public inventory itself by check-all-declared. This test invokes all three check mains against this repo's tree, asserting each exits 0 and that none reports a newly_covered module, so it reddens if any public symbol drifts from the constraints this heading fixes. The kind-to-prefix lockstep clause is separately exercised by tests/consumer/test_attention_lockstep.py from its own scenario heading. Re-homed off superseded livespec-runtime-4s3 under plan livespec-dev-tooling/fleet-heading-coverage-convergence (D1: no permanent non-testable exemption).",
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -58,7 +58,7 @@
     "heading": "## Consumption shape",
     "test": "TODO",
     "reason": "No independently testable assertion at runtime: it fixes how consumers DECLARE the dependency (a uv git source, as a dev dependency or a runtime one). The declaration is exercised by installation itself -- CI resolving and importing the package is the evidence -- and nothing in the library observes it. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -93,8 +93,8 @@
     "spec_file": "contracts.md",
     "heading": "## Versioning",
     "test": "TODO",
-    "reason": "No independently testable assertion OF ITS OWN: this section delegates, stating that the semver bump rules and the pin-and-bump mechanism live in non-functional-requirements.md \u00a7\"Versioning\". The untested rule and its tracked gap are recorded on that heading, which points at livespec-runtime-mqsxsu.1. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "reason": "No independently testable assertion OF ITS OWN: this section delegates, stating that the semver bump rules and the pin-and-bump mechanism live in non-functional-requirements.md §\"Versioning\". The untested rule and its tracked gap are recorded on that heading, which points at livespec-runtime-mqsxsu.1. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -102,7 +102,7 @@
     "heading": "## `.livespec.jsonc` `compat` block (consumer-facing)",
     "test": "TODO",
     "reason": "No independently testable assertion by THIS library: it constrains what a CONSUMER must declare in its own .livespec.jsonc. This repo cannot verify a rule whose subject lives in another repository -- the same reason v014 rejected the producer-emission-boundary alternative for attention-id validation. Enforcement belongs to whatever reads the consumer's config. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -110,7 +110,7 @@
     "heading": "## Boundary",
     "test": "TODO",
     "reason": "No independently testable assertion: meta-prose stating which invariants this FILE covers and which belong to contracts.md or constraints.md. It is the placement litmus, not a rule an implementation can violate. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -118,7 +118,7 @@
     "heading": "## Build and packaging",
     "test": "TODO",
     "reason": "No independently testable assertion at runtime: it fixes build configuration (hatchling backend, a single wheel from livespec_runtime/). The declarations live in pyproject.toml and are exercised by the build itself -- a failing build is the signal, and an importable installed package is the evidence CI already produces. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -126,7 +126,7 @@
     "heading": "## Inherited from livespec",
     "test": "TODO",
     "reason": "No independently testable assertion: by construction it restates no rule of its own, adopting livespec-core's non-functional-requirements in full and listing notable inherited rules for orientation only. Anything testable here belongs to the upstream repo that owns the rule. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -134,7 +134,7 @@
     "heading": "## Prose conventions",
     "test": "TODO",
     "reason": "No independently testable assertion about the library: it constrains how this SPEC's prose is written (version references prefixed with the owning project name). Violating it produces a misleading document, not misbehaving code. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -142,7 +142,7 @@
     "heading": "## Release flow",
     "test": "TODO",
     "reason": "No pytest test today, and the gap is TRACKED rather than dismissed: the section binds releases to release-please's manifest-mode config, but nothing asserts that the computed bump matches the ratified classification. That gap released 0.21.5 for a Major-classified change and is owned by livespec-runtime-mqsxsu.1; whatever closes it is the right mapping for this heading. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -150,23 +150,23 @@
     "heading": "## Repo layout",
     "test": "TODO",
     "reason": "Enforced by a CHECK rather than by a pytest test: the load-bearing clause -- that tests/ mirrors the livespec_runtime/ package layout -- is asserted by check-tests-mirror-pairing. The remaining bullets describe directory purposes, which carry no assertion. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Spec evolution",
     "test": "TODO",
-    "reason": "No independently testable assertion: it describes this spec's own lifecycle and names compat.pinned as the authoritative consumed version. The lifecycle invariants are doctor's (see spec.md \u00a7'Lifecycle and evolution'); the pin is consumer configuration. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "reason": "No independently testable assertion: it describes this spec's own lifecycle and names compat.pinned as the authoritative consumed version. The lifecycle invariants are doctor's (see spec.md §'Lifecycle and evolution'); the pin is consumer configuration. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Task-runner discipline",
-    "test": "TODO",
-    "reason": "Enforced by CHECKS rather than by a pytest test: that `just` is the single canonical entry point, and that ruff/pyright/pytest are not invoked directly, is asserted by check-no-direct-tool-invocation and check-canonical-recipe-fidelity. A test asserting a check runs would be indirection, not coverage. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "test": "tests.livespec_runtime.test_heading_enforcing_checks.test_task_runner_discipline_bans_direct_tool_invocation",
+    "reason": "The load-bearing clause forbids direct ruff/pyright/pytest/coverage/gh invocations in lefthook.yml and CI YAML, mandating a just <target> indirection; it is enforced by check-no-direct-tool-invocation. This test is control-armed: it asserts the check passes against this repo's real tree AND convicts a fabricated lefthook.yml that shells out to pytest directly, so a green result witnesses the rule rather than a check that inspected nothing. Re-homed off superseded livespec-runtime-4s3 under plan livespec-dev-tooling/fleet-heading-coverage-convergence.",
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -174,7 +174,7 @@
     "heading": "## Test discipline",
     "test": "TODO",
     "reason": "Enforced by CHECKS rather than by a pytest test: 'every public symbol MUST have direct test coverage' is asserted by check-per-file-coverage and check-tests-mirror-pairing, and the scenario-tier rule this very registry implements is asserted by check-heading-coverage. The section governs the SUITE, so a test inside the suite cannot be its own witness. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged. F-04 disposition (charge point 7 of the archived homelab-loop-hardening-runtime plan, transferred to livespec-runtime-x87): property-based tests on the pure attention modules are CONSCIOUSLY EXEMPTED, reason recorded here rather than left as a silent narrowing. hypothesis is a declared dev dependency used by exactly one module, tests/livespec_runtime/test_credentials.py. The attention surface is dominated by a CLOSED FINITE domain -- the declared kind-to-prefix mapping -- and tests/consumer/test_attention_lockstep.py asserts that mapping is total over AttentionKind and injective into the prefixes, which is exhaustive enumeration over the closed set and strictly stronger than sampling it. The one open-domain predicate, validate_attention_item_id(*, id: str) -> bool, is covered by example across all five grammar classes the ratified grammar names, at the consumer tier (tests/consumer/test_attention_id_grammar.py, five tests) and the unit tier (tests/livespec_runtime/test_attention_item.py, four tests). A hypothesis property over arbitrary component strings would ADD to that coverage, not replace it.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -182,7 +182,7 @@
     "heading": "## Versioning",
     "test": "TODO",
     "reason": "No pytest test today, and the gap is TRACKED rather than dismissed: this section IS the ratified Major/Minor/Patch classification plus the pre-major provision, and nothing binds it to the bump release automation computes -- the defect that nearly shipped 0.21.5 for a Major-classified change. Owned by livespec-runtime-mqsxsu.1; whatever closes it is the right mapping for this heading. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -190,15 +190,15 @@
     "heading": "## Lifecycle and evolution",
     "test": "TODO",
     "reason": "Enforced by CHECKS rather than by a pytest test: it describes the livespec propose/critique/revise lifecycle, whose invariants are asserted by the doctor static registry via check-doctor-static (doctor-out-of-band-edits, doctor-version-contiguity, doctor-revision-to-proposed-change-pairing). No library behavior to exercise. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "spec.md",
     "heading": "## Public surface",
     "test": "TODO",
-    "reason": "No independently testable assertion OF ITS OWN: this section delegates, naming contracts.md \u00a7'Module-level public surface' as the authoritative inventory. The testable content lives under that heading, which carries its own registry entry; duplicating a mapping here would make two entries move together silently. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "reason": "No independently testable assertion OF ITS OWN: this section delegates, naming contracts.md §'Module-level public surface' as the authoritative inventory. The testable content lives under that heading, which carries its own registry entry; duplicating a mapping here would make two entries move together silently. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -206,7 +206,7 @@
     "heading": "## Purpose",
     "test": "TODO",
     "reason": "No independently testable assertion: orientation prose stating what this library is and is not. Its one assertable claim -- that the package ships no slash commands, SKILL.md files or hooks -- is a repo-SHAPE fact, not runtime behavior, and is already declared in `.livespec.jsonc` `harnesses`, where both the claude and codex entries are recorded `exempt` with the reason 'livespec-runtime is a library; it ships no command/skill surface'. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -214,7 +214,7 @@
     "heading": "## Scope boundary",
     "test": "TODO",
     "reason": "No independently testable assertion: meta-prose delimiting which decisions this spec owns versus which are fixed upstream in livespec-core. It constrains the SPEC's contents, not the library's behavior. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -222,7 +222,7 @@
     "heading": "## Terminology",
     "test": "TODO",
     "reason": "No independently testable assertion: a glossary. It adopts livespec-core's terms verbatim and adds library-local refinements; definitions carry no input/output an implementation could satisfy or violate. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
-    "work_item": "livespec-runtime-4s3"
+    "work_item": "livespec-runtime-l5q"
   },
   {
     "spec_root": "SPECIFICATION",
@@ -320,21 +320,21 @@
     "spec_file": "scenarios.md",
     "heading": "## Scenario: validate_attention_item_id rejects an id whose component is purely decimal",
     "test": "tests.consumer.test_attention_id_grammar.test_rejects_an_id_whose_component_is_purely_decimal",
-    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\")."
+    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md §\"Test discipline\" (\"Scenario-tier coverage\")."
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: validate_attention_item_id accepts a well-formed three-part hygiene id",
     "test": "tests.consumer.test_attention_id_grammar.test_accepts_a_well_formed_three_part_hygiene_id",
-    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\")."
+    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md §\"Test discipline\" (\"Scenario-tier coverage\")."
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: composition surfaces an invalid candidate rather than shortening the list",
     "test": "tests.consumer.test_attention_composition_refusal.test_composition_refuses_a_workflow_carrying_an_invalid_candidate",
-    "reason": "Closed by livespec-runtime-emu: compose_needs_attention no longer silently drops a candidate whose id fails validation. Validation is enforced at construction (AttentionItem.__post_init__ raises InvalidAttentionItemIdError), so composition refuses the call and the valid candidate is never returned alone. Mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\")."
+    "reason": "Closed by livespec-runtime-emu: compose_needs_attention no longer silently drops a candidate whose id fails validation. Validation is enforced at construction (AttentionItem.__post_init__ raises InvalidAttentionItemIdError), so composition refuses the call and the valid candidate is never returned alone. Mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md §\"Test discipline\" (\"Scenario-tier coverage\")."
   },
   {
     "spec_root": "SPECIFICATION",
