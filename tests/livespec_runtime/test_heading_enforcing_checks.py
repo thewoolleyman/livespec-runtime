@@ -11,9 +11,10 @@ evidence the rule holds rather than evidence the check never ran.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
-from livespec_dev_tooling.checks import no_direct_tool_invocation
+from livespec_dev_tooling.checks import heading_coverage, no_direct_tool_invocation
 
 __all__: list[str] = []
 
@@ -47,3 +48,31 @@ def test_task_runner_discipline_bans_direct_tool_invocation(monkeypatch, tmp_pat
         encoding="utf-8",
     )
     assert _run_no_direct_tool_invocation(cwd=violation, monkeypatch=monkeypatch) == 1
+
+
+def test_test_discipline_heading_coverage_registry_is_complete(monkeypatch, tmp_path) -> None:
+    """Witness non-functional-requirements.md "Test discipline".
+
+    Among that section's clauses is the scenario-tier / registry-coverage
+    discipline this very `tests/heading-coverage.json` implements: every
+    spec H2 MUST carry a registry entry. check-heading-coverage enforces
+    it. The control arm drives the check to conviction on a fabricated
+    spec tree carrying an unregistered heading, so the passing assertion
+    against this repo is evidence the discipline holds rather than
+    evidence the check inspected nothing.
+    """
+    repo_root = Path(__file__).resolve().parents[2]
+    monkeypatch.chdir(repo_root)
+    assert heading_coverage.main() == 0
+
+    # Control arm: a spec tree with an H2 absent from the registry MUST be
+    # convicted (the uncovered-heading direction).
+    fixture = tmp_path / "fixture"
+    (fixture / "SPECIFICATION").mkdir(parents=True)
+    (fixture / "SPECIFICATION" / "spec.md").write_text(
+        "# Title\n\n## Uncovered Heading\n\nbody\n", encoding="utf-8"
+    )
+    (fixture / "tests").mkdir()
+    (fixture / "tests" / "heading-coverage.json").write_text(json.dumps([]), encoding="utf-8")
+    monkeypatch.chdir(fixture)
+    assert heading_coverage.main() == 1
