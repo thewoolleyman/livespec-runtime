@@ -172,8 +172,8 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "non-functional-requirements.md",
     "heading": "## Test discipline",
-    "test": "TODO",
-    "reason": "Enforced by CHECKS rather than by a pytest test: 'every public symbol MUST have direct test coverage' is asserted by check-per-file-coverage and check-tests-mirror-pairing, and the scenario-tier rule this very registry implements is asserted by check-heading-coverage. The section governs the SUITE, so a test inside the suite cannot be its own witness. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged. F-04 disposition (charge point 7 of the archived homelab-loop-hardening-runtime plan, transferred to livespec-runtime-x87): property-based tests on the pure attention modules are CONSCIOUSLY EXEMPTED, reason recorded here rather than left as a silent narrowing. hypothesis is a declared dev dependency used by exactly one module, tests/livespec_runtime/test_credentials.py. The attention surface is dominated by a CLOSED FINITE domain -- the declared kind-to-prefix mapping -- and tests/consumer/test_attention_lockstep.py asserts that mapping is total over AttentionKind and injective into the prefixes, which is exhaustive enumeration over the closed set and strictly stronger than sampling it. The one open-domain predicate, validate_attention_item_id(*, id: str) -> bool, is covered by example across all five grammar classes the ratified grammar names, at the consumer tier (tests/consumer/test_attention_id_grammar.py, five tests) and the unit tier (tests/livespec_runtime/test_attention_item.py, four tests). A hypothesis property over arbitrary component strings would ADD to that coverage, not replace it.",
+    "test": "tests.livespec_runtime.test_heading_enforcing_checks.test_test_discipline_heading_coverage_registry_is_complete",
+    "reason": "Among this section's clauses is the registry/scenario-tier coverage discipline that tests/heading-coverage.json implements: every spec H2 carries a registry entry, enforced by check-heading-coverage. This control-armed test asserts the check passes against this repo AND convicts a fabricated spec tree carrying an unregistered heading. (The per-file-coverage clause is additionally enforced by check-per-file-coverage in the coverage gate; the tests-mirror-pairing clause is convention_not_adopted here and does not apply.) Owner livespec-runtime-l5q.",
     "work_item": "livespec-runtime-l5q"
   },
   {
@@ -196,8 +196,8 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "spec.md",
     "heading": "## Public surface",
-    "test": "TODO",
-    "reason": "No independently testable assertion OF ITS OWN: this section delegates, naming contracts.md §'Module-level public surface' as the authoritative inventory. The testable content lives under that heading, which carries its own registry entry; duplicating a mapping here would make two entries move together silently. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
+    "test": "tests.livespec_runtime.test_phase1_mechanical_checks.test_non_file_lloc_newly_covered_mechanical_checks_are_burned_down",
+    "reason": "This section names contracts.md \"Module-level public surface\" as the authoritative v1 inventory, which is enforced by check-all-declared (the inventory), check-keyword-only-args, and check-no-inheritance. This test invokes those check mains against this repo's tree and asserts each exits 0 with no newly_covered module, so the public surface is witnessed to conform to its declared constraints. A fresh violation-arm would require a git-repo fixture that the tests-no-subprocess-spawn gate precludes in-process, so this binds as an in-repo conformance witness. Owner livespec-runtime-l5q.",
     "work_item": "livespec-runtime-l5q"
   },
   {
