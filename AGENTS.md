@@ -332,3 +332,13 @@ alternative stays configured but idle for this repo. See
 `livespec/plan/fleet-ci-runner-pool/research/k3s-arc-kueue-migration.md`
 ("Real-traffic cutover log") and the `livespec-s43svm.16` ledger comments for
 the full cross-repo cutover record.
+
+## Progressive guidance
+
+Situational operational notes live under `.ai/`, loaded on demand;
+`check-agents-ai-references-resolve` enforces that every reference resolves.
+
+- Read `.ai/release-please-rate-limit.md` BEFORE treating a red
+  `Release Please` run as a defect or re-running it — the GitHub App
+  installation's hourly budget is separate from your own `gh` budget, and a
+  re-run inside the same hour fails again.
