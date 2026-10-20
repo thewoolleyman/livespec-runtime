@@ -48,14 +48,6 @@
   "livespec-overseer": { "foreman_valve_disposition": "consensus" },
   "template": "livespec",
   "spec_root": "SPECIFICATION",
-  // Cross-repository citation allowlist for doctor-no-cross-spec-reference.
-  // constraints.md §"Factory routing" cites the fleet factory registry
-  // section of livespec-dev-tooling.
-  "external_references": {
-    "livespec-dev-tooling": [
-      "SPECIFICATION/non-functional-requirements.md §\"Fabro factory registry\""
-    ]
-  },
   "implementation": { "plugin": "livespec-orchestrator-beads-fabro" },
   // Optional — spec_governance:
   // "spec_governance": {
