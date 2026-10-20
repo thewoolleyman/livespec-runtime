@@ -150,6 +150,7 @@ surface and appears in neither place is a defect rather than tolerated
 debt, and `tests/livespec_runtime/test_public_surface_inventory.py`
 fails on it; the `# @generated` third-party port that test's register
 excludes is outside this rule by construction.
+The converse also holds: every module a ratified `contracts.md` section documents MUST ship, and every name such a section documents MUST be exported, so a phantom inventory entry fails the same test. The one exception is a section ratified AHEAD of its implementation. Such a section MAY name a module that does not ship yet only while a row of the `ratified_unshipped_modules` register in `tests/public-surface-debt.json` names that module and a live owning work-item. While the row stands, the test MUST NOT fail that section's module or names for not shipping, and MUST still apply every other check to it. A row MAY be added only by the revise that ratifies its section, and otherwise the register only shrinks: the change that ships the module MUST delete its row, a row whose module now ships MUST fail the suite as stale, and the owning work-item MUST NOT close while its row stands.
 
 Consciously exempted from scenario coverage, with the reason recorded here so the decision is
 ratified rather than implied. None of these names carries behaviour of its own. Six are named
