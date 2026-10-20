@@ -24,6 +24,10 @@ These tests read them together, in both directions:
   exported by that module, or by a module the section names, so a phantom NAME
   — documented, never shipped, or shipped once and since removed — cannot sit
   in the inventory unnoticed either;
+- the one exception to those two reverse legs is a section ratified AHEAD of
+  its implementation, which is waived only while a `ratified_unshipped_modules`
+  row names its module and an owning work-item, and that register is shrink-only
+  in the same way: a row whose module now ships is stale and fails;
 - the verbatim third-party ports that sit outside the first-party structural
   universe are declared WITH the names they take out of scope, so that
   exclusion is visible in the register rather than silent in the walker.
@@ -58,6 +62,19 @@ residual latitude is the re-export allowance: a name may be satisfied by the
 how a facade section (`hygiene_scan`, `github_budget`) credits the support
 modules it re-exports from, and it does not distinguish those from a module the
 section merely mentions.
+
+THE UNSHIPPED WAIVER — `SPECIFICATION/spec.md`, section "Public surface",
+ratifies that a section MAY precede its module only while a
+`ratified_unshipped_modules` row of `tests/public-surface-debt.json` names that
+module and a LIVE owning work-item. Without it, ratifying a family before its
+implementation lands is impossible: the reverse legs above refuse the section
+while the implementing work-item cannot be dispatched until its governing
+section is ratified. Only the two REVERSE legs are waived, and only for the
+registered section: the forward leg never sees an unshipped module (it walks
+`__all__`), and every other section keeps both legs. What this file CANNOT
+observe is the owner's liveness or the rule that a row is added only by the
+revise that ratifies its section — both are ledger and review-process
+obligations rather than tree state, so they are enforced there, not here.
 """
 
 import ast
@@ -65,7 +82,11 @@ import json
 import re
 from pathlib import Path
 
-__all__: list[str] = []
+__all__: list[str] = [
+    "inventory_findings",
+    "public_surface_register",
+    "ratified_inventory_section",
+]
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _RUNTIME_ROOT = _REPO_ROOT / "livespec_runtime"
@@ -79,7 +100,7 @@ _LEADING_IDENTIFIER = re.compile(r"`([A-Za-z_][A-Za-z0-9_.]*)")
 _DOTTED_TOKEN = re.compile(r"`([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)+)`")
 
 
-def _inventory_section() -> str:
+def ratified_inventory_section() -> str:
     """The body of the ratified inventory, up to the next top-level heading."""
     contracts = _CONTRACTS.read_text(encoding="utf-8")
     start = contracts.index(_INVENTORY_HEADING)
@@ -132,12 +153,40 @@ def _exporting_modules() -> dict[str, tuple[str, ...]]:
     return exporting
 
 
-def _register() -> dict[str, list[dict[str, object]]]:
+def public_surface_register() -> dict[str, list[dict[str, object]]]:
+    """The register payload: the shipped-but-unratified rows and the unshipped waivers."""
     return json.loads(_REGISTER.read_text(encoding="utf-8"))
 
 
-def _registered_modules() -> frozenset[str]:
-    return frozenset(str(row["module"]) for row in _register()["unratified_modules"])
+def _registered_modules(*, register: dict[str, list[dict[str, object]]]) -> frozenset[str]:
+    return frozenset(str(row["module"]) for row in register["unratified_modules"])
+
+
+def _waived_unshipped_modules(*, register: dict[str, list[dict[str, object]]]) -> frozenset[str]:
+    """Modules a ratified section may document ahead of shipping, per the register.
+
+    A row waives only when it names an OWNING work-item: the spec grants the
+    waiver to a module with a live owner, so an ownerless row waives nothing
+    and its section fails as the phantom it is. Whether that owner is still
+    live is ledger state this file cannot read.
+    """
+    return frozenset(
+        str(row["module"])
+        for row in register["ratified_unshipped_modules"]
+        if str(row.get("work_item", "")).strip()
+    )
+
+
+def _stale_unshipped_rows(
+    *, register: dict[str, list[dict[str, object]]], shipped: frozenset[str]
+) -> list[str]:
+    """Waiver rows whose module now ships, which is what keeps that register shrinking too.
+
+    Every row is measured, including an ownerless one: a row that waives
+    nothing still has to leave once the module it names arrives.
+    """
+    rows = sorted(str(row["module"]) for row in register["ratified_unshipped_modules"])
+    return [f"{module}: now ships (delete the row)" for module in rows if module in shipped]
 
 
 def _unaccounted_exports(
@@ -234,19 +283,36 @@ def _sibling_exports(
     )
 
 
+def _phantom_sections(
+    *, documented_modules: frozenset[str], shipped: frozenset[str], waived: frozenset[str]
+) -> list[str]:
+    """Ratified sections whose module does not ship and carries no waiver row."""
+    return sorted(
+        module for module in documented_modules if module not in shipped and module not in waived
+    )
+
+
 def _phantom_documented_names(
     *,
     sections: dict[str, str],
     exporting: dict[str, tuple[str, ...]],
     shipped: frozenset[str],
+    waived: frozenset[str],
 ) -> list[str]:
     """Names a ratified section documents that no module it names actually exports.
 
     This is the reverse of `_unaccounted_exports`: that one walks `__all__` and
     asks the inventory, this one walks the inventory and asks `__all__`.
+
+    A WAIVED section is skipped whole, which is exactly as narrow as waiving
+    its unexported names one at a time: a name its text credits to a shipped
+    sibling is already satisfied by the re-export allowance, so the only names
+    the skip can absorb are the ones its own unshipped module owes.
     """
     phantom: list[str] = []
     for module, body in sections.items():
+        if module in waived:
+            continue
         exported = frozenset(exporting.get(module, ())) | _sibling_exports(
             body=body, section_module=module, exporting=exporting, shipped=shipped
         )
@@ -258,22 +324,62 @@ def _phantom_documented_names(
     return sorted(set(phantom))
 
 
-def _phantom_in_inventory(*, section: str) -> list[str]:
+def _phantom_in_inventory(*, section: str, waived: frozenset[str]) -> list[str]:
     """The reverse leg measured against the shipped tree."""
     return _phantom_documented_names(
         sections=_sections(section=section),
         exporting=_exporting_modules(),
         shipped=_shipped_modules(),
+        waived=waived,
+    )
+
+
+def inventory_findings(*, section: str, register: dict[str, list[dict[str, object]]]) -> list[str]:
+    """Every finding the reconciliation reports over one inventory text and one register.
+
+    The legs the test functions below assert one at a time, composed into the
+    single sorted list a caller OUTSIDE this module can diff between two runs.
+    Each finding carries the leg that produced it, because one module name can
+    be reported by more than one leg — an unregistered unshipped section is
+    both a phantom section and, for each name it documents, a phantom name.
+    """
+    exporting = _exporting_modules()
+    shipped = _shipped_modules()
+    documented_modules = _documented_modules(section=section)
+    registered = _registered_modules(register=register)
+    waived = _waived_unshipped_modules(register=register)
+    unaccounted = _unaccounted_exports(
+        exporting=exporting,
+        ratified_modules=documented_modules,
+        documented=_documented_names(section=section),
+        registered=registered,
+    )
+    stale_debt = _stale_register_rows(
+        registered=registered, exporting=exporting, ratified_modules=documented_modules
+    )
+    phantom_sections = _phantom_sections(
+        documented_modules=documented_modules, shipped=shipped, waived=waived
+    )
+    phantom_names = _phantom_documented_names(
+        sections=_sections(section=section), exporting=exporting, shipped=shipped, waived=waived
+    )
+    stale_waivers = _stale_unshipped_rows(register=register, shipped=shipped)
+    return sorted(
+        [f"unaccounted export: {finding}" for finding in unaccounted]
+        + [f"stale debt row: {finding}" for finding in stale_debt]
+        + [f"phantom section: {finding}" for finding in phantom_sections]
+        + [f"phantom name: {finding}" for finding in phantom_names]
+        + [f"stale unshipped row: {finding}" for finding in stale_waivers]
     )
 
 
 def test_every_exported_name_is_ratified_or_its_module_is_registered_as_debt() -> None:
-    section = _inventory_section()
+    section = ratified_inventory_section()
     unaccounted = _unaccounted_exports(
         exporting=_exporting_modules(),
         ratified_modules=_documented_modules(section=section),
         documented=_documented_names(section=section),
-        registered=_registered_modules(),
+        registered=_registered_modules(register=public_surface_register()),
     )
 
     assert unaccounted == [], (
@@ -288,9 +394,9 @@ def test_every_exported_name_is_ratified_or_its_module_is_registered_as_debt() -
 def test_the_debt_register_carries_no_stale_rows() -> None:
     """A row must still describe the tree, so the register can only shrink."""
     stale = _stale_register_rows(
-        registered=_registered_modules(),
+        registered=_registered_modules(register=public_surface_register()),
         exporting=_exporting_modules(),
-        ratified_modules=_documented_modules(section=_inventory_section()),
+        ratified_modules=_documented_modules(section=ratified_inventory_section()),
     )
 
     assert stale == [], f"stale debt-register rows: {stale}"
@@ -332,23 +438,28 @@ def test_a_register_row_goes_stale_when_it_stops_describing_the_tree() -> None:
 
 
 def test_every_ratified_module_section_resolves_to_a_shipped_module() -> None:
-    """The inventory must not carry a section for a module that no longer ships."""
-    phantom = [
-        module
-        for module in sorted(_documented_modules(section=_inventory_section()))
-        if not (_REPO_ROOT / f"{module.replace('.', '/')}.py").is_file()
-    ]
+    """The inventory must not carry a section for an unwaived module that does not ship."""
+    phantom = _phantom_sections(
+        documented_modules=_documented_modules(section=ratified_inventory_section()),
+        shipped=_shipped_modules(),
+        waived=_waived_unshipped_modules(register=public_surface_register()),
+    )
 
     assert phantom == [], (
         f"contracts.md documents modules that do not ship: {phantom}. "
         "Removing or renaming a module is a major-version change; the inventory "
-        "section must move with it."
+        "section must move with it. A section ratified AHEAD of its module instead "
+        "owes a `ratified_unshipped_modules` row naming it and a live owning "
+        "work-item in tests/public-surface-debt.json."
     )
 
 
 def test_every_documented_name_is_exported_by_a_module_its_section_names() -> None:
     """The reverse of the forward leg: the inventory may not document a phantom name."""
-    phantom = _phantom_in_inventory(section=_inventory_section())
+    phantom = _phantom_in_inventory(
+        section=ratified_inventory_section(),
+        waived=_waived_unshipped_modules(register=public_surface_register()),
+    )
 
     assert phantom == [], (
         f"contracts.md documents names that no module exports: {phantom}. Each is "
@@ -356,6 +467,16 @@ def test_every_documented_name_is_exported_by_a_module_its_section_names() -> No
         "that has since been dropped from an `__all__`, must leave the inventory with "
         "it; removing a shipped name is a major-version change per spec.md "
         '§"Public surface".'
+    )
+
+
+def test_the_ratified_unshipped_register_carries_no_stale_rows() -> None:
+    """A waiver outlives its purpose the moment the module it names arrives."""
+    stale = _stale_unshipped_rows(register=public_surface_register(), shipped=_shipped_modules())
+
+    assert stale == [], (
+        f"stale ratified-unshipped rows: {stale}. The change that ships the module "
+        "must delete its row; the register only shrinks."
     )
 
 
@@ -369,14 +490,15 @@ def test_a_phantom_bullet_injected_into_a_ratified_section_is_reported() -> None
     fail-capability alone: a real phantom appearing in the tree is the positive
     control's failure to report, not this one's.
     """
-    section = _inventory_section()
+    section = ratified_inventory_section()
+    waived = _waived_unshipped_modules(register=public_surface_register())
     heading = "### `livespec_runtime.cross_repo.retry`\n"
     injected = section.replace(
         heading, f"{heading}\n- `never_shipped_by_anything` — a name the tree never had.\n", 1
     )
 
-    caused = set(_phantom_in_inventory(section=injected)) - set(
-        _phantom_in_inventory(section=section)
+    caused = set(_phantom_in_inventory(section=injected, waived=waived)) - set(
+        _phantom_in_inventory(section=section, waived=waived)
     )
 
     assert caused == {"livespec_runtime.cross_repo.retry.never_shipped_by_anything"}
@@ -400,9 +522,66 @@ def test_the_reverse_leg_credits_re_exports_and_skips_module_bullets() -> None:
         },
         exporting={"pkg.support": ("Reexported",)},
         shipped=frozenset({"pkg.facade", "pkg.support"}),
+        waived=frozenset(),
     )
 
     assert phantom == ["pkg.facade.Missing"]
+
+
+def test_a_waiver_row_waives_its_section_only_when_it_names_an_owning_work_item() -> None:
+    """The register grants the waiver to a module WITH an owner, never to a bare module."""
+    waived = _waived_unshipped_modules(
+        register={
+            "ratified_unshipped_modules": [
+                {"module": "pkg.owned", "work_item": "livespec-runtime-krpzzb"},
+                {"module": "pkg.ownerless", "work_item": "  "},
+                {"module": "pkg.no_owner_key"},
+            ]
+        }
+    )
+
+    assert waived == frozenset({"pkg.owned"})
+
+
+def test_a_waiver_row_goes_stale_the_moment_its_module_ships() -> None:
+    """Every row is measured for staleness, including one that waived nothing."""
+    stale = _stale_unshipped_rows(
+        register={
+            "ratified_unshipped_modules": [
+                {"module": "pkg.arrived", "work_item": "livespec-runtime-krpzzb"},
+                {"module": "pkg.ownerless_arrived"},
+                {"module": "pkg.still_unshipped", "work_item": "livespec-runtime-krpzzb"},
+            ]
+        },
+        shipped=frozenset({"pkg.arrived", "pkg.ownerless_arrived"}),
+    )
+
+    assert stale == [
+        "pkg.arrived: now ships (delete the row)",
+        "pkg.ownerless_arrived: now ships (delete the row)",
+    ]
+
+
+def test_the_waiver_suppresses_only_the_registered_sections_two_reverse_legs() -> None:
+    """Both reverse legs skip the waived section and report every other one unchanged."""
+    documented = frozenset({"pkg.waived", "pkg.phantom", "pkg.shipped"})
+    sections = {
+        "pkg.waived": "- `not_yet_exported` — ratified ahead of its module.\n",
+        "pkg.phantom": "- `also_not_exported` — ratified with no waiver row.\n",
+        "pkg.shipped": "- `Missing` — dropped from `__all__` without leaving the inventory.\n",
+    }
+
+    assert _phantom_sections(
+        documented_modules=documented,
+        shipped=frozenset({"pkg.shipped"}),
+        waived=frozenset({"pkg.waived"}),
+    ) == ["pkg.phantom"]
+    assert _phantom_documented_names(
+        sections=sections,
+        exporting={},
+        shipped=frozenset({"pkg.shipped"}),
+        waived=frozenset({"pkg.waived"}),
+    ) == ["pkg.phantom.also_not_exported", "pkg.shipped.Missing"]
 
 
 def test_generated_ports_declare_the_names_they_take_out_of_scope() -> None:
@@ -414,7 +593,9 @@ def test_generated_ports_declare_the_names_they_take_out_of_scope() -> None:
         for path in sorted(_RUNTIME_ROOT.rglob("*.py"))
         if _GENERATED_MARKER in path.read_text(encoding="utf-8")
     }
-    declared = {str(row["path"]): row["names"] for row in _register()["generated_ports"]}
+    declared = {
+        str(row["path"]): row["names"] for row in public_surface_register()["generated_ports"]
+    }
 
     assert on_disk == declared, (
         "the `# @generated` verbatim ports on disk disagree with "
