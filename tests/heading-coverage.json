@@ -591,5 +591,13 @@
     "test": "TODO",
     "reason": "A consumer-tier test is owed for this heading: ratified with proposal spec-stated-judgement, and the owning work-item livespec-runtime-krpzzb lands the livespec_runtime.spec_stated module together with the consumer-tier test that binds this entry.",
     "work_item": "livespec-runtime-krpzzb"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "constraints.md",
+    "heading": "## Factory routing",
+    "test": "TODO",
+    "reason": "A test is owed for this heading: ratified with proposal factory-routing (v028), and the owning work-item livespec-runtime-vfdotb switches the committed .livespec.jsonc factory table to one registry-backed legacy entry and lands the test that reads that table and binds this entry; its host-captured proof is a dispatch from the control node that resolves legacy through /etc/livespec/fabro-factories.json.",
+    "work_item": "livespec-runtime-vfdotb"
   }
 ]
