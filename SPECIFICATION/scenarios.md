@@ -400,3 +400,12 @@ When the two are compared as strings
 Then BOTTOM_SENTINEL sorts after the real key
 And BOTTOM_SENTINEL uses a character outside the base-62 alphabet so no generated key can ever equal or follow it
 And a store adapter substitutes it only for a legacy line lacking rank; the WorkItem.rank domain field never carries it
+
+## Scenario: a ratified section may precede its module only while a live owner is registered
+
+- **Given** a ratified `contracts.md` section documenting a module that does not ship, and a `ratified_unshipped_modules` row naming that module and a live owning work-item
+- **When** the public-surface inventory test runs
+- **Then** it MUST NOT fail that section for the missing module or its unexported names
+- **And** the same section without the row MUST fail as a phantom
+- **And** a row whose module now ships MUST fail as stale
+- **And** a documented name missing from any other ratified section's module MUST still fail

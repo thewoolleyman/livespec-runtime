@@ -559,5 +559,13 @@
     "heading": "## Scenario: the bottom sentinel sorts strictly after every real rank key",
     "test": "tests.consumer.test_work_item_lifecycle_and_rank.test_the_bottom_sentinel_sorts_strictly_after_every_real_rank_key",
     "reason": "Consumer-tier test asserting every generated base-62 key sorts before BOTTOM_SENTINEL, that the sentinel's character is outside the base-62 alphabet so no generated key can equal or follow it, and that a domain WorkItem.rank built from a generated key still sorts ahead of it."
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: a ratified section may precede its module only while a live owner is registered",
+    "test": "TODO",
+    "reason": "A consumer-tier test is owed for this heading: ratified with proposal ratified-unshipped-module-register, and the owning work-item livespec-runtime-lfu53l lands the register-honoring change to tests/livespec_runtime/test_public_surface_inventory.py together with the consumer-tier test that binds this entry.",
+    "work_item": "livespec-runtime-lfu53l"
   }
 ]
