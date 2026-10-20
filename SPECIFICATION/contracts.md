@@ -935,6 +935,21 @@ The consuming producers are `livespec` core
   fleet member's `check-spec-governance-default-block` verifier maps onto
   a process exit code.
 
+### `livespec_runtime.spec_stated`
+
+SHARED-RUNTIME contract per `spec.md` §"Scope boundary": `livespec` core names NO slot for it. It is the one judgement every orchestrator runs to decide whether a behaviour is stated by a ratified livespec specification. The consuming producers are `livespec-orchestrator-beads-fabro` (its Definition-of-Done judgement, its Definition-of-Ready spec-change tier, its ledger-intent scan and its drift run) and `livespec-orchestrator-git-jsonl` (its ledger-intent scan, its impl-drift front-end and its filing). The module MUST define the judgement once — its prompt, its inputs, its verdict schema and its parser — and MUST NOT invoke a model, a subprocess or the network itself: the model is reached only through the `run_model` callable the caller supplies, so the library carries no credential and no provider binding.
+
+- `StatedKind` — the `TypeAlias` for `Literal["stated", "partial", "unstated"]`.
+- `ItemClass` — the `TypeAlias` for `Literal["feature", "bug", "chore", "non_functional"]`.
+- `SpecStatedVerdict` — frozen, slotted, kw-only dataclass. Fields: `kind: StatedKind` (REQUIRED); `stated_by: tuple[str, ...]` (REQUIRED; each entry the verbatim text of a governing H2 heading, empty for `unstated`); `generalization_target: str | None` (REQUIRED; the verbatim H2 heading whose generalization would state the behaviour, or `None`); `rationale: str` (REQUIRED).
+- `SpecChangeTier` — frozen, slotted, kw-only dataclass: the persisted fields both orchestrators store on a work-item. Fields: `tier: Literal["spec-change", "none"]` (REQUIRED), `linked_proposal_topic: str | None` (REQUIRED), `verdict: SpecStatedVerdict | None` (REQUIRED), `judged_at: str` (REQUIRED, ISO-8601 UTC).
+- `ModelRunner` — the `TypeAlias` for `Callable[[str], str]`: given the rendered prompt, return the model's raw text. The library MUST call it at most once per `judge` or `classify` call.
+- `SpecStatedParseError` — raised by nothing; returned as the `Failure` payload of `judge`, `classify` and `parse_verdict`. It MUST subclass `Exception` directly per `constraints.md` §"Public-surface constraints" and MUST carry `field: str | None` (the offending field, or `None` when the response is not JSON) and `detail: str`.
+- `JUDGE_PROMPT: str` and `CLASSIFY_PROMPT: str` — the prompt templates, importable so a consumer renders exactly the shared text.
+- `judge(*, spec_tree: Mapping[str, str], statement: str, run_model: ModelRunner) -> Result[SpecStatedVerdict, SpecStatedParseError]` — `spec_tree` maps each spec-tree-relative file path to its text. The verdict's `stated_by` entries MUST each equal an H2 heading present in `spec_tree`; a model response naming a heading not present MUST be returned as a `Failure` naming the field.
+- `classify(*, title: str, description: str, item_type: str, run_model: ModelRunner) -> Result[ItemClass, SpecStatedParseError]` — `item_type` is the stored type and MUST be passed to the model as evidence, never returned as the answer unexamined.
+- `parse_verdict(*, text: str, headings: Collection[str]) -> Result[SpecStatedVerdict, SpecStatedParseError]` — parse one raw model response. A well-formed response yields the verdict; a response with a missing or ill-typed field yields a `Failure` whose error names that field; a response that is not JSON yields a `Failure` whose error has `field` `None` and a `detail` naming the parse error.
+
 ## Resolution semantics
 
 For each `DependsOnEntry` variant `resolve_ref` returns:

@@ -49,10 +49,16 @@ def _inventory_with_an_unshipped_section() -> str:
 
 
 def _register_waiving(*, modules: list[str]) -> dict[str, list[dict[str, object]]]:
-    """The shipped register with its `ratified_unshipped_modules` list replaced."""
+    """The shipped register with rows for `modules` appended to its `ratified_unshipped_modules`.
+
+    The shipped rows are KEPT: each waives a real section ratified ahead of its
+    module, so replacing them would report that section as a phantom and
+    measure the shipped register rather than the injected one.
+    """
     register = public_surface_register()
     register["ratified_unshipped_modules"] = [
-        {"module": module, "work_item": _OWNER} for module in modules
+        *register["ratified_unshipped_modules"],
+        *({"module": module, "work_item": _OWNER} for module in modules),
     ]
     return register
 
