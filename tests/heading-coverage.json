@@ -567,5 +567,29 @@
     "test": "tests.consumer.test_public_surface_unshipped_waiver.test_a_ratified_section_may_precede_its_module_only_while_a_live_owner_is_registered",
     "reason": "Closed by livespec-runtime-lfu53l, which landed the register-honoring change to tests/livespec_runtime/test_public_surface_inventory.py together with this consumer-tier test. The test drives the reconciliation over the REAL contracts.md inventory with one synthetic ratified section appended for a module the tree does not ship, and walks the scenario's four Then/And lines in order: with a ratified_unshipped_modules row naming that module and an owning work-item the findings list is empty; with the row removed it reports the phantom section AND every name the section documents; a row whose module now ships is reported as stale; and a phantom name injected into a DIFFERENT ratified section is still reported while the waiver stands. The clauses the test cannot observe -- that the owner is live, that a row is added only by the revise that ratifies its section, and that the owning work-item must not close while its row stands -- are ledger and review-process obligations, recorded as such in the `authority` note of tests/public-surface-debt.json.",
     "work_item": "livespec-runtime-lfu53l"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: the spec-stated judgement names the governing heading, the generalization target, or neither",
+    "test": "TODO",
+    "reason": "A consumer-tier test is owed for this heading: ratified with proposal spec-stated-judgement, and the owning work-item livespec-runtime-krpzzb lands the livespec_runtime.spec_stated module together with the consumer-tier test that binds this entry.",
+    "work_item": "livespec-runtime-krpzzb"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: classify treats the stored type as evidence, not as the answer",
+    "test": "TODO",
+    "reason": "A consumer-tier test is owed for this heading: ratified with proposal spec-stated-judgement, and the owning work-item livespec-runtime-krpzzb lands the livespec_runtime.spec_stated module together with the consumer-tier test that binds this entry.",
+    "work_item": "livespec-runtime-krpzzb"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: parse_verdict names the offending field or the parse error",
+    "test": "TODO",
+    "reason": "A consumer-tier test is owed for this heading: ratified with proposal spec-stated-judgement, and the owning work-item livespec-runtime-krpzzb lands the livespec_runtime.spec_stated module together with the consumer-tier test that binds this entry.",
+    "work_item": "livespec-runtime-krpzzb"
   }
 ]

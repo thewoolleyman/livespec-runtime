@@ -409,3 +409,25 @@ And a store adapter substitutes it only for a legacy line lacking rank; the Work
 - **And** the same section without the row MUST fail as a phantom
 - **And** a row whose module now ships MUST fail as stale
 - **And** a documented name missing from any other ratified section's module MUST still fail
+
+## Scenario: the spec-stated judgement names the governing heading, the generalization target, or neither
+
+- **Given** a spec tree whose `contracts.md` carries the H2 heading `## Widgets` stating that a widget MUST be blue, and a `run_model` stub returning a well-formed response
+- **When** `judge` is called with the statement "a widget is blue"
+- **Then** the result MUST be a `Success` whose verdict has `kind` `stated` and `stated_by` equal to `("## Widgets",)`
+- **And** calling `judge` with "a widget is blue and square" against a stub reporting partial coverage MUST yield `kind` `partial` with `generalization_target` `"## Widgets"`
+- **And** the stub MUST have been called exactly once per `judge` call, and the module MUST have opened no subprocess and no socket
+
+## Scenario: classify treats the stored type as evidence, not as the answer
+
+- **Given** an item typed `task` whose description asks for new observable behaviour, and a `run_model` stub that returns `feature`
+- **When** `classify` is called
+- **Then** the result MUST be a `Success` carrying `feature`
+
+## Scenario: parse_verdict names the offending field or the parse error
+
+- **Given** a response missing `kind`
+- **When** `parse_verdict` is called
+- **Then** the result MUST be a `Failure` whose `SpecStatedParseError` has `field` `"kind"`
+- **And** for a response that is not JSON the `Failure`'s error MUST have `field` `None` and a non-empty `detail`
+- **And** for a response whose `stated_by` names a heading absent from the supplied headings the `Failure`'s error MUST have `field` `"stated_by"`
