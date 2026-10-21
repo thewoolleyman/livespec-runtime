@@ -291,6 +291,18 @@ covered_trees = []
 # Proposal 6e speculated about are deliberately NOT declared here. The sweep's
 # silence on two plain imports that do exist is routed to dev-tooling as a
 # measurement finding (`livespec-dev-tooling-kcoslm`), not worked around here.
+#
+# A further central sweep on 2026-10-21 (`Fleet conformance` run 39658243579,
+# read against master 6e291ca) named one more omitted consumed function —
+# `work_items/lifecycle.ready_sort_key`, imported by FOUR of
+# livespec-orchestrator-beads-fabro's product modules at its master 314ec038d.
+# It is declared below for the same reason the other lifecycle names are: the
+# key is tightening-only, so an omission is a BLIND gate rather than a failing
+# one, and declaring the name converts nothing. The guard reading was checked
+# before declaring — `ready_sort_key` is a keyword-only FACTORY returning
+# `Callable[[WorkItem], tuple]` and never `None` or a `Result`, and every
+# consumer hands its return straight to `sorted(..., key=...)`, so no consumer
+# guards it and no consumer behaviour changes.
 cross_repo_public_api = [
     { file = "livespec_runtime/attention_item.py", function = "validate_attention_item_id", reason = "product import: livespec-orchestrator-beads-fabro's commands/_needs_attention_conformance.py, plus three of its test modules: test_needs_attention_conformance.py, test_needs_attention_currency_staleness.py and test_needs_attention_release_adoption.py" },
     { file = "livespec_runtime/credentials.py", function = "decide_credentials", reason = "product import: livespec-orchestrator-beads-fabro's .claude-plugin/scripts/bin/_bootstrap.py" },
@@ -301,6 +313,7 @@ cross_repo_public_api = [
     { file = "livespec_runtime/spec_governance.py", function = "verify_default_block", reason = "product import by livespec's .claude-plugin/scripts/livespec/spec_governance/default_block.py and dev-tooling/checks/spec_governance_template.py" },
     { file = "livespec_runtime/work_items/lifecycle.py", function = "is_item_ready", reason = "product import: livespec-orchestrator-beads-fabro's _dispatcher_loop_selection.py, list_work_items.py and next.py" },
     { file = "livespec_runtime/work_items/lifecycle.py", function = "lane_of", reason = "product import: livespec-orchestrator-beads-fabro's _needs_attention_work_items.py and list_work_items.py, and livespec-orchestrator-git-jsonl's commands/attention_impl.py" },
+    { file = "livespec_runtime/work_items/lifecycle.py", function = "ready_sort_key", reason = "product import: livespec-orchestrator-beads-fabro's commands/_dispatcher_loop_selection.py, commands/_dispatcher_rework_admission.py, commands/next.py and commands/rebalance_ranks.py" },
     { file = "livespec_runtime/work_items/rank.py", function = "key_between", reason = "product import: livespec-orchestrator-beads-fabro's _orchestrator_gap_capture.py and groom.py, and livespec-orchestrator-git-jsonl's migration/beads_to_jsonl.py" },
     { file = "livespec_runtime/work_items/rank.py", function = "n_keys_between", reason = "product import: livespec-orchestrator-beads-fabro's commands/rebalance_ranks.py, plus two of its test modules" },
     { file = "livespec_runtime/work_items/reduce.py", function = "materialize_work_items", reason = "product import: both orchestrators' store.py" },
