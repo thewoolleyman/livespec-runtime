@@ -34,3 +34,10 @@ default to the production surface (`DEFAULT_MINT_SEAMS`, `time.time`), so
 omitting the injection would attempt a real openssl sign and a real network
 mint. The one genuine process spawn in this tier is `openssl`, offline, for
 the RS256 sign/verify round-trip that scenario names.
+
+`test_spec_stated_judgement.py` carries the three `spec_stated` scenarios
+ratified as v027 (work-item `livespec-runtime-krpzzb`). Its seam needs no
+patching at all: `livespec_runtime.spec_stated` reaches a model only through
+the `run_model` callable the caller passes in, so the tier hands it a stub
+that records the prompts it is given and there is no provider binding to
+substitute.

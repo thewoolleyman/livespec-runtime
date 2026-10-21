@@ -30,11 +30,12 @@ closed by this module's own reading.
 
 from __future__ import annotations
 
+import json
 from collections.abc import Callable, Collection, Mapping
 from dataclasses import dataclass
-from typing import Literal, TypeAlias
+from typing import Literal, TypeAlias, cast
 
-from returns.result import Failure, Result
+from returns.result import Failure, Result, Success
 
 __all__: list[str] = [
     "CLASSIFY_PROMPT",
@@ -53,6 +54,9 @@ __all__: list[str] = [
 StatedKind: TypeAlias = Literal["stated", "partial", "unstated"]
 ItemClass: TypeAlias = Literal["feature", "bug", "chore", "non_functional"]
 ModelRunner: TypeAlias = Callable[[str], str]
+
+_STATED_KINDS: tuple[StatedKind, ...] = ("stated", "partial", "unstated")
+_REQUIRED_VERDICT_FIELDS = ("kind", "stated_by", "generalization_target", "rationale")
 
 JUDGE_PROMPT: str = """You are judging ONE behaviour statement against a RATIFIED specification.
 
@@ -159,23 +163,112 @@ def _rendered_spec_tree(*, spec_tree: Mapping[str, str]) -> str:
     return "\n\n".join(f"--- {path} ---\n{spec_tree[path]}" for path in sorted(spec_tree))
 
 
+def _stated_by(
+    *, value: object, headings: Collection[str]
+) -> Result[tuple[str, ...], SpecStatedParseError]:
+    """The governing headings a response names, refused when they are not the tree's.
+
+    A heading the tree does not carry is refused rather than carried: a verdict
+    citing a clause that does not exist is worse than no verdict, because a
+    consumer would file a proposal against it.
+    """
+    if not isinstance(value, list):
+        return Failure(
+            SpecStatedParseError(
+                field="stated_by", detail=f"stated_by is not a list of headings: {value!r}"
+            )
+        )
+    entries = cast("list[object]", value)
+    if not all(isinstance(entry, str) for entry in entries):
+        return Failure(
+            SpecStatedParseError(
+                field="stated_by", detail=f"stated_by names a non-string heading: {entries!r}"
+            )
+        )
+    absent = [entry for entry in entries if entry not in headings]
+    if absent:
+        return Failure(
+            SpecStatedParseError(
+                field="stated_by",
+                detail=f"stated_by names headings the spec tree does not carry: {absent!r}",
+            )
+        )
+    return Success(tuple(cast("list[str]", entries)))
+
+
+def _verdict_from(
+    *, payload: Mapping[str, object], headings: Collection[str]
+) -> Result[SpecStatedVerdict, SpecStatedParseError]:
+    """One verdict out of a response whose required fields are all present."""
+    kind = payload["kind"]
+    if kind not in _STATED_KINDS:
+        return Failure(
+            SpecStatedParseError(
+                field="kind", detail=f"kind is not one of {_STATED_KINDS}: {kind!r}"
+            )
+        )
+    target = payload["generalization_target"]
+    if target is not None and not isinstance(target, str):
+        return Failure(
+            SpecStatedParseError(
+                field="generalization_target",
+                detail=f"generalization_target is neither a heading nor null: {target!r}",
+            )
+        )
+    rationale = payload["rationale"]
+    if not isinstance(rationale, str):
+        return Failure(
+            SpecStatedParseError(
+                field="rationale", detail=f"rationale is not a string: {rationale!r}"
+            )
+        )
+    return _stated_by(value=payload["stated_by"], headings=headings).map(
+        lambda stated_by: SpecStatedVerdict(
+            kind=kind,
+            stated_by=stated_by,
+            generalization_target=target,
+            rationale=rationale,
+        )
+    )
+
+
 def parse_verdict(
     *, text: str, headings: Collection[str]
 ) -> Result[SpecStatedVerdict, SpecStatedParseError]:
     """Parse one raw model response into a verdict over the headings the tree carries.
 
-    This slice opens the surface and recognizes NO response yet; the typed
-    verdict and the per-field failures land with the parse itself.
+    `headings` is the H2 heading set the verdict may cite — every entry of the
+    verdict's `stated_by` MUST be one of them. A well-formed response yields
+    the typed verdict; a response with a missing or ill-typed field yields a
+    `Failure` whose error names that field; a response that is not JSON yields
+    a `Failure` whose error carries `field` `None` and a `detail` naming the
+    parse error.
+
+    The `json.JSONDecodeError` catch is the narrow seam this boundary exists
+    to be: a model response is foreign input, so its malformedness is an
+    expected failure that rides the railway rather than an exception a caller
+    has to guard.
     """
-    return Failure(
-        SpecStatedParseError(
-            field=None,
-            detail=(
-                f"no verdict is recognized yet: {len(text)} characters of response "
-                f"against {len(headings)} headings"
-            ),
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError as error:
+        return Failure(SpecStatedParseError(field=None, detail=f"response is not JSON: {error}"))
+    if not isinstance(parsed, dict):
+        return Failure(
+            SpecStatedParseError(
+                field=None,
+                detail=f"response is not a JSON object but a {type(parsed).__name__}",
+            )
         )
-    )
+    payload = cast("dict[str, object]", parsed)
+    omitted = [field for field in _REQUIRED_VERDICT_FIELDS if field not in payload]
+    if omitted:
+        return Failure(
+            SpecStatedParseError(
+                field=omitted[0], detail=f"response omits the required field {omitted[0]!r}"
+            )
+        )
+    return _verdict_from(payload=payload, headings=headings)
 
 
 def judge(
