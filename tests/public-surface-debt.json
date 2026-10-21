@@ -15,11 +15,5 @@
     }
   ],
   "unratified_modules": [],
-  "ratified_unshipped_modules": [
-    {
-      "module": "livespec_runtime.spec_stated",
-      "work_item": "livespec-runtime-krpzzb",
-      "reason": "Section ratified ahead of its module by proposal spec-stated-judgement (v027); livespec-runtime-krpzzb ships livespec_runtime.spec_stated and its merge deletes this row."
-    }
-  ]
+  "ratified_unshipped_modules": []
 }
