@@ -242,11 +242,51 @@
       },
       "auto_approve_ready": true,
       "acceptance_mode": "ai-only",
+      // THE ONE ENTRY HERE IS REGISTRY-BACKED, and that is the whole shape of
+      // this table: it carries `"registry": true` and NO address, so it names
+      // a FACTORY and never a machine. Required of every entry by
+      // SPECIFICATION/constraints.md §"Factory routing" (v028) and asserted
+      // over whatever this file commits by
+      // tests/livespec_runtime/test_committed_factory_table.py.
+      //
+      // The two addresses — the Fabro server url and the sandbox Docker
+      // daemon — are resolved per host from the factory registry the fleet's
+      // provisioning renders at /etc/livespec/fabro-factories.json. Moving a
+      // factory to another machine is therefore a provisioning change and
+      // touches no tracked file here; under the literal form this replaces it
+      // was a commit, a release and a plugin refresh in every governed
+      // repository, for a fact the inventory already held.
+      //
+      // The name is the registry's, not ours to choose: an entry whose name
+      // that file does not declare resolves to no address, which is REFUSED
+      // before the item is claimed rather than quietly sent to whichever
+      // Fabro the dispatching host runs. `legacy` is the same hp-xubuntu
+      // :32276 instance the retired `hp` entry addressed, so this switch
+      // changes no routing. The retired `vps` entry is simply absent: an
+      // intentionally stopped factory must stay out of the table so no
+      // survey pass contacts it.
+      //
+      // `"registry": true` is the one ratified spelling and it is tested for
+      // that VALUE, not for the key's presence: any other value leaves the
+      // entry non-registry-backed, where a committed `server` decides as it
+      // did before — still the supported form for an adopter outside this
+      // fleet. An entry carrying `registry` TOGETHER with `server` or
+      // `docker_host` has two answers and no rule for choosing, so it is
+      // refused before the claim.
+      //
+      // `petri` is deliberately NOT added here. Onboarding it needs this
+      // repository's own `bin` and `secret_channel` settings and is a
+      // separate decision (plan petri-factory-on-gmktec, epic bd-ib-fyozyd).
+      //
+      // A recorded item pin naming the retired `hp`, `vps`, or `default`
+      // falls back to `default_factory` below (the ratified recorded-pin
+      // fallback), so no in-flight item is stranded by the rename.
       "factories": {
-        "hp": { "server": "https://hp-xubuntu.perch-rudd.ts.net:32276" },
-        "vps": { "server": "https://vps.perch-rudd.ts.net:32276" }
+        "legacy": {
+          "registry": true
+        }
       },
-      "default_factory": "hp"
+      "default_factory": "legacy"
     }
   }
 }
