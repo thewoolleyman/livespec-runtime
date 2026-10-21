@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.28.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.27.0...v0.28.0) (2026-10-21)
+
+
+### Features
+
+* classify a work item into the four-member class vocabulary ([3bfd613](https://github.com/thewoolleyman/livespec-runtime/commit/3bfd613fd41fcd9008a6e6a7d421ca90d1786038))
+* derive the governing heading set from the spec tree in judge ([0d70aa2](https://github.com/thewoolleyman/livespec-runtime/commit/0d70aa2401ff8e592176b381c2bc81effd16f1ef))
+* open the shared spec-stated judgement surface ([36c7d6b](https://github.com/thewoolleyman/livespec-runtime/commit/36c7d6b3af962713ada99f9f328f3555afa803fb))
+* parse a model response into the typed spec-stated verdict ([0ee8b4c](https://github.com/thewoolleyman/livespec-runtime/commit/0ee8b4c9d560ec6e8ae1153d966fc00c6b5d46dd))
+
 ## [0.27.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.26.0...v0.27.0) (2026-09-07)
 
 
