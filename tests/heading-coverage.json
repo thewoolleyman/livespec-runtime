@@ -596,8 +596,7 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Factory routing",
-    "test": "TODO",
-    "reason": "A test is owed for this heading: ratified with proposal factory-routing (v028), and the owning work-item livespec-runtime-vfdotb switches the committed .livespec.jsonc factory table to one registry-backed legacy entry and lands the test that reads that table and binds this entry; its host-captured proof is a dispatch from the control node that resolves legacy through /etc/livespec/fabro-factories.json.",
-    "work_item": "livespec-runtime-vfdotb"
+    "test": "tests.livespec_runtime.test_committed_factory_table.test_every_committed_entry_is_registry_backed_and_names_no_machine",
+    "reason": "Mapped to the test witnessing the load-bearing clause: every entry this repository commits under dispatcher.factories is registry-backed, so no committed factory entry names a machine. That test is a lint over whatever the real .livespec.jsonc commits rather than over a fixture, and it is asserted across EVERY entry so one added later cannot reintroduce a hostname; its siblings in the same module bind the default_factory clause and arm the whole module against vacuity. The section's remaining sentence -- that a dispatch resolves a registry-backed entry by name from the host's rendered /etc/livespec/fabro-factories.json -- is host-captured by design and belongs to the dispatching control node, which no test in this library can read. Landed by livespec-runtime-vfdotb, which replaced this entry's TODO."
   }
 ]
