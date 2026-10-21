@@ -93,7 +93,7 @@
     "spec_file": "contracts.md",
     "heading": "## Versioning",
     "test": "TODO",
-    "reason": "No independently testable assertion OF ITS OWN: this section delegates, stating that the semver bump rules and the pin-and-bump mechanism live in non-functional-requirements.md \u00a7\"Versioning\". The untested rule and its tracked gap are recorded on that heading, which points at livespec-runtime-mqsxsu.1. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
+    "reason": "No independently testable assertion OF ITS OWN: this section delegates, stating that the semver bump rules and the pin-and-bump mechanism live in non-functional-requirements.md §\"Versioning\". The untested rule and its tracked gap are recorded on that heading, which points at livespec-runtime-mqsxsu.1. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
     "work_item": "livespec-runtime-l5q"
   },
   {
@@ -157,7 +157,7 @@
     "spec_file": "non-functional-requirements.md",
     "heading": "## Spec evolution",
     "test": "TODO",
-    "reason": "No independently testable assertion: it describes this spec's own lifecycle and names compat.pinned as the authoritative consumed version. The lifecycle invariants are doctor's (see spec.md \u00a7'Lifecycle and evolution'); the pin is consumer configuration. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
+    "reason": "No independently testable assertion: it describes this spec's own lifecycle and names compat.pinned as the authoritative consumed version. The lifecycle invariants are doctor's (see spec.md §'Lifecycle and evolution'); the pin is consumer configuration. Adjudicated under livespec-runtime-mqsxsu.2. Ownership of replacing this placeholder moved to livespec-runtime-x87 when livespec-runtime-mqsxsu.2 closed (review finding F-05); the adjudication sentence above records where the disposition was actually made and is unchanged.",
     "work_item": "livespec-runtime-l5q"
   },
   {
@@ -320,21 +320,21 @@
     "spec_file": "scenarios.md",
     "heading": "## Scenario: validate_attention_item_id rejects an id whose component is purely decimal",
     "test": "tests.consumer.test_attention_id_grammar.test_rejects_an_id_whose_component_is_purely_decimal",
-    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\")."
+    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md §\"Test discipline\" (\"Scenario-tier coverage\")."
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: validate_attention_item_id accepts a well-formed three-part hygiene id",
     "test": "tests.consumer.test_attention_id_grammar.test_accepts_a_well_formed_three_part_hygiene_id",
-    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\")."
+    "reason": "Closed by livespec-runtime-cr4. Describes already-shipped behavior; the v012 ratification landed it as TODO so the spec-only changeset would carry no product test code. Now mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md §\"Test discipline\" (\"Scenario-tier coverage\")."
   },
   {
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: composition surfaces an invalid candidate rather than shortening the list",
     "test": "tests.consumer.test_attention_composition_refusal.test_composition_refuses_a_workflow_carrying_an_invalid_candidate",
-    "reason": "Closed by livespec-runtime-emu: compose_needs_attention no longer silently drops a candidate whose id fails validation. Validation is enforced at construction (AttentionItem.__post_init__ raises InvalidAttentionItemIdError), so composition refuses the call and the valid candidate is never returned alone. Mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md \u00a7\"Test discipline\" (\"Scenario-tier coverage\")."
+    "reason": "Closed by livespec-runtime-emu: compose_needs_attention no longer silently drops a candidate whose id fails validation. Validation is enforced at construction (AttentionItem.__post_init__ raises InvalidAttentionItemIdError), so composition refuses the call and the valid candidate is never returned alone. Mapped to the consumer tier (node-id prefix tests.consumer) per non-functional-requirements.md §\"Test discipline\" (\"Scenario-tier coverage\")."
   },
   {
     "spec_root": "SPECIFICATION",
@@ -572,8 +572,8 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: the spec-stated judgement names the governing heading, the generalization target, or neither",
-    "test": "TODO",
-    "reason": "A consumer-tier test is owed for this heading: ratified with proposal spec-stated-judgement, and the owning work-item livespec-runtime-krpzzb lands the livespec_runtime.spec_stated module together with the consumer-tier test that binds this entry.",
+    "test": "tests.consumer.test_spec_stated_judgement.test_the_spec_stated_judgement_names_the_governing_heading_the_generalization_target_or_neither",
+    "reason": "Consumer-tier test driving all THREE kinds the heading promises, including the `unstated` case the scenario body never showed: a `stated` verdict naming `## Widgets`, a `partial` one naming a generalization target, and an `unstated` one whose `stated_by` is empty and whose `generalization_target` is None. It also refuses a response naming `## Sprockets`, which is what shows `judge` deriving the governing heading set from `spec_tree` rather than trusting the model, and it takes H2 headings only — the tree's `### Widget colour` is not citable. The no-subprocess-no-socket line is a MEASUREMENT rather than an absence of evidence: both spawn constructors are replaced by a recorder that is fired once and cleared before the judgement, so the empty attempt list is witnessed by an instrument proven able to record. Landed by livespec-runtime-krpzzb, which replaced this entry's TODO.",
     "work_item": "livespec-runtime-krpzzb"
   },
   {
