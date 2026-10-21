@@ -14,12 +14,15 @@ there is nothing to patch out.
 """
 
 import json
+import socket
+import subprocess
 
 from returns.result import Failure, Success
 
 from livespec_runtime.spec_stated import (
     SpecStatedParseError,
     SpecStatedVerdict,
+    judge,
     parse_verdict,
 )
 
@@ -27,6 +30,40 @@ __all__: list[str] = []
 
 _HEADINGS = ("## Widgets", "## Gadgets")
 _RATIONALE = "the Widgets clause states that a widget is blue"
+_SPEC_TREE = {
+    "SPECIFICATION/contracts.md": (
+        "# Contracts\n\n## Widgets\n\nA widget MUST be blue.\n\n"
+        "### Widget colour\n\nBlue is the only colour.\n\n"
+        "## Gadgets\n\nA gadget MUST be round.\n"
+    )
+}
+
+
+class _Runner:
+    """A `ModelRunner` stub that records every prompt it is handed.
+
+    `ModelRunner` is `Callable[[str], str]`, so the prompt arrives
+    POSITIONALLY; a `__call__` carries that externally-fixed convention.
+    """
+
+    def __init__(self, *, responses: list[str]) -> None:
+        self.responses = responses
+        self.prompts: list[str] = []
+
+    def __call__(self, prompt: str) -> str:
+        self.prompts.append(prompt)
+        return self.responses[len(self.prompts) - 1]
+
+
+class _Spawned:
+    """A stand-in for a process or socket constructor that records every attempt."""
+
+    def __init__(self) -> None:
+        self.attempts: list[str] = []
+
+    def __call__(self, *args: object, **kwargs: object) -> object:
+        self.attempts.append(f"{args!r} {kwargs!r}")
+        return self
 
 
 def _response(**fields: object) -> str:
@@ -54,6 +91,74 @@ def _refusal(*, response: str) -> SpecStatedParseError:
     result = parse_verdict(text=response, headings=_HEADINGS)
     assert isinstance(result, Failure), f"expected a Failure for {response!r}, got {result}"
     return result.failure()
+
+
+def test_the_spec_stated_judgement_names_the_governing_heading_the_generalization_target_or_neither(
+    monkeypatch,
+) -> None:
+    """Witness the scenario, including the `unstated` case its heading promises.
+
+    The governing heading set is the tree's own: a response naming a heading
+    the tree does not carry is refused, which is what shows `judge` deriving
+    the set from `spec_tree` rather than trusting the model. `### Widget
+    colour` is in the tree so the derivation is seen to take H2 headings only.
+
+    The two spawn constructors are replaced by recorders rather than merely
+    left alone, so the scenario's no-subprocess-no-socket line is a
+    MEASUREMENT here and not an absence of evidence. The recorder is fired
+    once first and then cleared: an instrument that cannot record cannot
+    witness that nothing was recorded.
+    """
+    spawned = _Spawned()
+    monkeypatch.setattr(subprocess, "Popen", spawned)
+    monkeypatch.setattr(socket, "socket", spawned)
+    assert socket.socket() is spawned
+    assert len(spawned.attempts) == 1
+    spawned.attempts.clear()
+    stated_by_widgets = _Runner(responses=[_response()])
+    partially = _Runner(responses=[_response(kind="partial", generalization_target="## Widgets")])
+    unstated = _Runner(responses=[_response(kind="unstated", stated_by=[])])
+    invented = _Runner(responses=[_response(stated_by=["## Sprockets"])])
+    runners = (stated_by_widgets, partially, unstated, invented)
+
+    stated = judge(spec_tree=_SPEC_TREE, statement="a widget is blue", run_model=stated_by_widgets)
+    partial = judge(
+        spec_tree=_SPEC_TREE, statement="a widget is blue and square", run_model=partially
+    )
+    neither = judge(spec_tree=_SPEC_TREE, statement="a widget hums", run_model=unstated)
+    refused = judge(spec_tree=_SPEC_TREE, statement="a widget is blue", run_model=invented)
+
+    assert stated == Success(
+        SpecStatedVerdict(
+            kind="stated",
+            stated_by=("## Widgets",),
+            generalization_target=None,
+            rationale=_RATIONALE,
+        )
+    )
+    assert partial == Success(
+        SpecStatedVerdict(
+            kind="partial",
+            stated_by=("## Widgets",),
+            generalization_target="## Widgets",
+            rationale=_RATIONALE,
+        )
+    )
+    assert neither == Success(
+        SpecStatedVerdict(
+            kind="unstated",
+            stated_by=(),
+            generalization_target=None,
+            rationale=_RATIONALE,
+        )
+    )
+    assert isinstance(refused, Failure)
+    assert refused.failure().field == "stated_by"
+    assert [len(runner.prompts) for runner in runners] == [1, 1, 1, 1]
+    assert spawned.attempts == []
+    assert "## Widgets" in stated_by_widgets.prompts[0]
+    assert "A widget MUST be blue." in stated_by_widgets.prompts[0]
+    assert "a widget is blue" in stated_by_widgets.prompts[0]
 
 
 def test_parse_verdict_returns_the_typed_verdict_for_a_well_formed_response() -> None:

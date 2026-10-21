@@ -31,6 +31,7 @@ closed by this module's own reading.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable, Collection, Mapping
 from dataclasses import dataclass
 from typing import Literal, TypeAlias, cast
@@ -57,6 +58,12 @@ ModelRunner: TypeAlias = Callable[[str], str]
 
 _STATED_KINDS: tuple[StatedKind, ...] = ("stated", "partial", "unstated")
 _REQUIRED_VERDICT_FIELDS = ("kind", "stated_by", "generalization_target", "rationale")
+
+# One H2 heading line, captured WITH its leading `## ` marker, because that
+# marker is part of the heading text the prompt asks the model to copy out and
+# therefore part of what `stated_by` carries. `##` followed by a third `#` is
+# an H3 and is not matched: the governing clause set is the H2 set.
+_H2_HEADING = re.compile(r"^(##[ \t][^\n]*?)[ \t]*$", re.MULTILINE)
 
 JUDGE_PROMPT: str = """You are judging ONE behaviour statement against a RATIFIED specification.
 
@@ -161,6 +168,18 @@ class SpecStatedParseError(Exception):
 def _rendered_spec_tree(*, spec_tree: Mapping[str, str]) -> str:
     """The spec tree rendered into the prompt: one block per path, in path order."""
     return "\n\n".join(f"--- {path} ---\n{spec_tree[path]}" for path in sorted(spec_tree))
+
+
+def _governing_headings(*, spec_tree: Mapping[str, str]) -> tuple[str, ...]:
+    """Every H2 heading the spec tree carries, verbatim and marker included.
+
+    This is the clause set a verdict may cite, derived from the tree itself
+    rather than trusted from the response: a heading the tree does not carry is
+    a clause nobody can open, and a consumer would file a proposal against it.
+    """
+    return tuple(
+        heading for path in sorted(spec_tree) for heading in _H2_HEADING.findall(spec_tree[path])
+    )
 
 
 def _stated_by(
@@ -280,13 +299,15 @@ def judge(
     is reached exactly once, through `run_model`, with `JUDGE_PROMPT` rendered
     over the tree and the statement.
 
-    The heading set the verdict is validated against is empty in this slice;
-    deriving it from `spec_tree` lands with the verdict parse.
+    The heading set the verdict is validated against is the TREE'S OWN H2
+    headings, derived here rather than taken from the response, so a verdict
+    citing a clause the supplied tree does not carry is refused as a
+    `stated_by` failure instead of returned.
     """
     prompt = JUDGE_PROMPT.format(
         spec_tree=_rendered_spec_tree(spec_tree=spec_tree), statement=statement
     )
-    return parse_verdict(text=run_model(prompt), headings=())
+    return parse_verdict(text=run_model(prompt), headings=_governing_headings(spec_tree=spec_tree))
 
 
 def classify(
