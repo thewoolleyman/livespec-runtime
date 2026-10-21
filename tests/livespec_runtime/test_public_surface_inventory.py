@@ -95,7 +95,7 @@ _REGISTER = _REPO_ROOT / "tests" / "public-surface-debt.json"
 _INVENTORY_HEADING = "## Module-level public surface"
 _GENERATED_MARKER = "# @generated"
 _SECTION_SPLIT = re.compile(r"^### `([A-Za-z0-9_.]+)`\n", re.MULTILINE)
-_BULLET_HEAD = re.compile(r"^- ((?:`[^`]+`(?:,\s+)?)+)", re.MULTILINE)
+_BULLET_HEAD = re.compile(r"^- ((?:`[^`]+`(?:,\s+|\s+and\s+(?=`))?)+)", re.MULTILINE)
 _LEADING_IDENTIFIER = re.compile(r"`([A-Za-z_][A-Za-z0-9_.]*)")
 _DOTTED_TOKEN = re.compile(r"`([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)+)`")
 
@@ -246,6 +246,10 @@ def _bullet_leading_names(*, body: str) -> tuple[str, ...]:
     `Literal``` claims `a` and `b` and not `Literal`. Signatures are truncated
     at the first non-identifier character, which is what turns the inventory's
     ``lane_of(*, item, ...)`` into the bare `lane_of` a module can export.
+
+    The inventory joins a two-name head with a comma OR with `and`, so both
+    are read; the `and` arm requires a backticked name to follow immediately,
+    which stops the prose after a head from being read as further claims.
     """
     return tuple(
         name for head in _BULLET_HEAD.findall(body) for name in _LEADING_IDENTIFIER.findall(head)
@@ -526,6 +530,35 @@ def test_the_reverse_leg_credits_re_exports_and_skips_module_bullets() -> None:
     )
 
     assert phantom == ["pkg.facade.Missing"]
+
+
+def test_a_bullet_head_joining_two_names_with_and_claims_both_of_them() -> None:
+    """A two-name bullet head is read whether it joins with a comma or with `and`.
+
+    The inventory writes the join both ways, and the ratified `spec_stated`
+    section writes the prompt-template pair as ``- `JUDGE_PROMPT: str` and
+    `CLASSIFY_PROMPT: str` — ...``. Reading only the comma form credited that
+    section with `JUDGE_PROMPT` alone, so an implementation that never
+    exported `CLASSIFY_PROMPT` satisfied "every documented name MUST be
+    exported" vacuously. Measured against the REAL section and not only a
+    synthetic one, because that is where the gap was found.
+
+    The `and` is read as a separator ONLY when a backticked name follows it
+    immediately, which is what keeps the widening from turning the prose after
+    a bullet head into further claims.
+    """
+    comma = _bullet_leading_names(body="- `A: str`, `B: str` — the pair.\n")
+    conjoined = _bullet_leading_names(body="- `A: str` and `B: str` — the pair.\n")
+    prose = _bullet_leading_names(body="- `A: str` and the rest of `B` — prose, not a claim.\n")
+    spec_stated = _bullet_leading_names(
+        body=_sections(section=ratified_inventory_section())["livespec_runtime.spec_stated"]
+    )
+
+    assert comma == ("A", "B")
+    assert conjoined == ("A", "B")
+    assert prose == ("A",)
+    assert "JUDGE_PROMPT" in spec_stated
+    assert "CLASSIFY_PROMPT" in spec_stated
 
 
 def test_a_waiver_row_waives_its_section_only_when_it_names_an_owning_work_item() -> None:
