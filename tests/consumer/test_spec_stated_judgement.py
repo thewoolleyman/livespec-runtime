@@ -22,6 +22,7 @@ from returns.result import Failure, Success
 from livespec_runtime.spec_stated import (
     SpecStatedParseError,
     SpecStatedVerdict,
+    classify,
     judge,
     parse_verdict,
 )
@@ -29,6 +30,7 @@ from livespec_runtime.spec_stated import (
 __all__: list[str] = []
 
 _HEADINGS = ("## Widgets", "## Gadgets")
+_ITEM_CLASSES = ("feature", "bug", "chore", "non_functional")
 _RATIONALE = "the Widgets clause states that a widget is blue"
 _SPEC_TREE = {
     "SPECIFICATION/contracts.md": (
@@ -159,6 +161,70 @@ def test_the_spec_stated_judgement_names_the_governing_heading_the_generalizatio
     assert "## Widgets" in stated_by_widgets.prompts[0]
     assert "A widget MUST be blue." in stated_by_widgets.prompts[0]
     assert "a widget is blue" in stated_by_widgets.prompts[0]
+
+
+def test_classify_treats_the_stored_type_as_evidence_not_as_the_answer() -> None:
+    """Witness the scenario, and that the stored type reaches the model as evidence.
+
+    The scenario's own Given/Then — a `task`-typed item whose description asks
+    for new observable behaviour and a stub returning `feature` — cannot fail
+    for an implementation that drops `item_type` from the prompt entirely,
+    because `task` is not an `ItemClass` and so never collides with the answer.
+    So the stored type is also asserted to BE in the prompt the stub was
+    handed: that is the half of "MUST be passed to the model as evidence" the
+    scenario leaves unexercised.
+
+    Evidence-not-answer is measured in the direction that can actually fail:
+    an item stored as `bug` whose model answer is `chore` classifies as
+    `chore`, so a stored type that IS a member of the vocabulary is still not
+    returned unexamined. All four members and the out-of-vocabulary refusal
+    are driven too, so the `Failure` track of `classify` is witnessed rather
+    than assumed.
+    """
+    stored_task = _Runner(responses=["feature"])
+    stored_bug = _Runner(responses=["chore"])
+    members = {member: _Runner(responses=[member]) for member in _ITEM_CLASSES}
+    unrecognized = _Runner(responses=["enhancement"])
+
+    classified = classify(
+        title="widgets report their colour",
+        description="a widget MUST expose the colour it is, which nothing does today",
+        item_type="task",
+        run_model=stored_task,
+    )
+    disagreed = classify(
+        title="rename the widget module",
+        description="no observable behaviour changes",
+        item_type="bug",
+        run_model=stored_bug,
+    )
+    answered = {
+        member: classify(
+            title="widgets report their colour",
+            description="a widget MUST expose the colour it is",
+            item_type="task",
+            run_model=runner,
+        )
+        for member, runner in members.items()
+    }
+    refused = classify(
+        title="widgets report their colour",
+        description="a widget MUST expose the colour it is",
+        item_type="task",
+        run_model=unrecognized,
+    )
+
+    assert classified == Success("feature")
+    assert disagreed == Success("chore")
+    assert answered == {member: Success(member) for member in _ITEM_CLASSES}
+    assert isinstance(refused, Failure)
+    assert refused.failure().field is None
+    assert refused.failure().detail != ""
+    assert "task" in stored_task.prompts[0]
+    assert "bug" in stored_bug.prompts[0]
+    assert "widgets report their colour" in stored_task.prompts[0]
+    assert len(stored_task.prompts) == 1
+    assert [len(runner.prompts) for runner in members.values()] == [1, 1, 1, 1]
 
 
 def test_parse_verdict_returns_the_typed_verdict_for_a_well_formed_response() -> None:

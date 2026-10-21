@@ -57,6 +57,7 @@ ItemClass: TypeAlias = Literal["feature", "bug", "chore", "non_functional"]
 ModelRunner: TypeAlias = Callable[[str], str]
 
 _STATED_KINDS: tuple[StatedKind, ...] = ("stated", "partial", "unstated")
+_ITEM_CLASSES: tuple[ItemClass, ...] = ("feature", "bug", "chore", "non_functional")
 _REQUIRED_VERDICT_FIELDS = ("kind", "stated_by", "generalization_target", "rationale")
 
 # One H2 heading line, captured WITH its leading `## ` marker, because that
@@ -320,14 +321,16 @@ def classify(
     title and the description. The model is reached exactly once, through
     `run_model`.
 
+    An answer outside the four-member vocabulary rides the `Failure` track.
     The failure carries `field` `None` because a classification response is one
     bare word rather than a JSON object, so there is no field to name.
-
-    This slice recognizes no answer yet; the four-member vocabulary lands with
-    the classification itself.
     """
     prompt = CLASSIFY_PROMPT.format(title=title, description=description, item_type=item_type)
     answer = run_model(prompt).strip()
-    return Failure(
-        SpecStatedParseError(field=None, detail=f"no item class is recognized yet: {answer!r}")
-    )
+    if answer not in _ITEM_CLASSES:
+        return Failure(
+            SpecStatedParseError(
+                field=None, detail=f"answer is not one of {_ITEM_CLASSES}: {answer!r}"
+            )
+        )
+    return Success(answer)

@@ -580,8 +580,8 @@
     "spec_root": "SPECIFICATION",
     "spec_file": "scenarios.md",
     "heading": "## Scenario: classify treats the stored type as evidence, not as the answer",
-    "test": "TODO",
-    "reason": "A consumer-tier test is owed for this heading: ratified with proposal spec-stated-judgement, and the owning work-item livespec-runtime-krpzzb lands the livespec_runtime.spec_stated module together with the consumer-tier test that binds this entry.",
+    "test": "tests.consumer.test_spec_stated_judgement.test_classify_treats_the_stored_type_as_evidence_not_as_the_answer",
+    "reason": "Consumer-tier test carrying the scenario's own Given/Then — a `task`-typed item whose description asks for new observable behaviour and a stub returning `feature` yields Success('feature') — plus the half of \"item_type MUST be passed to the model as evidence\" the scenario cannot measure. Because `task` is not an ItemClass it never collides with the answer, so the scenario as written passes for an implementation that drops item_type from the prompt entirely; the test therefore asserts the stored type IS in the prompt the stub was handed, and drives the one direction that can fail — an item stored as `bug` whose model answer is `chore` classifies as `chore`. All four vocabulary members, the out-of-vocabulary refusal onto the Failure track with `field` None, and classify's at-most-one-call-per-call clause are measured in the same test. Landed by livespec-runtime-krpzzb, which replaced this entry's TODO.",
     "work_item": "livespec-runtime-krpzzb"
   },
   {
