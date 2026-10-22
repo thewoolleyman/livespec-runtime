@@ -242,10 +242,10 @@
       },
       "auto_approve_ready": true,
       "acceptance_mode": "ai-only",
-      // THE ONE ENTRY HERE IS REGISTRY-BACKED, and that is the whole shape of
-      // this table: it carries `"registry": true` and NO address, so it names
+      // EVERY ENTRY HERE IS REGISTRY-BACKED, and that is the whole shape of
+      // this table: each carries `"registry": true` and NO address, so it names
       // a FACTORY and never a machine. Required of every entry by
-      // SPECIFICATION/constraints.md §"Factory routing" (v028) and asserted
+      // SPECIFICATION/constraints.md §"Factory routing" (v029) and asserted
       // over whatever this file commits by
       // tests/livespec_runtime/test_committed_factory_table.py.
       //
@@ -274,9 +274,10 @@
       // `docker_host` has two answers and no rule for choosing, so it is
       // refused before the claim.
       //
-      // `petri` is deliberately NOT added here. Onboarding it needs this
-      // repository's own `bin` and `secret_channel` settings and is a
-      // separate decision (plan petri-factory-on-gmktec, epic bd-ib-fyozyd).
+      // `petri` was onboarded and made the default by the R668 cutover
+      // (rulings R668/R672, work-item bd-ib-iud52v; plan petri-factory-on-gmktec),
+      // with this repository's own `bin` and `secret_channel` settings.
+      // `legacy` stays declared so a recorded item pin naming it still resolves.
       //
       // A recorded item pin naming the retired `hp`, `vps`, or `default`
       // falls back to `default_factory` below (the ratified recorded-pin

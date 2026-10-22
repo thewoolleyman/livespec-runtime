@@ -105,16 +105,18 @@ def _registry_backing_faults(*, factories: dict[str, Any]) -> list[tuple[str, st
     return faults
 
 
-def test_the_committed_table_declares_exactly_one_entry_named_legacy() -> None:
-    """One live instance, named for the factory and not for its host.
+def test_the_committed_table_declares_exactly_the_petri_and_legacy_entries() -> None:
+    """Two instances, each named for the factory and not for its host.
 
-    `legacy` is the name the control node's rendered registry declares for the
-    instance this repository has always dispatched to, so routing is unchanged
-    by the switch. A committed entry whose name that file does not declare
-    resolves to no address at all, which is refused before the item is claimed
-    rather than quietly sent to whichever Fabro the dispatching host runs.
+    `petri` and `legacy` are names the control node's rendered registry
+    declares: `petri` is the current Fabro server this repository dispatches to
+    by default since the R668 cutover, and `legacy` stays declared so a
+    recorded item pin naming it still resolves. A committed entry whose name
+    that file does not declare resolves to no address at all, which is refused
+    before the item is claimed rather than quietly sent to whichever Fabro the
+    dispatching host runs.
     """
-    assert sorted(_factories(dispatcher=_committed_dispatcher_block())) == ["legacy"]
+    assert sorted(_factories(dispatcher=_committed_dispatcher_block())) == ["legacy", "petri"]
 
 
 def test_every_committed_entry_is_registry_backed_and_names_no_machine() -> None:
@@ -132,7 +134,7 @@ def test_every_committed_entry_is_registry_backed_and_names_no_machine() -> None
 
 
 def test_the_committed_default_factory_names_a_registry_backed_entry() -> None:
-    """`legacy` is the default, and it is an entry the table actually declares.
+    """`petri` is the default, and it is an entry the table actually declares.
 
     The second half is what makes the first worth asserting: a default naming
     no declared entry refuses every dispatch from this repository, and nothing
@@ -140,7 +142,7 @@ def test_the_committed_default_factory_names_a_registry_backed_entry() -> None:
     """
     dispatcher = _committed_dispatcher_block()
 
-    assert dispatcher["default_factory"] == "legacy"
+    assert dispatcher["default_factory"] == "petri"
     assert dispatcher["default_factory"] in _factories(dispatcher=dispatcher)
 
 
