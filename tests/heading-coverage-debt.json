@@ -1,0 +1,128 @@
+[
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "constraints.md",
+    "heading": "## Dependency constraints",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "constraints.md",
+    "heading": "## Inherited from livespec",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "constraints.md",
+    "heading": "## Process boundaries",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "contracts.md",
+    "heading": "## Consumption shape",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "contracts.md",
+    "heading": "## Versioning",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "contracts.md",
+    "heading": "## `.livespec.jsonc` `compat` block (consumer-facing)",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "non-functional-requirements.md",
+    "heading": "## Boundary",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "non-functional-requirements.md",
+    "heading": "## Build and packaging",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "non-functional-requirements.md",
+    "heading": "## Inherited from livespec",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "non-functional-requirements.md",
+    "heading": "## Prose conventions",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "non-functional-requirements.md",
+    "heading": "## Release flow",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "non-functional-requirements.md",
+    "heading": "## Repo layout",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "non-functional-requirements.md",
+    "heading": "## Spec evolution",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "non-functional-requirements.md",
+    "heading": "## Versioning",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "spec.md",
+    "heading": "## Lifecycle and evolution",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "spec.md",
+    "heading": "## Purpose",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "spec.md",
+    "heading": "## Scope boundary",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  },
+  {
+    "spec_root": "SPECIFICATION",
+    "spec_file": "spec.md",
+    "heading": "## Terminology",
+    "work_item": "livespec-runtime-l5q",
+    "first_seen": "2026-05-28"
+  }
+]
