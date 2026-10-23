@@ -308,6 +308,11 @@ cross_repo_public_api = [
     { file = "livespec_runtime/credentials.py", function = "decide_credentials", reason = "product import: livespec-orchestrator-beads-fabro's .claude-plugin/scripts/bin/_bootstrap.py" },
     { file = "livespec_runtime/credentials.py", function = "wrapper_launch_failure", reason = "product import: livespec-orchestrator-beads-fabro's .claude-plugin/scripts/bin/_bootstrap.py" },
     { file = "livespec_runtime/cross_repo/types.py", function = "parse_cross_repo_manifest", reason = "product import by THREE members: livespec-orchestrator-beads-fabro's commands/_cross_repo.py, livespec-orchestrator-git-jsonl's io/_cross_repo.py, and livespec's parse/cross_repo.py" },
+    # Arrived with livespec-orchestrator-beads-fabro's condensed spec-stated judgement
+    # (078983bb3, 2026-10-22), after this repo's last green fleet-conformance run. GUARD
+    # READ BEFORE DECLARING: the consumer returns `judge(...)`'s Result unchanged to its
+    # own callers, with no `is None` guard, so the Result-vs-None hazard does not apply.
+    { file = "livespec_runtime/spec_stated.py", function = "judge", reason = "product import: livespec-orchestrator-beads-fabro's commands/_spec_tree_condensation.py (078983bb3, 2026-10-22) calls `judge(...)` and returns its Result to the drift run and the ledger-intent scan; no `is None` guard at the site" },
     { file = "livespec_runtime/spec_governance.py", function = "documented_defaults", reason = "product import: livespec's .claude-plugin/scripts/livespec/spec_governance/default_block.py" },
     { file = "livespec_runtime/spec_governance.py", function = "manifest_rows", reason = "product import by livespec's .claude-plugin/scripts/livespec/spec_governance/registry.py and dev-tooling/checks/spec_governance_manifest.py" },
     { file = "livespec_runtime/spec_governance.py", function = "verify_default_block", reason = "product import by livespec's .claude-plugin/scripts/livespec/spec_governance/default_block.py and dev-tooling/checks/spec_governance_template.py" },
