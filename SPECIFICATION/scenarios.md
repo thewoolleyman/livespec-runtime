@@ -292,6 +292,7 @@ Given a WorkItem constructed with only the fifteen required fields, including a 
 When its optional-on-read fields are read
 Then spec_commitment_hint, acceptance_criteria, notes, supersedes, admission_policy, acceptance_policy, blocked_reason, factory_safety and review_requirement are None
 And awaits_scope_override is False
+And rework_pending is False
 
 ## Scenario: record identity is a stable sha256 over the canonical serialization
 
