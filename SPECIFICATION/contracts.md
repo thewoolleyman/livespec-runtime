@@ -197,7 +197,7 @@ multiply the attempt count the resolver chose.
 ### `livespec_runtime.work_items.types`
 
 - `WorkItem` — frozen, slotted, kw-only dataclass: the unified
-  work-item record shared by every impl-plugin store. **Twenty-five
+  work-item record shared by every impl-plugin store. **Twenty-six
   fields.** Required (no default), in order: `id: str`, `type: WorkItemType`,
   `status: WorkItemStatus`, `title: str`, `description: str`,
   `origin: Origin`, `gap_id: str | None`, `rank: str`,
@@ -213,13 +213,17 @@ multiply the attempt count the resolver chose.
   `blocked_reason: StoredBlockedReason | None`,
   `factory_safety: FactorySafety | None`,
   `review_requirement: ReviewRequirement | None`,
-  `awaits_scope_override: bool = False`. Every optional-on-read field
-  reads back as its default (`None`, or `False` for
-  `awaits_scope_override`) for a legacy record lacking it.
+  `awaits_scope_override: bool = False`, `rework_pending: bool = False`.
+  Every optional-on-read field reads back as its default (`None`, or
+  `False` for `awaits_scope_override` and `rework_pending`) for a legacy
+  record lacking it.
   `awaits_scope_override` is a materialized current-state signal,
   backed by the `awaits-scope-override` beads label in the beads
   substrate — consumer `livespec_orchestrator_beads_fabro` sets it to
-  reflect that label. The record schema is codified HERE, in this
+  reflect that label.
+  `rework_pending` is likewise a materialized current-state signal,
+  backed by the `rework:pending` beads label — the same consumer sets
+  it to reflect that label. The record schema is codified HERE, in this
   repo's own
   `### livespec_runtime.work_items.types`; livespec CORE's
   `SPECIFICATION/` delegates the work-item schema to the runtime +
