@@ -105,18 +105,18 @@ def _registry_backing_faults(*, factories: dict[str, Any]) -> list[tuple[str, st
     return faults
 
 
-def test_the_committed_table_declares_exactly_the_petri_and_legacy_entries() -> None:
-    """Two instances, each named for the factory and not for its host.
+def test_the_committed_table_declares_exactly_the_petri_entry() -> None:
+    """One instance, named for the factory and not for its host.
 
-    `petri` and `legacy` are names the control node's rendered registry
-    declares: `petri` is the current Fabro server this repository dispatches to
-    by default since the R668 cutover, and `legacy` stays declared so a
-    recorded item pin naming it still resolves. A committed entry whose name
+    `petri` is a name the control node's rendered registry declares: the
+    current Fabro server this repository dispatches to by default since the
+    R668 cutover. `legacy`, the retired hp-xubuntu instance, was removed on
+    2026-10-24 (plan fabro-currency). A committed entry whose name
     that file does not declare resolves to no address at all, which is refused
     before the item is claimed rather than quietly sent to whichever Fabro the
     dispatching host runs.
     """
-    assert sorted(_factories(dispatcher=_committed_dispatcher_block())) == ["legacy", "petri"]
+    assert sorted(_factories(dispatcher=_committed_dispatcher_block())) == ["petri"]
 
 
 def test_every_committed_entry_is_registry_backed_and_names_no_machine() -> None:
