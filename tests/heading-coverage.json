@@ -460,7 +460,7 @@
     "spec_file": "scenarios.md",
     "heading": "## Scenario: a legacy record reads its optional-on-read fields back as their defaults",
     "test": "tests.consumer.test_work_item_records.test_a_legacy_record_reads_its_optional_on_read_fields_back_as_defaults",
-    "reason": "Consumer-tier test constructing a WorkItem from ONLY the fifteen required fields (including a real non-sentinel rank) and asserting all nine None-defaulted optional fields plus awaits_scope_override False."
+    "reason": "Consumer-tier test constructing a WorkItem from ONLY the fifteen required fields (including a real non-sentinel rank) and asserting all nine None-defaulted optional fields plus awaits_scope_override and rework_pending False."
   },
   {
     "spec_root": "SPECIFICATION",

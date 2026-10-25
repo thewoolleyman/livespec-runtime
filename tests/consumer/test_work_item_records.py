@@ -120,6 +120,7 @@ def test_a_legacy_record_reads_its_optional_on_read_fields_back_as_defaults() ->
     assert legacy.factory_safety is None
     assert legacy.review_requirement is None
     assert legacy.awaits_scope_override is False
+    assert legacy.rework_pending is False
 
 
 def test_record_identity_is_a_stable_sha256_over_the_canonical_serialization() -> None:
