@@ -1,6 +1,6 @@
 """Tests for `livespec_runtime.work_items.types`.
 
-Verifies the unified `WorkItem` model (the 25-field shape codified by
+Verifies the unified `WorkItem` model (the 26-field shape codified by
 this repo's own `### livespec_runtime.work_items.types`), the
 `AuditRecord` sub-object, the schema enums/aliases (the 7-state
 `WorkItemStatus`, the `AdmissionPolicy` / `AcceptancePolicy` /
@@ -8,8 +8,8 @@ this repo's own `### livespec_runtime.work_items.types`), the
 optional-on-read defaults
 (`spec_commitment_hint`, `acceptance_criteria`, `notes`, `supersedes`,
 `admission_policy`, `acceptance_policy`, `blocked_reason`,
-`factory_safety`, `review_requirement`, `awaits_scope_override`), the
-required `rank` ordering key, and frozenness.
+`factory_safety`, `review_requirement`, `awaits_scope_override`,
+`rework_pending`), the required `rank` ordering key, and frozenness.
 
 Schema reference: this repo's own `SPECIFICATION/contracts.md`
 §`### livespec_runtime.work_items.types`.
@@ -25,7 +25,7 @@ from livespec_runtime.work_items.types import AuditRecord, WorkItem
 
 __all__: list[str] = []
 
-# The ratified 25-field order (required block, then optional-on-read
+# The ratified 26-field order (required block, then optional-on-read
 # block), per `### livespec_runtime.work_items.types`.
 _EXPECTED_FIELD_ORDER: tuple[str, ...] = (
     "id",
@@ -53,6 +53,7 @@ _EXPECTED_FIELD_ORDER: tuple[str, ...] = (
     "factory_safety",
     "review_requirement",
     "awaits_scope_override",
+    "rework_pending",
 )
 
 _FACTORY_SAFETY_REASONS: tuple[str | None, ...] = (
@@ -163,6 +164,18 @@ def test_work_item_awaits_scope_override_carries_true() -> None:
     assert item.awaits_scope_override is True
 
 
+def test_work_item_rework_pending_defaults_to_false() -> None:
+    # The eleventh optional-on-read field: a record constructed without
+    # it — the legacy shape — reads `rework_pending` back as `False`.
+    item = _work_item()
+    assert item.rework_pending is False
+
+
+def test_work_item_rework_pending_carries_true() -> None:
+    item = _work_item(rework_pending=True)
+    assert item.rework_pending is True
+
+
 def test_work_item_supersedes_carries_prior_identity() -> None:
     item = _work_item(supersedes="sha256:deadbeef")
     assert item.supersedes == "sha256:deadbeef"
@@ -255,12 +268,13 @@ def test_work_item_active_carries_assignee() -> None:
     assert item.assignee == "agent-7"
 
 
-def test_work_item_has_twenty_five_schema_fields() -> None:
-    # The unified shape is the 25-field record: 15 required (including
-    # the `rank` ordering key, `priority` removed), then 10 optional-on-
+def test_work_item_has_twenty_six_schema_fields() -> None:
+    # The unified shape is the 26-field record: 15 required (including
+    # the `rank` ordering key, `priority` removed), then 11 optional-on-
     # read (spec_commitment_hint, acceptance_criteria, notes,
     # supersedes, admission_policy, acceptance_policy, blocked_reason,
-    # factory_safety, review_requirement, awaits_scope_override).
+    # factory_safety, review_requirement, awaits_scope_override,
+    # rework_pending).
     field_names = set(WorkItem.__dataclass_fields__)
     assert field_names == set(_EXPECTED_FIELD_ORDER)
     assert "priority" not in field_names
@@ -269,7 +283,7 @@ def test_work_item_has_twenty_five_schema_fields() -> None:
 
 def test_work_item_field_order_matches_contract() -> None:
     # The ratified `### livespec_runtime.work_items.types` pins the exact
-    # 24-field order (required block, then optional-on-read block).
+    # 26-field order (required block, then optional-on-read block).
     assert tuple(WorkItem.__dataclass_fields__) == _EXPECTED_FIELD_ORDER
 
 
