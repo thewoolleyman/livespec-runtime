@@ -8,7 +8,7 @@ This library is NOT enforcement-suite code — those live in [`livespec-dev-tool
 
 ## Status
 
-**v0.28.0 — cross_repo resolution surface shipped.** <!-- x-release-please-version --> `livespec_runtime.cross_repo` is fully implemented: typed `DependsOnEntry` union, `providers.github`, `retry`, and `resolve_ref` have all landed. The module is present and in active use by livespec consumers. See [`CHANGELOG.md`](CHANGELOG.md) for the per-release history.
+**v0.29.0 — cross_repo resolution surface shipped.** <!-- x-release-please-version --> `livespec_runtime.cross_repo` is fully implemented: typed `DependsOnEntry` union, `providers.github`, `retry`, and `resolve_ref` have all landed. The module is present and in active use by livespec consumers. See [`CHANGELOG.md`](CHANGELOG.md) for the per-release history.
 
 ## Consumption
 
@@ -21,7 +21,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.28.0" } # x-release-please-version
+livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.29.0" } # x-release-please-version
 ```
 
 Or as a runtime dependency:
@@ -29,11 +29,11 @@ Or as a runtime dependency:
 ```toml
 [project]
 dependencies = [
-    "livespec-runtime>=0.28.0", # x-release-please-version
+    "livespec-runtime>=0.29.0", # x-release-please-version
 ]
 
 [tool.uv.sources]
-livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.28.0" } # x-release-please-version
+livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.29.0" } # x-release-please-version
 ```
 
 ## Governance

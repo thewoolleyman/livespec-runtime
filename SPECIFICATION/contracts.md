@@ -1009,7 +1009,7 @@ is:
   "livespec-runtime": {
     "compat": {
       "livespec": ">=0.1.0,<1.0.0",
-      "pinned": "v0.28.0" // x-release-please-version
+      "pinned": "v0.29.0" // x-release-please-version
     }
   }
 }
@@ -1031,7 +1031,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.28.0" } # x-release-please-version
+livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.29.0" } # x-release-please-version
 ```
 
 Or as a runtime dependency:
@@ -1043,7 +1043,7 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.28.0" } # x-release-please-version
+livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.29.0" } # x-release-please-version
 ```
 
 The tag value in `[tool.uv.sources]` MUST match the `compat.pinned`

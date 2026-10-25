@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.28.0...v0.29.0) (2026-10-25)
+
+
+### Features
+
+* carry rework_pending on WorkItem ([c431489](https://github.com/thewoolleyman/livespec-runtime/commit/c43148984cdc2e94c6e5c3906e74e7331301cba7))
+
 ## [0.28.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.27.0...v0.28.0) (2026-10-21)
 
 
