@@ -138,6 +138,7 @@ ensure-codex-plugins:
 # with the failure list if any target failed.
 # ---------------------------------------------------------------
 
+# errexit is deliberately off: the body is one read and an exec, and check.sh owns the aggregate's continue-on-failure exit code.
 check:
     #!/usr/bin/env bash
     set -uo pipefail
