@@ -432,3 +432,17 @@ And a store adapter substitutes it only for a legacy line lacking rank; the Work
 - **Then** the result MUST be a `Failure` whose `SpecStatedParseError` has `field` `"kind"`
 - **And** for a response that is not JSON the `Failure`'s error MUST have `field` `None` and a non-empty `detail`
 - **And** for a response whose `stated_by` names a heading absent from the supplied headings the `Failure`'s error MUST have `field` `"stated_by"`
+
+## Scenario: a delegating host's push gates on the remote executor and refuses on no verdict
+
+Given this repository's version-controlled configuration opts it in to delegating its pre-push gate
+
+And the pushing host holds the credential to submit to the remote executor
+
+When a git push of a new tree runs the pre-push gate
+
+Then the pre-push path MUST run the delegation client instead of running `just check` on the pushing host
+
+And the push MUST complete only on a passing verdict from the executor
+
+And the push MUST be refused when the executor returns no verdict
