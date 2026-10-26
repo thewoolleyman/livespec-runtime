@@ -69,6 +69,15 @@
   // is fail-closed pending the unbuilt Increment-3 consensus panel) and
   // doctor_dispositions (deferred to a separate follow-up; populating it
   // needs real per-check-id judgment).
+  // Cross-repository citations the spec may make (doctor-no-cross-spec-reference).
+  // non-functional-requirements.md §"Task-runner discipline" cites livespec-dev-tooling's
+  // §"Delegated pre-push gate" and livespec's §"Enforcement-suite invocation". Each
+  // entry is the BARE heading form: a file-qualified entry is validated against a
+  // local sibling clone that CI runners do not have.
+  "external_references": {
+    "livespec-dev-tooling": ["§\"Delegated pre-push gate\""],
+    "livespec": ["§\"Enforcement-suite invocation\""]
+  },
   "spec_governance": {
     "propose_change_mode": "batch",
     "critique_mode": "batch",
