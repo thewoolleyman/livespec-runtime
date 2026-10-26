@@ -88,8 +88,9 @@
     // fallback, and a review by EITHER model ratifies. The models are
     // interchangeable like any other model selection here. "auto-spawn" below is
     // inert when this key is null.
-    // History: "fable" (original); "opus" 2026-08-26 (PR #632, a replacement after Fable
-    // capacity exhaustion); ["opus", "gpt-6-astra"] 2026-10-26 (R70, livespec core v0.44.0).
+    // History: a single designated model originally; "opus" 2026-08-26 (PR #632, a
+    // replacement after reviewer capacity exhaustion); ["opus", "gpt-6-astra"]
+    // 2026-10-26 (R70, livespec core v0.44.0).
     "ratification_review": "auto-spawn",
     "ratification_reviewer_model": ["opus", "gpt-6-astra"],
     "spec_pr_merge": "auto-on-green"
