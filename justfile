@@ -138,8 +138,23 @@ ensure-codex-plugins:
 # with the failure list if any target failed.
 # ---------------------------------------------------------------
 
+check:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    # `SKIP_TARGETS` is the fleet's recognised skip contract, the one livespec's
+    # `check` recipe reads too. The delegated gate client exports the members
+    # that read authority held outside the tree into it, so the gate Job leaves
+    # them to the pushing host; since livespec-dev-tooling v1.134.2 the client
+    # refuses to submit a Job for a recipe that reads no recognised skip
+    # variable (livespec-dev-tooling-ebtm6t). It reads that variable from a
+    # header of exactly `check:`, so positional skipping lives in
+    # `check-skipping` below. Unset, the full aggregate runs, and `check.sh`
+    # writes no green token for a run that skipped anything.
+    read -ra skip_targets <<< "${SKIP_TARGETS:-}"
+    exec .github/scripts/check.sh "${skip_targets[@]}"
+
 [positional-arguments]
-check *skip_targets:
+check-skipping *skip_targets:
     .github/scripts/check.sh "$@"
 
 # ---------------------------------------------------------------
