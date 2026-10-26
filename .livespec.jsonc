@@ -83,21 +83,15 @@
     "critique_mode": "batch",
     "in_flight_alignment": "default-align",
     "revise_decision_mode": "delegated",
-    // ratification_review: "auto-spawn" is inert without a configured
-    // reviewer model (effective.py's effective_ratification_review returns
-    // requires_input=True when ratification_reviewer_model is None) — set
-    // to "fable", matching livespec core's own convention.
-    // SUPERSEDED 2026-08-26 by PR #632: the active designation is "opus",
-    // changed fleet-wide after exhausted Fable capacity hard-blocked spec
-    // ratification in four repos (this one, livespec core, livespec-overseer,
-    // livespec-console-beads-fabro). The line above is kept verbatim as the
-    // original intent; it no longer describes the value below. Note this is a
-    // REPLACEMENT, not a fallback: exactly one model is designated, so the
-    // single point of failure moved from fable to opus rather than being
-    // removed. The ordered-reviewer-list fallback was considered and
-    // CANCELLED by maintainer ruling, so no fallback is pending.
+    // ratification_reviewer_model: an ordered list. Opus is the primary
+    // ratification reviewer and auto-spawn selects it; gpt-6-astra (Codex) is the
+    // fallback, and a review by EITHER model ratifies. The models are
+    // interchangeable like any other model selection here. "auto-spawn" below is
+    // inert when this key is null.
+    // History: "fable" (original); "opus" 2026-08-26 (PR #632, a replacement after Fable
+    // capacity exhaustion); ["opus", "gpt-6-astra"] 2026-10-26 (R70, livespec core v0.44.0).
     "ratification_review": "auto-spawn",
-    "ratification_reviewer_model": "opus",
+    "ratification_reviewer_model": ["opus", "gpt-6-astra"],
     "spec_pr_merge": "auto-on-green"
   },
   // Credential-injection wrapper (fleet default) prefixed to the beads CLIs so a bare invocation self-heals its tenant secret.
