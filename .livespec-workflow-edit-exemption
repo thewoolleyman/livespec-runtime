@@ -1,2 +1,2 @@
-work_item=livespec-runtime-vm5kry
-reason=Add a top-level concurrency group to release-please.yml so concurrent master pushes queue instead of racing on a stale release base (2026-10-25 PRs 3619/3620).
+work_item=livespec-runtime-r6qc2o
+reason=Add the five check-ci-matrix-completeness slugs surfaced by PR 787's livespec-dev-tooling pin jump (v1.64.1 to v1.134.2) to CI, or declare them skip-only; maintainer-authorized 2026-10-27 (coordinator R89/R96).
