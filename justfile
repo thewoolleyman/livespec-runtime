@@ -333,11 +333,20 @@ check-global-writes:
 check-heading-coverage:
     uv run python -m livespec_dev_tooling.checks.heading_coverage
 
+check-heading-coverage-debt-register:
+    uv run python -m livespec_dev_tooling.checks.heading_coverage_debt_register
+
+generate-heading-coverage-debt-register:
+    uv run python -m livespec_dev_tooling.heading_coverage_debt
+
 check-keyword-only-args:
     uv run python -m livespec_dev_tooling.checks.keyword_only_args
 
 check-main-guard:
     uv run python -m livespec_dev_tooling.checks.main_guard
+
+check-marketplace-ref-release-only:
+    uv run python -m livespec_dev_tooling.checks.marketplace_ref_release_only
 
 check-master-ci-green:
     uv run python -m livespec_dev_tooling.checks.master_ci_green
@@ -547,6 +556,9 @@ check-plan-anchor-declared:
 
 check-plan-epic-parity:
     uv run python -m livespec_dev_tooling.checks.plan_epic_parity
+
+check-plan-no-live-handoff-file:
+    uv run python -m livespec_dev_tooling.checks.plan_no_live_handoff_file
 
 # Plan-lifecycle tombstone ban: a topic must not exist at BOTH
 # plan/<topic>/ and plan/archive/<topic>/. Fail-closed with no opt-in
