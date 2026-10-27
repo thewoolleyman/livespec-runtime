@@ -31,4 +31,14 @@ if uv run python -m livespec_dev_tooling.green_token check 2>&1; then
     exit 0
 fi
 
+# The remote gate is selected only by an opted-in repository pushed from a host
+# that can read the gates credential. On an ineligible host `enabled` reports
+# the local-gate fallback and exits non-zero. Once selected, `exec` is
+# load-bearing: no verdict from the client refuses this push rather than falling
+# through to a local aggregate.
+if uv run python -m livespec_dev_tooling.gate_remote_delegate enabled; then
+    echo ":: pre-push: delegated gate is enabled for this repo; gating on the cluster"
+    exec uv run python -m livespec_dev_tooling.gate_remote_delegate run
+fi
+
 just check

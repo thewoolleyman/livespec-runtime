@@ -131,7 +131,7 @@ dev = [
 # answer they stay `liveness_unverified` and pass, which is what makes the
 # fleet-wide rollout landable (work-item livespec-runtime-txl).
 [tool.uv.sources]
-livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git", tag = "v1.64.1" }
+livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-tooling.git", tag = "v1.134.2" }
 
 # Consumer-declared layout config consumed by the shared
 # livespec-dev-tooling checks (per livespec-dev-tooling
@@ -180,6 +180,10 @@ livespec-dev-tooling = { git = "https://github.com/thewoolleyman/livespec-dev-to
 file_lloc_hard_gate = true
 plan_lifecycle_anchor = true
 scenario_tiers = ["tests.consumer", "tests.e2e"]
+# The delegated-gate client selects the remote executor only when this explicit
+# repository opt-in AND the pushing host's gates credential are both present.
+# Sandboxes and other ineligible hosts retain the local aggregate fall-through.
+delegated_gate = true
 
 # e9j Wave-1 B-rt (role-key declaration). `source_trees` arms the ROP checks
 # (`no_except_outside_io`, `no_raise_outside_io`) over `livespec_runtime` for
