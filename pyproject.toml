@@ -184,6 +184,9 @@ scenario_tiers = ["tests.consumer", "tests.e2e"]
 # repository opt-in AND the pushing host's gates credential are both present.
 # Sandboxes and other ineligible hosts retain the local aggregate fall-through.
 delegated_gate = true
+repo_local_ci_skips = [
+    { slug = "check-no-workflow-edits", reason = "Local and janitor authorship control; the canonical guard explicitly exits without evaluation under GITHUB_ACTIONS because CI has no local author to control." },
+]
 
 # e9j Wave-1 B-rt (role-key declaration). `source_trees` arms the ROP checks
 # (`no_except_outside_io`, `no_raise_outside_io`) over `livespec_runtime` for
