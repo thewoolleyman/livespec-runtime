@@ -320,6 +320,10 @@ cross_repo_public_api = [
     # READ BEFORE DECLARING: the consumer returns `judge(...)`'s Result unchanged to its
     # own callers, with no `is None` guard, so the Result-vs-None hazard does not apply.
     { file = "livespec_runtime/spec_stated.py", function = "judge", reason = "product import: livespec-orchestrator-beads-fabro's commands/_spec_tree_condensation.py (078983bb3, 2026-10-22) calls `judge(...)` and returns its Result to the drift run and the ledger-intent scan; no `is None` guard at the site" },
+    # READ BEFORE DECLARING: the sibling test only reads `classify.__name__` to assert the
+    # skill prose names the call; no Result is consumed, so the Result-vs-None hazard does
+    # not apply.
+    { file = "livespec_runtime/spec_stated.py", function = "classify", reason = "test import: livespec-orchestrator-git-jsonl's tests/prompts/test_capture_work_item_spec_stated_classification.py imports `CLASSIFY_PROMPT, ItemClass, classify` from livespec_runtime.spec_stated (d6c82ed7, 2026-10-25) and asserts the capture-work-item skill names `classify(`" },
     { file = "livespec_runtime/spec_governance.py", function = "documented_defaults", reason = "product import: livespec's .claude-plugin/scripts/livespec/spec_governance/default_block.py" },
     { file = "livespec_runtime/spec_governance.py", function = "manifest_rows", reason = "product import by livespec's .claude-plugin/scripts/livespec/spec_governance/registry.py and dev-tooling/checks/spec_governance_manifest.py" },
     { file = "livespec_runtime/spec_governance.py", function = "verify_default_block", reason = "product import by livespec's .claude-plugin/scripts/livespec/spec_governance/default_block.py and dev-tooling/checks/spec_governance_template.py" },
