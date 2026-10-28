@@ -65,7 +65,7 @@ check-vendor-manifest
 check-work-item-interpolation-delimiters
 check-work-item-status-vocabulary
 check-wrapper-shape
-check-no-workflow-edits
+check-no-workflow-edits  # purity: world-reading  # authority: ledger
 check-lint
 check-format
 check-types
