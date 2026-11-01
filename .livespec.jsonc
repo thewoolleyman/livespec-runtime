@@ -276,6 +276,9 @@
         "verify_commit_refuse_hook": { "mode": "internal_livespec_dev_tooling" },
         "verify_plugin_resolution": { "mode": "internal_livespec_dev_tooling" }
       },
+      // Run post-merge janitor check suites through the shared gate Job rather
+      // than consuming CPU in a janitor worktree on the dispatching host.
+      "janitor": { "venue": "cluster_job" },
       "auto_approve_ready": true,
       "acceptance_mode": "ai-only",
       // EVERY ENTRY HERE IS REGISTRY-BACKED, and that is the whole shape of
