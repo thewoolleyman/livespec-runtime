@@ -38,8 +38,10 @@ default:
 # the `check` aggregate (so pre-push stops a session agent), it is a no-op
 # under GITHUB_ACTIONS, and it is deliberately NOT a canonical slug nor a CI
 # matrix member. The only override is the tracked
-# `.livespec-workflow-edit-exemption` declaration whose work item a human has
-# labelled `approval:workflow-edit`; no environment variable bypasses it.
+# `.livespec-workflow-edit-exemption` declaration whose work item carries a
+# tier label: `approval:workflow-edit-additive` (delegable) for an attested
+# add-only edit, the maintainer-only `approval:workflow-edit` for anything
+# else; no environment variable bypasses it.
 check-no-workflow-edits:
     bash dev-tooling/check-no-workflow-edits.sh
 
