@@ -147,6 +147,19 @@ def test_the_ratified_public_surface_is_importable_from_the_one_module() -> None
     )
 
 
+def test_clause_evidence_is_bound_for_the_fabro_governing_heading_consumer() -> None:
+    """The consumer's typed clause record keeps importing from the shared module."""
+    module = importlib.import_module(_MODULE_NAME)
+
+    assert hasattr(module, "ClauseEvidence")
+
+    from livespec_runtime.spec_stated import ClauseEvidence
+
+    evidence = ClauseEvidence(heading="## Widgets", quote="A widget MUST be blue.")
+
+    assert (evidence.heading, evidence.quote) == ("## Widgets", "A widget MUST be blue.")
+
+
 def test_a_model_is_reached_only_through_the_injected_run_model_callable() -> None:
     """Witness the contract's no-model-no-subprocess-no-network clause.
 
