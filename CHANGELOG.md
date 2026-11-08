@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.29.1...v0.29.2) (2026-11-08)
+
+
+### Bug Fixes
+
+* bind ClauseEvidence for sibling consumers ([822f0b3](https://github.com/thewoolleyman/livespec-runtime/commit/822f0b38899d48ebfb2abc07e03880718de26eee))
+
 ## [0.29.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.29.0...v0.29.1) (2026-10-25)
 
 
