@@ -119,6 +119,14 @@ does.
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class ClauseEvidence:
+    """One verbatim quotation supporting a heading a judgement names."""
+
+    heading: str
+    quote: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class SpecStatedVerdict:
     """One judgement: whether the spec states a behaviour, and by which clause.
 
