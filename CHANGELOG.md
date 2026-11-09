@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.30.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.29.2...v0.30.0) (2026-11-09)
+
+
+### Features
+
+* spec_stated verdict carries parsed clause evidence ([2c2697f](https://github.com/thewoolleyman/livespec-runtime/commit/2c2697fcf5273cea01437b63038fab42985862a9))
+
+
+### Bug Fixes
+
+* export ClauseEvidence under the ratified v033 contract (livespec-runtime-bxbyko) ([31e264d](https://github.com/thewoolleyman/livespec-runtime/commit/31e264dbdedcc974a7fcb049c278ef675b4864d9))
+
 ## [0.29.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.29.1...v0.29.2) (2026-11-08)
 
 
