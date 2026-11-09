@@ -594,6 +594,14 @@
   },
   {
     "spec_root": "SPECIFICATION",
+    "spec_file": "scenarios.md",
+    "heading": "## Scenario: parse_verdict reads optional clause evidence in order",
+    "test": "tests.consumer.test_spec_stated_judgement.test_parse_verdict_reads_optional_clause_evidence_in_order",
+    "reason": "Consumer-tier test driving parse_verdict through the public surface across every line of the scenario. Two well-formed evidence entries parse into ClauseEvidence values in response order, and they deliberately cite headings outside the supplied set, which shows an entry's heading is carried as given. An absent key and a null key each yield the empty tuple. A non-list value, a non-object entry and a blank quote each yield a Failure whose field is evidence. The unit-tier tests in tests/livespec_runtime/test_spec_stated.py cover the same parser branch by branch. Landed with the v033 revise by livespec-runtime-bxbyko.",
+    "work_item": "livespec-runtime-bxbyko"
+  },
+  {
+    "spec_root": "SPECIFICATION",
     "spec_file": "constraints.md",
     "heading": "## Factory routing",
     "test": "tests.livespec_runtime.test_committed_factory_table.test_every_committed_entry_is_registry_backed_and_names_no_machine",

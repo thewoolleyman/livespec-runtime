@@ -41,6 +41,7 @@ from returns.result import Failure, Result, Success
 __all__: list[str] = [
     "CLASSIFY_PROMPT",
     "JUDGE_PROMPT",
+    "ClauseEvidence",
     "ItemClass",
     "ModelRunner",
     "SpecChangeTier",

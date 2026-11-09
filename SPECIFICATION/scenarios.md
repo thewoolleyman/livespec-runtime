@@ -433,6 +433,14 @@ And a store adapter substitutes it only for a legacy line lacking rank; the Work
 - **And** for a response that is not JSON the `Failure`'s error MUST have `field` `None` and a non-empty `detail`
 - **And** for a response whose `stated_by` names a heading absent from the supplied headings the `Failure`'s error MUST have `field` `"stated_by"`
 
+## Scenario: parse_verdict reads optional clause evidence in order
+
+- **Given** a well-formed response whose `evidence` is a list of two objects, each carrying a string `heading` and a non-blank string `quote`
+- **When** `parse_verdict` is called
+- **Then** the result MUST be a `Success` whose verdict's `evidence` equals the two entries as `ClauseEvidence` values, in response order
+- **And** the same response without an `evidence` key, or with `evidence` `null`, MUST yield a verdict whose `evidence` is the empty tuple
+- **And** a response whose `evidence` is not a list, carries a non-object entry, or carries an entry whose `quote` is blank MUST yield a `Failure` whose `SpecStatedParseError` has `field` `"evidence"`
+
 ## Scenario: a delegating host's push gates on the remote executor and refuses on no verdict
 
 Given this repository's version-controlled configuration opts it in to delegating its pre-push gate
