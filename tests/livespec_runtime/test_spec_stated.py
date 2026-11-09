@@ -24,6 +24,7 @@ failure instead of a collection error.
 """
 
 import importlib
+import json
 import re
 from pathlib import Path
 
@@ -184,3 +185,92 @@ def test_a_model_is_reached_only_through_the_injected_run_model_callable() -> No
     assert sorted(imported & _MODEL_TRANSPORTS) == []
     assert len(judged.prompts) == 1
     assert len(classified.prompts) == 1
+
+
+def _verdict_text(*, evidence: object = None, with_evidence: bool = True) -> str:
+    payload: dict[str, object] = {
+        "kind": "stated",
+        "stated_by": ["## Widgets"],
+        "generalization_target": None,
+        "rationale": "the heading states it",
+    }
+    if with_evidence:
+        payload["evidence"] = evidence
+    return json.dumps(payload)
+
+
+def test_a_verdict_carries_an_evidence_tuple_that_defaults_to_empty() -> None:
+    """The verdict's `evidence` field is a tuple of `ClauseEvidence`, empty by default."""
+    module = importlib.import_module(_MODULE_NAME)
+    clause = module.ClauseEvidence(heading="## Widgets", quote="A widget MUST be blue.")
+
+    bare = module.SpecStatedVerdict(
+        kind="stated",
+        stated_by=("## Widgets",),
+        generalization_target=None,
+        rationale="the heading states it",
+    )
+    carrying = module.SpecStatedVerdict(
+        kind="stated",
+        stated_by=("## Widgets",),
+        generalization_target=None,
+        rationale="the heading states it",
+        evidence=(clause,),
+    )
+
+    assert bare.evidence == ()
+    assert carrying.evidence == (clause,)
+
+
+def test_parsing_reads_evidence_entries_in_order() -> None:
+    module = importlib.import_module(_MODULE_NAME)
+    text = _verdict_text(
+        evidence=[
+            {"heading": "## Widgets", "quote": "A widget MUST be blue."},
+            {"heading": "## Gadgets", "quote": "A gadget MAY be red."},
+        ]
+    )
+
+    verdict = module.parse_verdict(text=text, headings=("## Widgets",)).unwrap()
+
+    assert verdict.evidence == (
+        module.ClauseEvidence(heading="## Widgets", quote="A widget MUST be blue."),
+        module.ClauseEvidence(heading="## Gadgets", quote="A gadget MAY be red."),
+    )
+
+
+def test_parsing_yields_empty_evidence_when_the_key_is_absent_or_null() -> None:
+    module = importlib.import_module(_MODULE_NAME)
+
+    absent = module.parse_verdict(
+        text=_verdict_text(with_evidence=False), headings=("## Widgets",)
+    ).unwrap()
+    null = module.parse_verdict(
+        text=_verdict_text(evidence=None), headings=("## Widgets",)
+    ).unwrap()
+    empty = module.parse_verdict(text=_verdict_text(evidence=[]), headings=("## Widgets",)).unwrap()
+
+    assert (absent.evidence, null.evidence, empty.evidence) == ((), (), ())
+
+
+def test_parsing_refuses_a_non_list_or_malformed_evidence_naming_the_field() -> None:
+    module = importlib.import_module(_MODULE_NAME)
+    refused = [
+        "not a list",
+        {"heading": "## Widgets", "quote": "x"},
+        ["not an object"],
+        [{"quote": "A widget MUST be blue."}],
+        [{"heading": 7, "quote": "A widget MUST be blue."}],
+        [{"heading": "## Widgets"}],
+        [{"heading": "## Widgets", "quote": 7}],
+        [{"heading": "## Widgets", "quote": "   "}],
+        [{"heading": "## Widgets", "quote": "ok"}, {"heading": "## Widgets", "quote": ""}],
+    ]
+
+    errors = [
+        module.parse_verdict(text=_verdict_text(evidence=value), headings=("## Widgets",)).failure()
+        for value in refused
+    ]
+
+    assert [type(error) for error in errors] == [module.SpecStatedParseError] * len(refused)
+    assert [error.field for error in errors] == ["evidence"] * len(refused)
