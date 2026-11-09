@@ -1,8 +1,9 @@
 """The shared spec-stated judgement, driven through the library's public surface.
 
 Binds the three `SPECIFICATION/scenarios.md` scenarios ratified as v027 by
-proposal `spec-stated-judgement`; `tests/heading-coverage.json` carries the
-heading-to-test mapping. The consumer here is an orchestrator holding a spec
+proposal `spec-stated-judgement`, and the clause-evidence scenario ratified as
+v033 by proposal `spec-stated-clause-evidence`; `tests/heading-coverage.json`
+carries the heading-to-test mapping. The consumer here is an orchestrator holding a spec
 tree, a behaviour statement and a model it reaches itself: it hands the model
 in as `run_model` and reads consumer-visible return values — a `Success`
 carrying a `SpecStatedVerdict` or an `ItemClass`, or a `Failure` carrying a
@@ -20,6 +21,7 @@ import subprocess
 from returns.result import Failure, Success
 
 from livespec_runtime.spec_stated import (
+    ClauseEvidence,
     SpecStatedParseError,
     SpecStatedVerdict,
     classify,
@@ -296,3 +298,35 @@ def test_parse_verdict_names_the_offending_field_or_the_parse_error() -> None:
     assert ill_typed_heading.field == "stated_by"
     assert ill_typed_target.field == "generalization_target"
     assert ill_typed_rationale.field == "rationale"
+
+
+def test_parse_verdict_reads_optional_clause_evidence_in_order() -> None:
+    """Witness the scenario: evidence parses in order, defaults empty, and refuses by name.
+
+    The two quotations deliberately cite `## Gadgets` and an unknown heading
+    as well as `## Widgets`, because an entry's heading is carried as given
+    rather than checked against the supplied headings.
+    """
+    quotations = [
+        {"heading": "## Gadgets", "quote": "A gadget MUST be round."},
+        {"heading": "## Sprockets", "quote": "A widget MUST be blue."},
+    ]
+    parsed = parse_verdict(text=_response(evidence=quotations), headings=_HEADINGS)
+    absent = parse_verdict(text=_response(), headings=_HEADINGS)
+    null = parse_verdict(text=_response(evidence=None), headings=_HEADINGS)
+    not_a_list = _refusal(response=_response(evidence={"heading": "## Widgets", "quote": "x"}))
+    non_object = _refusal(response=_response(evidence=["## Widgets"]))
+    blank_quote = _refusal(response=_response(evidence=[{"heading": "## Widgets", "quote": "  "}]))
+
+    assert isinstance(parsed, Success)
+    assert parsed.unwrap().evidence == (
+        ClauseEvidence(heading="## Gadgets", quote="A gadget MUST be round."),
+        ClauseEvidence(heading="## Sprockets", quote="A widget MUST be blue."),
+    )
+    assert isinstance(absent, Success)
+    assert absent.unwrap().evidence == ()
+    assert isinstance(null, Success)
+    assert null.unwrap().evidence == ()
+    assert not_a_list.field == "evidence"
+    assert non_object.field == "evidence"
+    assert blank_quote.field == "evidence"

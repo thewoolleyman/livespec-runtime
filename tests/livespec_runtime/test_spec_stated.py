@@ -46,6 +46,7 @@ _MODULE_PATH = Path(__file__).resolve().parents[2] / "livespec_runtime" / "spec_
 # waiver that stood while the section preceded the module is gone.
 _RATIFIED_SURFACE = (
     "CLASSIFY_PROMPT",
+    "ClauseEvidence",
     "ItemClass",
     "JUDGE_PROMPT",
     "ModelRunner",
