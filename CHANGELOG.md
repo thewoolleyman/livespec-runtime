@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.30.0...v0.30.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* **ci:** judge the doc-only staged-registry match from a full-input reader ([f99aeb0](https://github.com/thewoolleyman/livespec-runtime/commit/f99aeb06215a3b594c3c38da17dfaac9acd62c04))
+
 ## [0.30.0](https://github.com/thewoolleyman/livespec-runtime/compare/v0.29.2...v0.30.0) (2026-11-09)
 
 
