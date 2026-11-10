@@ -15,7 +15,10 @@ just check-comment-line-anchors
 just check-agents-ai-references-resolve
 just check-plan-anchor-declared
 just check-vendor-manifest
-if git diff --cached --name-only | grep -qx 'tests/heading-coverage.json'; then
+# The reader consumes the whole staged list (no `grep -q`): under pipefail an
+# early-exiting reader closes its pipe and `git diff` takes SIGPIPE, which would
+# report a staged registry as absent on a list larger than the pipe buffer.
+if git diff --cached --name-only | grep -x 'tests/heading-coverage.json' >/dev/null; then
     echo ":: staged changeset edits tests/heading-coverage.json — arming the TODO-ownership release tier for this commit"
     LIVESPEC_FAIL_IF_HEADING_COVERAGE_TODOS_EXIST=true just check-no-todo-registry
 else
