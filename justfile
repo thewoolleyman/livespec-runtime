@@ -589,3 +589,15 @@ check-work-item-interpolation-delimiters:
 
 check-work-item-status-vocabulary:
     uv run python -m livespec_dev_tooling.checks.work_item_status_vocabulary
+
+check-codex-hook-reconcilable:
+    uv run python -m livespec_dev_tooling.checks.codex_hook_reconcilable
+
+check-delegated-gate-check-suite:
+    uv run python -m livespec_dev_tooling.checks.delegated_gate_check_suite
+
+check-delegated-job-authority-skip:
+    uv run python -m livespec_dev_tooling.checks.delegated_job_authority_skip
+
+check-rule-26-keep-out:
+    uv run python -m livespec_dev_tooling.checks.rule_26_keep_out
