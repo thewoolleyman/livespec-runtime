@@ -707,8 +707,11 @@ itself (its `dev-tooling/reap_stale_worktrees.py` imports
 - `detect_stale_worktrees(*, repo_path: Path, runner: CommandRunner |
   None = None) -> list[GitWorktree]` — the REMOVABLE stale-worktree
   candidate set for `repo_path`. It holds a worktree whose work has
-  landed only when a plain `git worktree remove` would accept it, and
-  it holds worktree metadata git reports prunable. It MUST NOT return a
+  landed only when that worktree's `git status --porcelain` is empty,
+  and it holds worktree metadata git reports prunable. It excludes
+  only the primary checkout: the worktree the caller is standing in,
+  and a locked worktree, can appear, and skipping them is the
+  consuming reaper's action-layer guard, not this function's. It MUST NOT return a
   worktree whose `git status --porcelain` shows any entry, tracked or
   untracked, because its consumer removes what it returns. A landed
   worktree whose only dirt is untracked is still REPORTED, by
