@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.2](https://github.com/thewoolleyman/livespec-runtime/compare/v0.30.1...v0.30.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* exclude untracked worktrees from reaper candidates ([f7ffc49](https://github.com/thewoolleyman/livespec-runtime/commit/f7ffc49c7dcd7f32e22dca39042e349ddb584fcc))
+
 ## [0.30.1](https://github.com/thewoolleyman/livespec-runtime/compare/v0.30.0...v0.30.1) (2026-11-10)
 
 
