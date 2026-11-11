@@ -39,6 +39,14 @@ full. Notable inherited rules (NOT re-stated, listed for orientation):
 - Lefthook pre-commit / commit-msg / pre-push step ordering.
 - Keyword-only arguments; frozen kw-only dataclasses.
 - Domain errors vs bugs split.
+- Hold-label disarm: because this repository carries
+  `.github/workflows/auto-enable-merge.yml`, it MUST also carry
+  `.github/workflows/disarm-on-hold-label.yml`, byte-identical to livespec's
+  root copy, which turns a pull request's auto-merge off when the
+  `do-not-merge` label is added to it. The behaviour, and the rule that every
+  fleet member carrying `auto-enable-merge.yml` carries it, are livespec's
+  `non-functional-requirements.md` §"Shared content sync — copier template"
+  and are not restated here.
 
 ## Task-runner discipline
 
