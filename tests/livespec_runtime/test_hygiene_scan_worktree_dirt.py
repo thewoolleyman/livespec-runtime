@@ -24,10 +24,16 @@ never be proposed for removal.
 
 from pathlib import Path
 
+import pytest
 from returns.io import IOResult, IOSuccess
 
 from livespec_runtime.attention_item import AttentionItem
-from livespec_runtime.hygiene_scan import CommandResult, CommandUnavailable, scan_hygiene
+from livespec_runtime.hygiene_scan import (
+    CommandResult,
+    CommandUnavailable,
+    detect_stale_worktrees,
+    scan_hygiene,
+)
 
 __all__: list[str] = []
 
@@ -80,6 +86,30 @@ def test_scan_hygiene_flags_a_worktree_whose_only_dirt_is_untracked() -> None:
         ".livespec-core/, .venv/."
     )
     assert items[0].handoff.command == _FORCED_REMOVE
+
+
+@pytest.mark.parametrize(
+    "untracked",
+    [
+        "?? authored.txt\n",
+        _VENDORED_DIRT,
+    ],
+)
+def test_detect_stale_worktrees_excludes_landed_worktrees_with_untracked_entries(
+    *, untracked: str
+) -> None:
+    """The force-removing consumer receives only plainly removable worktrees."""
+    worktrees = detect_stale_worktrees(
+        repo_path=Path("/repo"),
+        runner=_runner(
+            extra={
+                _STATUS: CommandResult(stdout=untracked),
+                _ANCESTOR: CommandResult(),
+            }
+        ).run,
+    )
+
+    assert worktrees == []
 
 
 def test_scan_hygiene_names_only_the_first_untracked_entries_and_counts_the_rest() -> None:
@@ -163,7 +193,17 @@ def test_scan_hygiene_leaves_a_worktree_with_an_unreadable_status_alone() -> Non
 
 def _scan(*, extra: dict[tuple[str, ...], CommandResult]) -> list[AttentionItem]:
     """Run `scan_hygiene` over one secondary worktree, PR reads off."""
-    runner = _FakeRunner(
+    runner = _runner(extra=extra)
+    return scan_hygiene(
+        repo_path=Path("/repo"),
+        repo_name="runtime",
+        include_prs=False,
+        runner=runner.run,
+    )
+
+
+def _runner(*, extra: dict[tuple[str, ...], CommandResult]) -> "_FakeRunner":
+    return _FakeRunner(
         {
             ("git", "-C", "/repo", "worktree", "list", "--porcelain"): CommandResult(
                 stdout=_LISTING
@@ -188,12 +228,6 @@ def _scan(*, extra: dict[tuple[str, ...], CommandResult]) -> list[AttentionItem]
             ): CommandResult(stdout="master\x00base\n"),
             **extra,
         }
-    )
-    return scan_hygiene(
-        repo_path=Path("/repo"),
-        repo_name="runtime",
-        include_prs=False,
-        runner=runner.run,
     )
 
 
