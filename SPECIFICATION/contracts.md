@@ -705,9 +705,17 @@ itself (its `dev-tooling/reap_stale_worktrees.py` imports
   both orchestrators consume this signature across a repo boundary; it
   MUST NOT be taken as a side effect of putting a leaf on the railway.
 - `detect_stale_worktrees(*, repo_path: Path, runner: CommandRunner |
-  None = None) -> list[GitWorktree]` — the stale-worktree CANDIDATE set
-  for `repo_path`. The second signature held for the same cross-repo
-  reason: `livespec`'s worktree reaper consumes it directly.
+  None = None) -> list[GitWorktree]` — the REMOVABLE stale-worktree
+  candidate set for `repo_path`. It holds a worktree whose work has
+  landed only when a plain `git worktree remove` would accept it, and
+  it holds worktree metadata git reports prunable. It MUST NOT return a
+  worktree whose `git status --porcelain` shows any entry, tracked or
+  untracked, because its consumer removes what it returns. A landed
+  worktree whose only dirt is untracked is still REPORTED, by
+  `stale_worktree_findings` and `scan_hygiene`, with the forced
+  removal command for an operator. The second signature held for the
+  same cross-repo reason: `livespec`'s worktree reaper consumes it
+  directly.
 - `stale_worktree_findings(*, context: ScanContext) ->
   IOResult[list[HygieneScanFinding], CommandUnavailable]` — the same
   detection expressed as findings, on the railway. It takes a
