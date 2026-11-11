@@ -76,7 +76,7 @@
   // local sibling clone that CI runners do not have.
   "external_references": {
     "livespec-dev-tooling": ["§\"Delegated pre-push gate\""],
-    "livespec": ["§\"Enforcement-suite invocation\""]
+    "livespec": ["§\"Enforcement-suite invocation\"", "§\"Shared content sync — copier template\""]
   },
   "spec_governance": {
     "propose_change_mode": "batch",
