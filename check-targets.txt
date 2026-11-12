@@ -70,9 +70,15 @@ check-work-item-interpolation-delimiters
 check-work-item-status-vocabulary
 check-wrapper-shape
 check-no-workflow-edits  # purity: world-reading  # authority: ledger
-check-lint
-check-format
-check-types
-check-spec-governance-default-block
-check-coverage
-check-doctor-static
+# Ruff reads this committed tree and the versioned lint configuration only.
+check-lint  # purity: tree-pure
+# Ruff's formatter reads this committed tree and the versioned format configuration only.
+check-format  # purity: tree-pure
+# Pyright's project, source and lockfile inputs are all committed with this tree.
+check-types  # purity: tree-pure
+# The governance default verifier reads only this tree's .livespec.jsonc.
+check-spec-governance-default-block  # purity: tree-pure
+# Its coverage data is produced by the preceding tree-pure coverage member in this aggregate.
+check-coverage  # purity: tree-pure
+# Resolves livespec core from an environment override or the host plugin cache.
+check-doctor-static  # purity: world-reading
