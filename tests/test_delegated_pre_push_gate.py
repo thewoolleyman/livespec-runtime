@@ -5,11 +5,22 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from livespec_dev_tooling import check_purity
+from returns.pipeline import is_successful
+from returns.unsafe import unsafe_perform_io
+
 _ROOT = Path(__file__).parent.parent
 _DELEGATE_MODULE = "livespec_dev_tooling.gate_remote_delegate"
+_CHECK_SCRIPT = _ROOT / ".github/scripts/check.sh"
 
 
 _TAG_PIN = re.compile(r'^livespec-dev-tooling = \{[^}]*\btag = "v\d+\.\d+\.\d+"', re.MULTILINE)
+_TARGET = re.compile(r"^    (check-[a-z0-9-]+)$", re.MULTILINE)
+
+
+def _aggregate_targets() -> tuple[str, ...]:
+    """Return the check aggregate's members in their declared execution order."""
+    return tuple(_TARGET.findall(_CHECK_SCRIPT.read_text(encoding="utf-8")))
 
 
 def _declares_delegated_gate(*, pyproject: str) -> bool:
@@ -68,3 +79,22 @@ def test_pre_push_execs_the_delegated_client_before_the_local_aggregate() -> Non
     assert delegate in script
     assert script.index("livespec_dev_tooling.green_token check") < script.index(delegate)
     assert script.index(delegate) < script.rindex("just check")
+
+
+def test_every_aggregate_member_carries_a_purity_declaration() -> None:
+    """A matching green token may memoize only members declared tree-pure."""
+    outcome = check_purity.audit_check_purity(targets=_aggregate_targets(), repo_root=_ROOT)
+
+    assert is_successful(outcome)
+    assert unsafe_perform_io(outcome.unwrap()).undeclared == ()
+
+
+def test_aggregate_refuses_to_run_with_an_undeclared_member() -> None:
+    """The aggregate delegates the fail-closed declaration audit before its member loop."""
+    script = _CHECK_SCRIPT.read_text(encoding="utf-8")
+    declaration_audit = (
+        'uv run python -m livespec_dev_tooling.green_token undeclared "${targets[@]}"'
+    )
+
+    assert declaration_audit in script
+    assert script.index(declaration_audit) < script.index('for target in "${targets[@]}"')

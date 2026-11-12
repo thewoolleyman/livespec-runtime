@@ -86,6 +86,11 @@ targets=(
 
 failed=()
 ran=0
+if ! uv run python -m livespec_dev_tooling.green_token undeclared "${targets[@]}"; then
+    echo "ERROR: check aggregate has member(s) without a purity declaration" >&2
+    exit 1
+fi
+
 for target in "${targets[@]}"; do
     skip_this=0
     for skipped in "${skip_targets[@]}"; do
