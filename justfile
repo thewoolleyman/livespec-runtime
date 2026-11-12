@@ -601,3 +601,6 @@ check-delegated-job-authority-skip:
 
 check-rule-26-keep-out:
     uv run python -m livespec_dev_tooling.checks.rule_26_keep_out
+
+check-ci-single-container-image:
+    uv run python -m livespec_dev_tooling.checks.ci_single_container_image
