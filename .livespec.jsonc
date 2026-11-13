@@ -108,17 +108,17 @@
   "cross_repo_targets": {
     "livespec-dev-tooling": {
       "github_url": "https://github.com/thewoolleyman/livespec-dev-tooling",
-      "local_clone": "/data/projects/livespec-dev-tooling",
+      "local_clone": "~/workspace/livespec-dev-tooling",
       "default_branch": "master"
     },
     "livespec": {
       "github_url": "https://github.com/thewoolleyman/livespec",
-      "local_clone": "/data/projects/livespec",
+      "local_clone": "~/workspace/livespec",
       "default_branch": "master"
     },
     "livespec-orchestrator-beads-fabro": {
       "github_url": "https://github.com/thewoolleyman/livespec-orchestrator-beads-fabro",
-      "local_clone": "/data/projects/livespec-orchestrator-beads-fabro",
+      "local_clone": "~/workspace/livespec-orchestrator-beads-fabro",
       "default_branch": "master"
     }
   },
