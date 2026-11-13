@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.4](https://github.com/thewoolleyman/livespec-runtime/compare/v0.30.3...v0.30.4) (2026-11-13)
+
+
+### Bug Fixes
+
+* **work_items:** admit needs-host-only-input to the FactorySafety enum ([d5dec7d](https://github.com/thewoolleyman/livespec-runtime/commit/d5dec7d838a8b3b72cf533a71b48e8abbc865cb5))
+
 ## [0.30.3](https://github.com/thewoolleyman/livespec-runtime/compare/v0.30.2...v0.30.3) (2026-11-13)
 
 
