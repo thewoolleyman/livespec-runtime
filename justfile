@@ -299,6 +299,11 @@ check-branch-protection-alignment:
 check-check-coverage-incremental *args:
     uv run python -m livespec_dev_tooling.checks.check_coverage_incremental "$@"
 
+# Advisory Rule-26 report; deliberately outside the check aggregate and hooks.
+[positional-arguments]
+mutation-kill-matrix *flags:
+    uv run python -m livespec_dev_tooling.mutation_kill_matrix_runner . "$@"
+
 # Always invoked plainly; the module self-manages its RUN/SKIP lever
 # (epic li-cvaudit, cvtodo). `LIVESPEC_RUN_MUTATION` unset → the check
 # logs "skipped" and exits 0; set to a non-empty value (CI sets it to

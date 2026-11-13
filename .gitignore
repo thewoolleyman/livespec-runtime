@@ -42,6 +42,7 @@ __pycache__/
 .pyright/
 .mutmut-cache/
 mutants/
+reports/
 htmlcov/
 
 ### Build artifacts

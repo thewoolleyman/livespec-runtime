@@ -36,6 +36,28 @@ dependencies = [
 livespec-runtime = { git = "https://github.com/thewoolleyman/livespec-runtime.git", tag = "v0.30.4" } # x-release-please-version
 ```
 
+## Mutation kill matrix
+
+`just mutation-kill-matrix` runs the shared Rule-26 engine on demand over
+`livespec_runtime/`, excluding the vendored CC0 fractional-indexing port. It
+collects the repository's tests and writes `reports/mutation-kill-matrix.json`,
+including each mutant's killers, survivors, baseline failures, unapplied
+coverage and redundancy candidates. The first-party wrapper around that port
+is included.
+
+Engine flags pass through, for example `just mutation-kill-matrix --help`.
+The result cache is `reports/mutation-kill-matrix-cache.json`; passing
+`--previous-report <path>` also writes
+`reports/mutation-kill-matrix-changes.json`. Reports and worker outputs are
+generated artifacts; retain a report and its checksum with the plan evidence.
+
+On fleet hosts, execute the real run through an approved persistent cluster
+Job, with the released engine and target revision recorded. Configuration
+alone is not a completed run. This recipe is advisory and runs only on demand;
+it is absent from the check aggregate, commit and push hooks, and required PR
+CI. A redundancy candidate still needs intent review and the plan's pruning
+safeguards before removal.
+
 ## Governance
 
 - The `SPECIFICATION/` tree at the repo root is the live spec for this library, governed by livespec via its own seeded template (per epic `li-6d2wpj` Phase: seed). Until seeded, livespec sub-commands targeting this tree fail-fast with a precondition error directing the user to seed first.
