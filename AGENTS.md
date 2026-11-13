@@ -232,8 +232,8 @@ stopping points.
 1. Confirm the primary checkout before editing:
 
    ```bash
-   git -C /data/projects/livespec-runtime config --get livespec.primaryPath
-   git -C /data/projects/livespec-runtime status --short --branch
+   git -C "$HOME/workspace/livespec-runtime" config --get livespec.primaryPath
+   git -C "$HOME/workspace/livespec-runtime" status --short --branch
    ```
 
 2. If the change will modify tracked files, create a dedicated worktree
@@ -247,7 +247,7 @@ stopping points.
    mise exec -- just worktree-create <branch>
    ```
 
-   A raw `mise exec -- git -C /data/projects/livespec-runtime worktree add -b <branch>
+   A raw `mise exec -- git -C "$HOME/workspace/livespec-runtime" worktree add -b <branch>
    "$HOME/.worktrees/livespec-runtime/<branch>" master` also yields a usable
    worktree — the pre-commit and pre-push hooks install the pack before
    any gate reads it, so the worktree can commit and push with no
@@ -264,7 +264,7 @@ stopping points.
    failure.
 4. Open a PR, wait for required checks, and merge through the PR using
    the repo's rebase-merge discipline.
-5. After merge, refresh `/data/projects/livespec-runtime` to
+5. After merge, refresh `~/workspace/livespec-runtime` to
    `origin/master`, remove the feature worktree, delete the local
    branch, and verify the primary checkout is clean on `master`.
 
