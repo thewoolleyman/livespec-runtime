@@ -206,6 +206,22 @@ def test_parse_cross_repo_manifest_full_target() -> None:
     assert target.default_branch == "main"
 
 
+def test_parse_cross_repo_manifest_expands_home_in_local_clone(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("HOME", str(tmp_path))
+    manifest = parse_cross_repo_manifest(
+        parsed={
+            "impl": {
+                "github_url": "https://github.com/owner/impl",
+                "local_clone": "~/workspace/impl",
+            },
+        },
+    )
+    assert manifest.targets["impl"].local_clone == tmp_path / "workspace" / "impl"
+
+
 def test_parse_cross_repo_manifest_target_missing_github_url_raises() -> None:
     with pytest.raises(CrossRepoSchemaError, match="missing required field 'github_url'"):
         _ = parse_cross_repo_manifest(parsed={"impl": {"local_clone": "/tmp/impl"}})
