@@ -310,32 +310,34 @@ covered_trees = []
 # `Callable[[WorkItem], tuple]` and never `None` or a `Result`, and every
 # consumer hands its return straight to `sorted(..., key=...)`, so no consumer
 # guards it and no consumer behaviour changes.
+# Mutmut 3.2.3 uses the older `toml` reader on Python 3.10. Apostrophes in
+# inline-table strings use equivalent Unicode escapes so it preserves all rows.
 cross_repo_public_api = [
-    { file = "livespec_runtime/attention_item.py", function = "validate_attention_item_id", reason = "product import: livespec-orchestrator-beads-fabro's commands/_needs_attention_conformance.py, plus three of its test modules: test_needs_attention_conformance.py, test_needs_attention_currency_staleness.py and test_needs_attention_release_adoption.py" },
-    { file = "livespec_runtime/credentials.py", function = "decide_credentials", reason = "product import: livespec-orchestrator-beads-fabro's .claude-plugin/scripts/bin/_bootstrap.py" },
-    { file = "livespec_runtime/credentials.py", function = "wrapper_launch_failure", reason = "product import: livespec-orchestrator-beads-fabro's .claude-plugin/scripts/bin/_bootstrap.py" },
-    { file = "livespec_runtime/cross_repo/types.py", function = "parse_cross_repo_manifest", reason = "product import by THREE members: livespec-orchestrator-beads-fabro's commands/_cross_repo.py, livespec-orchestrator-git-jsonl's io/_cross_repo.py, and livespec's parse/cross_repo.py" },
+    { file = "livespec_runtime/attention_item.py", function = "validate_attention_item_id", reason = "product import: livespec-orchestrator-beads-fabro\u0027s commands/_needs_attention_conformance.py, plus three of its test modules: test_needs_attention_conformance.py, test_needs_attention_currency_staleness.py and test_needs_attention_release_adoption.py" },
+    { file = "livespec_runtime/credentials.py", function = "decide_credentials", reason = "product import: livespec-orchestrator-beads-fabro\u0027s .claude-plugin/scripts/bin/_bootstrap.py" },
+    { file = "livespec_runtime/credentials.py", function = "wrapper_launch_failure", reason = "product import: livespec-orchestrator-beads-fabro\u0027s .claude-plugin/scripts/bin/_bootstrap.py" },
+    { file = "livespec_runtime/cross_repo/types.py", function = "parse_cross_repo_manifest", reason = "product import by THREE members: livespec-orchestrator-beads-fabro\u0027s commands/_cross_repo.py, livespec-orchestrator-git-jsonl\u0027s io/_cross_repo.py, and livespec\u0027s parse/cross_repo.py" },
     # Arrived with livespec-orchestrator-beads-fabro's condensed spec-stated judgement
     # (078983bb3, 2026-10-22), after this repo's last green fleet-conformance run. GUARD
     # READ BEFORE DECLARING: the consumer returns `judge(...)`'s Result unchanged to its
     # own callers, with no `is None` guard, so the Result-vs-None hazard does not apply.
-    { file = "livespec_runtime/spec_stated.py", function = "judge", reason = "product import: livespec-orchestrator-beads-fabro's commands/_spec_tree_condensation.py (078983bb3, 2026-10-22) calls `judge(...)` and returns its Result to the drift run and the ledger-intent scan; no `is None` guard at the site" },
+    { file = "livespec_runtime/spec_stated.py", function = "judge", reason = "product import: livespec-orchestrator-beads-fabro\u0027s commands/_spec_tree_condensation.py (078983bb3, 2026-10-22) calls `judge(...)` and returns its Result to the drift run and the ledger-intent scan; no `is None` guard at the site" },
     # READ BEFORE DECLARING: the sibling test only reads `classify.__name__` to assert the
     # skill prose names the call; no Result is consumed, so the Result-vs-None hazard does
     # not apply.
-    { file = "livespec_runtime/spec_stated.py", function = "classify", reason = "test import: livespec-orchestrator-git-jsonl's tests/prompts/test_capture_work_item_spec_stated_classification.py imports `CLASSIFY_PROMPT, ItemClass, classify` from livespec_runtime.spec_stated (d6c82ed7, 2026-10-25) and asserts the capture-work-item skill names `classify(`" },
-    { file = "livespec_runtime/spec_governance.py", function = "documented_defaults", reason = "product import: livespec's .claude-plugin/scripts/livespec/spec_governance/default_block.py" },
-    { file = "livespec_runtime/spec_governance.py", function = "manifest_rows", reason = "product import by livespec's .claude-plugin/scripts/livespec/spec_governance/registry.py and dev-tooling/checks/spec_governance_manifest.py" },
-    { file = "livespec_runtime/spec_governance.py", function = "verify_default_block", reason = "product import by livespec's .claude-plugin/scripts/livespec/spec_governance/default_block.py and dev-tooling/checks/spec_governance_template.py" },
-    { file = "livespec_runtime/work_items/lifecycle.py", function = "is_item_ready", reason = "product import: livespec-orchestrator-beads-fabro's _dispatcher_loop_selection.py, list_work_items.py and next.py" },
-    { file = "livespec_runtime/work_items/lifecycle.py", function = "lane_of", reason = "product import: livespec-orchestrator-beads-fabro's _needs_attention_work_items.py and list_work_items.py, and livespec-orchestrator-git-jsonl's commands/attention_impl.py" },
-    { file = "livespec_runtime/work_items/lifecycle.py", function = "ready_sort_key", reason = "product import: livespec-orchestrator-beads-fabro's commands/_dispatcher_loop_selection.py, commands/_dispatcher_rework_admission.py, commands/next.py and commands/rebalance_ranks.py" },
-    { file = "livespec_runtime/work_items/rank.py", function = "key_between", reason = "product import: livespec-orchestrator-beads-fabro's _orchestrator_gap_capture.py and groom.py, and livespec-orchestrator-git-jsonl's migration/beads_to_jsonl.py" },
-    { file = "livespec_runtime/work_items/rank.py", function = "n_keys_between", reason = "product import: livespec-orchestrator-beads-fabro's commands/rebalance_ranks.py, plus two of its test modules" },
-    { file = "livespec_runtime/work_items/reduce.py", function = "materialize_work_items", reason = "product import: both orchestrators' store.py" },
-    { file = "livespec_runtime/work_items/reduce.py", function = "random_id_suffix", reason = "product import: both orchestrators' _ids.py" },
-    { file = "livespec_runtime/work_items/reduce.py", function = "reduce_work_item_heads", reason = "product import: livespec-orchestrator-git-jsonl's store.py" },
-    { file = "livespec_runtime/work_items/reduce.py", function = "work_item_record_identity", reason = "product import: livespec-orchestrator-git-jsonl's store.py" },
+    { file = "livespec_runtime/spec_stated.py", function = "classify", reason = "test import: livespec-orchestrator-git-jsonl\u0027s tests/prompts/test_capture_work_item_spec_stated_classification.py imports `CLASSIFY_PROMPT, ItemClass, classify` from livespec_runtime.spec_stated (d6c82ed7, 2026-10-25) and asserts the capture-work-item skill names `classify(`" },
+    { file = "livespec_runtime/spec_governance.py", function = "documented_defaults", reason = "product import: livespec\u0027s .claude-plugin/scripts/livespec/spec_governance/default_block.py" },
+    { file = "livespec_runtime/spec_governance.py", function = "manifest_rows", reason = "product import by livespec\u0027s .claude-plugin/scripts/livespec/spec_governance/registry.py and dev-tooling/checks/spec_governance_manifest.py" },
+    { file = "livespec_runtime/spec_governance.py", function = "verify_default_block", reason = "product import by livespec\u0027s .claude-plugin/scripts/livespec/spec_governance/default_block.py and dev-tooling/checks/spec_governance_template.py" },
+    { file = "livespec_runtime/work_items/lifecycle.py", function = "is_item_ready", reason = "product import: livespec-orchestrator-beads-fabro\u0027s _dispatcher_loop_selection.py, list_work_items.py and next.py" },
+    { file = "livespec_runtime/work_items/lifecycle.py", function = "lane_of", reason = "product import: livespec-orchestrator-beads-fabro\u0027s _needs_attention_work_items.py and list_work_items.py, and livespec-orchestrator-git-jsonl\u0027s commands/attention_impl.py" },
+    { file = "livespec_runtime/work_items/lifecycle.py", function = "ready_sort_key", reason = "product import: livespec-orchestrator-beads-fabro\u0027s commands/_dispatcher_loop_selection.py, commands/_dispatcher_rework_admission.py, commands/next.py and commands/rebalance_ranks.py" },
+    { file = "livespec_runtime/work_items/rank.py", function = "key_between", reason = "product import: livespec-orchestrator-beads-fabro\u0027s _orchestrator_gap_capture.py and groom.py, and livespec-orchestrator-git-jsonl\u0027s migration/beads_to_jsonl.py" },
+    { file = "livespec_runtime/work_items/rank.py", function = "n_keys_between", reason = "product import: livespec-orchestrator-beads-fabro\u0027s commands/rebalance_ranks.py, plus two of its test modules" },
+    { file = "livespec_runtime/work_items/reduce.py", function = "materialize_work_items", reason = "product import: both orchestrators\u0027 store.py" },
+    { file = "livespec_runtime/work_items/reduce.py", function = "random_id_suffix", reason = "product import: both orchestrators\u0027 _ids.py" },
+    { file = "livespec_runtime/work_items/reduce.py", function = "reduce_work_item_heads", reason = "product import: livespec-orchestrator-git-jsonl\u0027s store.py" },
+    { file = "livespec_runtime/work_items/reduce.py", function = "work_item_record_identity", reason = "product import: livespec-orchestrator-git-jsonl\u0027s store.py" },
 ]
 
 # ---------------------------------------------------------------------------
@@ -361,15 +363,15 @@ cross_repo_public_api = [
 # could not obtain an answer". Fallible I/O, a parse, and a guard tripping are
 # the three shapes that make it the latter.
 total_absence_returns = [
-    { file = "livespec_runtime/github_budget_client_support.py", function = "header_value", reason = "A case-insensitive lookup of one header in a Mapping the caller ALREADY HOLDS. Total, no I/O, nothing fallible: None means 'no header of that name is present', an answer about the mapping's contents rather than a failure to obtain them. The HTTP exchange that could fail happened in the caller, which is why this helper takes headers rather than fetching them." },
-    { file = "livespec_runtime/github_budget_client_support.py", function = "mapping_option", reason = "Reads one option out of an ALREADY-PARSED options mapping. Total, no I/O, nothing fallible: None means 'that option is not set'. ⚠️ The former RESIDUAL is CLOSED (livespec-runtime-8zu) and was never about the None: the `cast` used to be unchecked, so an option that IS set but is not a Mapping[str, str] flowed on wrongly-typed. It now RAISES MisshapedGithubBudgetOptionError — the same direction documented_defaults took below — so the mis-shape is NOT folded into this None and the absence keeps exactly one meaning." },
-    { file = "livespec_runtime/github_budget_measurement.py", function = "snapshot_from_headers", reason = "Reads the budget snapshot out of a response's headers the caller ALREADY HOLDS — the same `header_value` shape one file over, and for the same reason: the HTTP exchange that could fail happened in the caller. Total, no I/O, nothing fallible. ⚠️ THE None IS LOAD-BEARING AND ITS ONE MEANING IS 'THIS RESPONSE REPORTED NO BUDGET', which the function's own docstring separates from a MEASURED zero: `remaining: 0` says the budget is spent, absence says nobody measured. Folding the two would make every unmeasurable read — a `gh` subcommand run without its header stream, a command that never spawned — look like primary exhaustion, and the client would then refuse deferrable work and back off until a reset it never read. Every route to None is that one absence: the headers mapping does not carry the full `x-ratelimit-*` set. The one fallible step, the `int()` parse in `parse_rate_limit_snapshot`, is reached only AFTER that superset test passes and RAISES rather than returning None." },
+    { file = "livespec_runtime/github_budget_client_support.py", function = "header_value", reason = "A case-insensitive lookup of one header in a Mapping the caller ALREADY HOLDS. Total, no I/O, nothing fallible: None means \u0027no header of that name is present\u0027, an answer about the mapping\u0027s contents rather than a failure to obtain them. The HTTP exchange that could fail happened in the caller, which is why this helper takes headers rather than fetching them." },
+    { file = "livespec_runtime/github_budget_client_support.py", function = "mapping_option", reason = "Reads one option out of an ALREADY-PARSED options mapping. Total, no I/O, nothing fallible: None means \u0027that option is not set\u0027. ⚠️ The former RESIDUAL is CLOSED (livespec-runtime-8zu) and was never about the None: the `cast` used to be unchecked, so an option that IS set but is not a Mapping[str, str] flowed on wrongly-typed. It now RAISES MisshapedGithubBudgetOptionError — the same direction documented_defaults took below — so the mis-shape is NOT folded into this None and the absence keeps exactly one meaning." },
+    { file = "livespec_runtime/github_budget_measurement.py", function = "snapshot_from_headers", reason = "Reads the budget snapshot out of a response\u0027s headers the caller ALREADY HOLDS — the same `header_value` shape one file over, and for the same reason: the HTTP exchange that could fail happened in the caller. Total, no I/O, nothing fallible. ⚠️ THE None IS LOAD-BEARING AND ITS ONE MEANING IS \u0027THIS RESPONSE REPORTED NO BUDGET\u0027, which the function\u0027s own docstring separates from a MEASURED zero: `remaining: 0` says the budget is spent, absence says nobody measured. Folding the two would make every unmeasurable read — a `gh` subcommand run without its header stream, a command that never spawned — look like primary exhaustion, and the client would then refuse deferrable work and back off until a reset it never read. Every route to None is that one absence: the headers mapping does not carry the full `x-ratelimit-*` set. The one fallible step, the `int()` parse in `parse_rate_limit_snapshot`, is reached only AFTER that superset test passes and RAISES rather than returning None." },
 
     # documented_defaults became declarable by CONVERSION, not by argument: c795205
     # lifted its malformed-block failure out into an exception, leaving a None with
     # exactly one meaning. ⚠️ It does NOT relieve verify_default_block, which is
     # convicted by that raise propagating through an unguarded call, not by this None.
-    { file = "livespec_runtime/spec_governance.py", function = "documented_defaults", reason = "Extracts the commented `spec_governance` object from source TEXT the caller already holds. ⚠️ DECLARABLE ONLY SINCE c795205 (livespec-runtime-922) -- BEFORE that commit this None ALSO covered an UNTERMINATED comment block, which is a malformed-input FAILURE, and the entry would have been refused. That case now raises UnterminatedGovernanceBlockError, so it no longer reaches the return. Every REMAINING route to None is an absence: (1) _comment_block finds no `spec_governance` block at all -- this file documents no defaults; (2) the parsed `spec_governance` value is not a dict -- an answer about an ALREADY-PARSED value's shape, the jsonio.as_object family; (3) the block parses to an EMPTY dict, which documents nothing. The one fallible step, json.loads over the uncommented block, RAISES JSONDecodeError rather than returning None, and a test added in c795205 pins that. No I/O -- the read happened in the caller." },
+    { file = "livespec_runtime/spec_governance.py", function = "documented_defaults", reason = "Extracts the commented `spec_governance` object from source TEXT the caller already holds. ⚠️ DECLARABLE ONLY SINCE c795205 (livespec-runtime-922) -- BEFORE that commit this None ALSO covered an UNTERMINATED comment block, which is a malformed-input FAILURE, and the entry would have been refused. That case now raises UnterminatedGovernanceBlockError, so it no longer reaches the return. Every REMAINING route to None is an absence: (1) _comment_block finds no `spec_governance` block at all -- this file documents no defaults; (2) the parsed `spec_governance` value is not a dict -- an answer about an ALREADY-PARSED value\u0027s shape, the jsonio.as_object family; (3) the block parses to an EMPTY dict, which documents nothing. The one fallible step, json.loads over the uncommented block, RAISES JSONDecodeError rather than returning None, and a test added in c795205 pins that. No I/O -- the read happened in the caller." },
 ]
 
 [tool.ruff]
@@ -497,6 +499,13 @@ reportUnnecessaryTypeIgnoreComment = "error"
 reportUnnecessaryCast = "error"
 reportUnnecessaryIsInstance = "error"
 reportImplicitStringConcatenation = "error"
+
+# Advisory Rule-26 catalogue; never part of check or commit/push hooks.
+[tool.mutmut]
+paths_to_mutate = ["livespec_runtime/"]
+# This CC0 port is third-party code, as declared by the existing coverage
+# exclusions. Its first-party wrapper remains in the mutant catalogue.
+do_not_mutate = ["livespec_runtime/work_items/_fractional_indexing.py"]
 
 # ---------------------------------------------------------------------------
 # Pytest — pytest-cov + pytest-icdiff wiring.
