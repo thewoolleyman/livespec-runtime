@@ -60,6 +60,7 @@ _FACTORY_SAFETY_REASONS: tuple[str | None, ...] = (
     "needs-host-secrets",
     "mutates-host-machinery",
     "needs-privileged-host",
+    "needs-host-only-input",
     None,
 )
 
@@ -210,6 +211,7 @@ def test_factory_safety_alias_carries_ratified_reasons() -> None:
         "needs-host-secrets",
         "mutates-host-machinery",
         "needs-privileged-host",
+        "needs-host-only-input",
     }
 
 
