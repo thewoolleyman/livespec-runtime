@@ -338,6 +338,14 @@ the full cross-repo cutover record.
 Situational operational notes live under `.ai/`, loaded on demand;
 `check-agents-ai-references-resolve` enforces that every reference resolves.
 
+- Read the fleet's distributed SendMessage protocol
+  (https://github.com/thewoolleyman/livespec-dev-tooling/blob/master/%2Eai/distributed-sendmessage-protocol.md)
+  BEFORE messaging, asking, directing or answering another agent session on
+  any host, and before running `herdr pane send-text`, `herdr pane run`,
+  `herdr agent prompt` or `tmux send-keys` against a pane you did not create.
+  Claude sessions talk through `SendMessage` (across machines via Remote
+  Control), never by typing into each other's panes (maintainer ruling
+  2026-11-14).
 - Read `.ai/release-please-rate-limit.md` BEFORE treating a red
   `Release Please` run as a defect or re-running it — the GitHub App
   installation's hourly budget is separate from your own `gh` budget, and a
