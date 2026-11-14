@@ -1,5 +1,7 @@
 # livespec-runtime
 
+Built with [livespec](https://livespec-ai.org/)
+
 Shared runtime library for livespec-governed projects.
 
 Hosts runtime code consumed by canonical [`livespec`](https://github.com/thewoolleyman/livespec) skills, impl-plugin skills, doctor invariants, hooks, and CI workflows. Initial scope is `livespec_runtime.cross_repo` (cross-repo work-item dependency resolution per `livespec/SPECIFICATION/contracts.md` §"Cross-repo dependency awareness").
